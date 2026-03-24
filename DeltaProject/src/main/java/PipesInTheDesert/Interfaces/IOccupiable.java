@@ -1,4 +1,4 @@
-package PipesInTheDesert;
+package PipesInTheDesert.Interfaces;
 
 public interface IOccupiable {
     

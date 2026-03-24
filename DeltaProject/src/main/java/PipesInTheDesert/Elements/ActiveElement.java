@@ -1,4 +1,4 @@
-package PipesInTheDesert;
+package PipesInTheDesert.Elements;
 
 public abstract class ActiveElement {
     
