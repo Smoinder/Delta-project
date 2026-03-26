@@ -63,6 +63,11 @@ public class Skeleton {
                 default -> System.out.println("Invalid choice, please try again.");
             }
             Thread.sleep(500);
+            if(running)
+            {
+                System.out.println("Press anything to return to main menu... ");
+                sc.nextLine();
+            }
         }
     }
 
