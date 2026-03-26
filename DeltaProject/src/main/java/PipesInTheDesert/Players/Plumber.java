@@ -8,10 +8,12 @@ import PipesInTheDesert.Elements.Pump;
 
 public class Plumber extends Player {
     public boolean holdingPump;
-
-    public void connectPipeEnd(Pipe pipe, IConnectable element) {
+    public Pump heldPump;
+    public PipeEnd heldPipeEnd;
+    
+    public void connectPipeEnd(IConnectable element) {
         System.out.println(
-                "connectPipeEnd method of Plumber class was called with pipe = " + pipe + " and element = " + element);
+                "connectPipeEnd method of Plumber class was called with element = " + element);
     }
 
     public void disconnectPipeEnd(Pipe pipe, IConnectable element) {
