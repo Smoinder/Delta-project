@@ -1,6 +1,12 @@
 package PipesInTheDesert;
 
 
+import PipesInTheDesert.Connectors.Pipe;
+import PipesInTheDesert.Connectors.PipeEnd;
+import PipesInTheDesert.Elements.Pump;
+import PipesInTheDesert.Interfaces.IConnectable;
+import PipesInTheDesert.Players.Plumber;
+
 import java.util.Scanner;
 
 public class Skeleton {
@@ -58,8 +64,6 @@ public class Skeleton {
             }
             Thread.sleep(500);
         }
-        sc.close();
-
     }
 
     private static void StartGame(){
@@ -103,7 +107,25 @@ public class Skeleton {
     }
 
     private static void PlumberRedirectsPipeEnd() {
-        // TODO: Implement Plumber redirects an end of a pipe use case
+        Scanner sc = new Scanner(System.in);
+        Plumber tempPlumber =  new Plumber();
+        Pipe tempPipe = new Pipe();
+        tempPipe.end1 = new PipeEnd();
+        tempPipe.end2 = new PipeEnd();
+        IConnectable tempConnectable = new Pump();
+        tempPlumber.disconnectPipeEnd(tempPipe, tempConnectable);
+        System.out.print("Condition Check: pipe end is connected → PipeEnd.isConnected() (y/n): ");
+        String input = sc.nextLine().trim().toLowerCase();
+        if(input.equals("y")) {
+            tempPipe.end1.isConnected();
+            tempPipe.end1.disconnect();
+            System.out.println("\nDisconnection successful.");
+        } else if (input.equals("n")) {
+            System.out.println("\nDisconnection rejected: pipe already disconnected");
+        }
+        else{
+            System.out.println("Invalid Input");
+        }
     }
 
     private static void SaboteurPuncturesPipe() {
