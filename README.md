@@ -3,4 +3,5 @@
 - Rely on chapter 5.2 
 - 20% must be comments 
 - comments should be java doc, see whatsup group
-- conditions for calling method inside a method should be checked interactively
+- conditions for calling method inside a method should be checked interactively 
+- use cases must be implemented in Skeleton class as static methods which should be could from main method
