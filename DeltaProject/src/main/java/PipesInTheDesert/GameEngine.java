@@ -2,9 +2,8 @@ package PipesInTheDesert;
 
 import PipesInTheDesert.Players.*;
 import PipesInTheDesert.Elements.*;
+import PipesInTheDesert.Connectors.Pipe;
 
-import java.nio.channels.Pipe;
-import java.text.NumberFormat.Field;
 import java.util.List;
 
 public class GameEngine {
