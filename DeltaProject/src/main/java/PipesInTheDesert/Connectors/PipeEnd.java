@@ -21,6 +21,10 @@ public class PipeEnd extends MapObject {
         System.out.println("connect method of PipeEnd class was called with element = " + element);
     }
 
+    public void disconnect(){
+        System.out.println("disconnect method of PipeEnd class was called");
+    }
+
     public boolean canConnect(IConnectable element) {
         System.out.println("canConnect method of PipeEnd class was called with element = " + element);
         return true;
