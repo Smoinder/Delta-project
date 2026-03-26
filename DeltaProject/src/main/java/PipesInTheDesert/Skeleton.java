@@ -1,57 +1,113 @@
 package PipesInTheDesert;
 
+
 import java.util.Scanner;
 
 public class Skeleton {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        while (true) {
-            System.out.println("""
-                    Which use case you would like to execute?
-                    1.\tStart Game 
-                    2.\tPlayer walks on a pump 
-                    3.\tPlayer walks on a pipe 
-                    4.\tPlayer changes pump direction 
-                    5.\tPlumber fixes a broken pump 
-                    6.\tPlumber picks up a pump 
-                    7.\tPlumber installs a new pump 
-                    8.\tPlumber fixes a broken pipe 
-                    9.\tPlumber picks a pipe 
-                    10.\tPlumber installs a new pipe 
+    private Skeleton(){
+        throw new AssertionError("No instantiation for static factory class");
+    }
+    private final static String MAIN_MENU =
+            """
+                    === MAIN MENU ===
+                    1.\tStart Game
+                    2.\tPlayer walks on a pump
+                    3.\tPlayer walks on a pipe
+                    4.\tPlayer changes pump direction
+                    5.\tPlumber fixes a broken pump\s
+                    6.\tPlumber picks up a pump
+                    7.\tPlumber installs a new pump
+                    8.\tPlumber fixes a broken pipe
+                    9.\tPlumber picks a pipe
+                    10.\tPlumber installs a new pipe
                     11.\tPlumber redirects an end of a pipe
                     12.\tSaboteur punctures a pipe
-                    13.\tClose menu""");
-            int choice = sc.nextInt();
-            if (choice == 1) {
-                // Start Game
-            } else if (choice == 2) {
-                // Player walks on a pump
-            } else if (choice == 3) {
-                // Player walks on a pipe
-            } else if (choice == 4) {
-                // Player changes pump direction
-            } else if (choice == 5) {
-                // Plumber fixes a broken pump
-            } else if (choice == 6) {
-                // Plumber picks up a pump
-            } else if (choice == 7) {
-                // Plumber installs a new pump
-            } else if (choice == 8) {
-                // Plumber fixes a broken pipe
-            } else if (choice == 9) {
-                // Plumber picks a pipe
-            } else if (choice == 10) {
-                // Plumber installs a new pipe
-            } else if (choice == 11) {
-                // Plumber redirects an end of a pipe
-            } else if (choice == 12) {
-                // Saboteur punctures a pipe
-            } else if (choice == 13) {
-                break;
-            } else {
-                System.out.println("Invalid choice, please try again.");
+                    0.\tExit
+                    """;
+    public static void main(String[] args) throws InterruptedException {
+        runSkeletonConsole();
+    }
+
+    private static void runSkeletonConsole() throws InterruptedException {
+        Scanner sc = new Scanner(System.in);
+        boolean running = true;
+        while (running) {
+            System.out.println(MAIN_MENU);
+            System.out.print("Please Choose an Option: ");
+            int choice;
+            try {
+                choice = Integer.parseInt(sc.nextLine().trim());
+            }catch(NumberFormatException e){
+                choice =-1; //Defaults to Invalid input
             }
+            switch (choice) {
+                case 0 -> running = false;
+                case 1 -> StartGame();
+                case 2 -> PlayerWalksOnPump();
+                case 3 -> PlayerWalksOnPipe();
+                case 4 -> PlayerChangesPumpDirection();
+                case 5 -> PlumberFixesBrokenPump();
+                case 6 -> PlumberPicksUpPump();
+                case 7 -> PlumberInstallsPump();
+                case 8 -> PlumberFixesBrokenPipe();
+                case 9 -> PlumberPicksPipe();
+                case 10 -> PlumberInstallsPipe();
+                case 11 -> PlumberRedirectsPipeEnd();
+                case 12 -> SaboteurPuncturesPipe();
+                default -> System.out.println("Invalid choice, please try again.");
+            }
+            Thread.sleep(500);
         }
         sc.close();
+
     }
+
+    private static void StartGame(){
+        // TODO: Implement Start / Configure Game use case
+    }
+
+    private static void PlayerWalksOnPump() {
+        // TODO: Implement Player walks on a pump use case
+    }
+
+    private static void PlayerWalksOnPipe() {
+        // TODO: Implement Player walks on a pipe use case
+    }
+
+    private static void PlayerChangesPumpDirection() {
+        // TODO: Implement Player changes pump direction use case
+    }
+
+    private static void PlumberFixesBrokenPump() {
+        // TODO: Implement Plumber fixes a broken pump use case
+    }
+
+    private static void PlumberPicksUpPump() {
+        // TODO: Implement Plumber picks up a pump use case
+    }
+
+    private static void PlumberInstallsPump() {
+        // TODO: Implement Plumber installs a new pump use case
+    }
+
+    private static void PlumberFixesBrokenPipe() {
+        // TODO: Implement Plumber fixes a broken pipe use case
+    }
+
+    private static void PlumberPicksPipe() {
+        // TODO: Implement Plumber picks a pipe (end) use case
+    }
+
+    private static void PlumberInstallsPipe() {
+        // TODO: Implement Plumber installs a new pipe use case
+    }
+
+    private static void PlumberRedirectsPipeEnd() {
+        // TODO: Implement Plumber redirects an end of a pipe use case
+    }
+
+    private static void SaboteurPuncturesPipe() {
+        // TODO: Implement Saboteur punctures a pipe use case
+    }
+
 }
