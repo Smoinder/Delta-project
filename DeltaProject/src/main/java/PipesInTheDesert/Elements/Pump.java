@@ -15,59 +15,59 @@ public class Pump extends ActiveElement implements IOccupiable {
     public double waterTankLevel;
 
     public void fix() {
-        System.out.println("fix method of Pump class was called");
+        System.out.println("Pump.fix()");
     }
 
     public void goOutOfOrder() {
-        System.out.println("goOutOfOrder method of Pump class was called");
+        System.out.println("Pump.goOutOfOrder()");
     }
 
     public void goOutOfOrderWithProbability(int p) {
-        System.out.println("goOutOfOrderWithProbability method of Pump class was called with p = " + p);
+        System.out.println("Pump.goOutOfOrderWithProbability(int)");
     }
 
     public void setInput(PipeEnd p) {
-        System.out.println("setInput method of Pump class was called with p = " + p);
+        System.out.println("Pump.setInput(PipeEnd)");
     }
 
     public void setOutput(PipeEnd p) {
-        System.out.println("setOutput method of Pump class was called with p = " + p);
+        System.out.println("Pump.setOutput(PipeEnd)");
     }
 
     public boolean isTankEmpty() {
-        System.out.println("isTankEmpty method of Pump class was called");
+        System.out.print("Pump.isTankEmpty(): boolean");
         return true;
     }
 
     public boolean canConnect(PipeEnd pipeEnd) {
-        System.out.println("canConnect method of Pump class was called with pipeEnd = " + pipeEnd);
+        System.out.print("Pump.canConnect(PipeEnd): boolean");
         return true;
     }
 
     public void connectEnd(PipeEnd pipeEnd) {
-        System.out.println("connectEnd method of Pump class was called with pipeEnd = " + pipeEnd);
+        System.out.println("Pump.connectEnd(PipeEnd)");
     }
 
     public PipeEnd disconnectEnd() {
-        System.out.println("disconnectEnd method of Pump class was called");
+        System.out.println("Pump.disconnectEnd(): PipeEnd");
         return null;
     }
 
     public Pipe getEnd() {
-        System.out.println("getEnd method of Pump class was called");
+        System.out.println("Pump.getEnd(): Pipe");
         return null;
     }
 
     public boolean canAccept(Player player) {
-        System.out.println("canAccept method of Pump class was called with player = " + player);
+        System.out.print("Pump.canAccept(Player): boolean");
         return true;
     }
 
     public void addOccupant(Player player) {
-        System.out.println("addOccupant method of Pump class was called with player = " + player);
+        System.out.println("Pump.addOccupant(Player)");
     }
 
     public void removeOccupant(Player player) {
-        System.out.println("removeOccupant method of Pump class was called with player = " + player);
+        System.out.println("Pump.removeOccupant(Player)");
     }
 }

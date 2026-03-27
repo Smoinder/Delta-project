@@ -8,25 +8,25 @@ public class PipeEnd extends MapObject {
     public IConnectable connectedElement;
 
     public boolean isConnected() {
-        System.out.println("isConnected method of PipeEnd class was called");
+        System.out.print("PipeEnd.isConnected(): boolean");
         return true;
     }
 
     public boolean isFree() {
-        System.out.println("isFree method of PipeEnd class was called");
+        System.out.print("PipeEnd.isFree(): boolean");
         return true;
     }
 
     public void connect(IConnectable element) {
-        System.out.println("connect method of PipeEnd class was called with element = " + element);
+        System.out.println("PipeEnd.connect()");
     }
 
     public void disconnect(){
-        System.out.println("disconnect method of PipeEnd class was called");
+        System.out.println("PipeEnd.disconnect()");
     }
 
     public boolean canConnect(IConnectable element) {
-        System.out.println("canConnect method of PipeEnd class was called with element = " + element);
+        System.out.print("PipeEnd.canConnect(): boolean");
         return true;
     }
 }

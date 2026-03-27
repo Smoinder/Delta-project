@@ -6,42 +6,40 @@ import PipesInTheDesert.Interfaces.IOccupiable;
 
 public class Saboteur extends Player {
     public void puncturePipe(Pipe pipe) {
-        System.out.println("puncturePipe method of Saboteur class was called with pipe = " + pipe);
+        System.out.println("Saboteur.puncturePipe(Pipe)");
     }
 
     public boolean occupy(IOccupiable target) {
-        System.out.println("occupy method of Saboteur class was called with target = " + target);
+        System.out.print("Saboteur.occupy(IOccupiable): boolean");
         return true;
     }
 
     public void moveAlongPipe(Pipe pipe) {
-        System.out.println("moveAlongPipe method of Saboteur class was called with pipe = " + pipe);
+        System.out.println("Saboteur.moveAlongPipe(Pipe)");
     }
 
     public void endTurn() {
-        System.out.println("endTurn method of Saboteur class was called");
+        System.out.println("Saboteur.endTurn()");
     }
 
     public boolean hasEnoughStamina(int cost) {
-        System.out.println("hasEnoughStamina method of Saboteur class was called with cost = " + cost);
+        System.out.print("Saboteur.hasEnoughStamina(int): boolean");
         return true;
     }
 
     public void consumeStamina(int amount) {
-        System.out.println("consumeStamina method of Saboteur class was called with amount = " + amount);
+        System.out.println("Saboteur.consumeStamina(int)");
     }
 
     public void refreshStamina() {
-        System.out.println("refreshStamina method of Saboteur class was called");
+        System.out.println("Saboteur.refreshStamina()");
     }
 
     public void setIncomingPipe(Pump pump, Pipe incoming) {
-        System.out.println("setIncomingPipe method of Saboteur class was called with pump = " + pump
-                + " and incoming = " + incoming);
+        System.out.println("Saboteur.setIncomingPipe(Pump, Pipe)");
     }
 
     public void setOutgoingPipe(Pump pump, Pipe outgoing) {
-        System.out.println("setOutgoingPipe method of Saboteur class was called with pump = " + pump
-                + " and outgoing = " + outgoing);
+        System.out.println("Saboteur.setOutgoingPipe(Pump, Pipe)");
     }
 }
