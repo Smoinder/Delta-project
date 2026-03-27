@@ -119,10 +119,11 @@ public class Skeleton {
         tempPipe.end2 = new PipeEnd();
         IConnectable tempConnectable = new Pump();
         tempPlumber.disconnectPipeEnd(tempPipe, tempConnectable);
-        System.out.print("Condition Check: pipe end is connected → PipeEnd.isConnected() (y/n): ");
+        System.out.print("Condition Check: pipe end is connected → ");
+        tempPipe.end1.isConnected();
+        System.out.print("(y/n) ");
         String input = sc.nextLine().trim().toLowerCase();
         if(input.equals("y")) {
-            tempPipe.end1.isConnected();
             tempPipe.end1.disconnect();
             System.out.println("\nDisconnection successful.");
         } else if (input.equals("n")) {

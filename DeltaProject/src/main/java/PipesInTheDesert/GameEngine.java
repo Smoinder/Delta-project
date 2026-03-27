@@ -19,18 +19,18 @@ public class GameEngine {
     public int turnNumber;
 
     public void endGame() {
-        System.out.println("endGame method of GameEngine class was called");
+        System.out.println("GameEngine.endGame()");
     }
 
     public void nextTurn() {
-        System.out.println("nextTurn method of GameEngine class was called");
+        System.out.println("GameEngine.nextTurn()");
     }
 
     public void simulateWaterFlow() {
-        System.out.println("simulateWaterFlow method of GameEngine class was called");
+        System.out.println("GameEngine.simulateWaterFlow()");
     }
 
     public void startGame() {
-        System.out.println("startGame method of GameEngine class was called");
+        System.out.println("GameEngine.startGame()");
     }
 }

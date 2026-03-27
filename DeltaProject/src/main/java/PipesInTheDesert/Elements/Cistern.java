@@ -12,29 +12,29 @@ public class Cistern extends ActiveElement {
     public List<Pump> generatedPumps;
 
     public void generatePipes() {
-        System.out.println("generatePipes method of Cistern class was called");
+        System.out.println("Cistern.generatePipes()");
     }
 
     public void generatePumps() {
-        System.out.println("generatePumps method of Cistern class was called");
+        System.out.println("Cistern.generatePumps()");
     }
 
     public boolean canConnect(PipeEnd pipeEnd) {
-        System.out.println("canConnect method of Cistern class was called with pipeEnd = " + pipeEnd);
+        System.out.print("Cistern.canConnect(): boolean");
         return true;
     }
 
     public void connectEnd(PipeEnd pipeEnd) {
-        System.out.println("connectEnd method of Cistern class was called with pipeEnd = " + pipeEnd);
+        System.out.println("Cistern.connectEnd()");
     }
 
     public PipeEnd disconnectEnd() {
-        System.out.println("disconnectEnd method of Cistern class was called");
+        System.out.println("Cistern.disconnectEnd(): PipeEnd");
         return null;
     }
 
     public Pipe getEnd() {
-        System.out.println("getEnd method of Cistern class was called");
+        System.out.println("Cistern.getEnd(): Pipe");
         return null;
     }
 }

@@ -12,68 +12,64 @@ public class Plumber extends Player {
     public PipeEnd heldPipeEnd;
     
     public void connectPipeEnd(IConnectable element) {
-        System.out.println(
-                "connectPipeEnd method of Plumber class was called with element = " + element);
+        System.out.println("Plumber.connectPipeEnd(IConnectable)");
     }
 
     public void disconnectPipeEnd(Pipe pipe, IConnectable element) {
-        System.out.println("disconnectPipeEnd method of Plumber class was called with pipe = " + pipe
-                + " and element = " + element);
+        System.out.println("Plumber.disconnectPipeEnd(Pipe, IConnectable)");
     }
 
     public void fixPipe(Pipe pipe) {
-        System.out.println("fixPipe method of Plumber class was called with pipe = " + pipe);
+        System.out.println("Plumber.fixPipe(Pipe)");
     }
 
     public void fixPump(Pump pump) {
-        System.out.println("fixPump method of Plumber class was called with pump = " + pump);
+        System.out.println("Plumber.fixPump(Pump)");
     }
 
     public void getEnd(PipeEnd eop) {
-        System.out.println("getEnd method of Plumber class was called with eop = " + eop);
+        System.out.println("Plumber.getEnd(PipeEnd)");
     }
 
     public void insertPump(Pipe pipe, Pump pump) {
-        System.out.println("insertPump method of Plumber class was called with pipe = " + pipe + " and pump = " + pump);
+        System.out.println("Plumber.insertPump(Pipe, Pump)");
     }
 
     public void pickUpPump(Cistern cistern) {
-        System.out.println("pickUpPump method of Plumber class was called with cistern = " + cistern);
+        System.out.println("Plumber.pickUpPump(Cistern)");
     }
 
     public boolean occupy(IOccupiable target) {
-        System.out.println("occupy method of Plumber class was called with target = " + target);
+        System.out.print("Plumber.occupy(IOccupiable): boolean");
         return true;
     }
 
     public void moveAlongPipe(Pipe pipe) {
-        System.out.println("moveAlongPipe method of Plumber class was called with pipe = " + pipe);
+        System.out.println("Plumber.moveAlongPipe(Pipe)");
     }
 
     public void endTurn() {
-        System.out.println("endTurn method of Plumber class was called");
+        System.out.println("Plumber.endTurn()");
     }
 
     public boolean hasEnoughStamina(int cost) {
-        System.out.println("hasEnoughStamina method of Plumber class was called with cost = " + cost);
+        System.out.print("Plumber.hasEnoughStamina(int): boolean");
         return true;
     }
 
     public void consumeStamina(int amount) {
-        System.out.println("consumeStamina method of Plumber class was called with amount = " + amount);
+        System.out.println("Plumber.consumeStamina(int)");
     }
 
     public void refreshStamina() {
-        System.out.println("refreshStamina method of Plumber class was called");
+        System.out.println("Plumber.refreshStamina()");
     }
 
     public void setIncomingPipe(Pump pump, Pipe incoming) {
-        System.out.println("setIncomingPipe method of Plumber class was called with pump = " + pump + " and incoming = "
-                + incoming);
+        System.out.println("Plumber.setIncomingPipe(Pump, Pipe)");
     }
 
     public void setOutgoingPipe(Pump pump, Pipe outgoing) {
-        System.out.println("setOutgoingPipe method of Plumber class was called with pump = " + pump + " and outgoing = "
-                + outgoing);
+        System.out.println("Plumber.setOutgoingPipe(Pump, Pipe)");
     }
 }
