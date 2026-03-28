@@ -106,6 +106,7 @@ public class Skeleton {
         Pump pump = new Pump();
         pipe.end1 = new PipeEnd();
         pipe.end2 = new PipeEnd();
+        plumber.insertPump(pipe, pump);
         System.out.print("Condition Check: plumber is on a pipe →: ");
         System.out.println("player.position == pipe");
         System.out.print("(y/n): ");
@@ -123,8 +124,8 @@ public class Skeleton {
             System.out.println("Pickup rejected: player not holding a pump");
             return;
         }
-
-        plumber.insertPump(pipe, pump);
+        
+        System.out.println("Pump inserted.");
     }
 
     private static void PlumberFixesBrokenPipe() {
@@ -144,7 +145,7 @@ public class Skeleton {
         Plumber plumber = new Plumber();
         PipeEnd pipeEnd = new PipeEnd();
         IConnectable element = new Pump();
-
+        plumber.connectPipeEnd(element);
         System.out.print("Condition Check: Plumber has a held pipe end → ");
         System.out.println("plumber.heldPipeEnd != null");
         System.out.print("(y/n): ");
@@ -169,7 +170,8 @@ public class Skeleton {
             System.out.println("Connection rejected: Pipe End cannot connect");
             return;
         }
-        plumber.connectPipeEnd(element);
+
+        System.out.println("Connection successful.");
     }
 
     private static void PlumberRedirectsPipeEnd() {
