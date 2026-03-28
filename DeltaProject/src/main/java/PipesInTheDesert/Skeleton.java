@@ -3,6 +3,7 @@ package PipesInTheDesert;
 
 import PipesInTheDesert.Connectors.Pipe;
 import PipesInTheDesert.Connectors.PipeEnd;
+import PipesInTheDesert.Elements.Cistern;
 import PipesInTheDesert.Elements.Pump;
 import PipesInTheDesert.Interfaces.IConnectable;
 import PipesInTheDesert.Players.Plumber;
@@ -104,7 +105,28 @@ public class Skeleton {
 
     /** Use case placeholder: Plumber picks up a pump. */
     private static void PlumberPicksUpPump() {
-        // TODO: Implement Plumber picks up a pump use case
+        Scanner sc = new Scanner(System.in);
+        Plumber tempPlumber = new Plumber();
+        Cistern tempCistern = new Cistern();
+        tempPlumber.pickUpPump(tempCistern);
+        System.out.print("Condition Check: plumber is on a cistern → player.position == cistern (y/n) ");
+        String input = sc.nextLine().trim().toLowerCase();
+        if (input.equals("y")) {
+            System.out.print("Condition Check: plumber is not holding a pump → !Plumber.holdingPump (y/n) ");
+            String input2 = sc.nextLine().trim().toLowerCase();
+            if (input2.equals("y")) {
+                tempCistern.generatePumps();
+                System.out.println("\nPump picked up successfully.");
+            } else if (input2.equals("n")) {
+                System.out.println("\nPickup rejected: already holding a pump.");
+            } else {
+                System.out.println("Invalid Input");
+            }
+        } else if (input.equals("n")) {
+            System.out.println("\nPickup rejected: player not on cistern.");
+        } else {
+            System.out.println("Invalid Input");
+        }
     }
     /**
      * Use case: Plumber installs a new pump.
@@ -147,7 +169,25 @@ public class Skeleton {
 
     /** Use case placeholder: Plumber picks a pipe end. */
     private static void PlumberPicksPipe() {
-        // TODO: Implement Plumber picks a pipe (end) use case
+        Scanner sc = new Scanner(System.in);
+        Plumber tempPlumber = new Plumber();
+        Pipe tempPipe = new Pipe();
+        tempPipe.end1 = new PipeEnd();
+        tempPipe.end2 = new PipeEnd();
+        PipeEnd targetEnd = tempPipe.end1;
+        tempPlumber.getEnd(targetEnd);
+        System.out.print("Condition Check: pipe end is available → ");
+        targetEnd.isFree();
+        System.out.print("(y/n) ");
+        String input = sc.nextLine().trim().toLowerCase();
+        if (input.equals("y")) {
+            tempPlumber.heldPipeEnd = targetEnd;
+            System.out.println("\nPipe end picked up successfully.");
+        } else if (input.equals("n")) {
+            System.out.println("\nPipeEnd pickup failed: Pipe End is currently connected to an element");
+        } else {
+            System.out.println("Invalid Input");
+        }
     }
     /**
      * Use case: Plumber installs a new pipe.
