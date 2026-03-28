@@ -111,7 +111,11 @@ public class Skeleton {
     private static void PlumberInstallsPipe() {
         // TODO: Implement Plumber installs a new pipe use case
     }
-
+    /**
+     * Use case: Plumber redirects an end of a pipe
+     * Based on section 5.2.2.11 of the Planning the Skeleton.
+     * Called from the main menu.
+     */
     private static void PlumberRedirectsPipeEnd() {
         Scanner sc = new Scanner(System.in);
         Plumber tempPlumber =  new Plumber();
@@ -134,7 +138,11 @@ public class Skeleton {
             System.out.println("Invalid Input");
         }
     }
-
+    /**
+     * Use case: Saboteur punctures a pipe
+     * Based on section 5.2.2.12 of the Planning the Skeleton.
+     * Called from the main menu.
+     */
     private static void SaboteurPuncturesPipe() {
         Scanner sc = new Scanner(System.in);
         Saboteur tempSaboteur =  new Saboteur();

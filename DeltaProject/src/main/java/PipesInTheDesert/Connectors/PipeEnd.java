@@ -18,7 +18,7 @@ public class PipeEnd extends MapObject {
     }
 
     public void connect(IConnectable element) {
-        System.out.println("PipeEnd.connect()");
+        System.out.println("PipeEnd.connect(IConnectable)");
     }
 
     public void disconnect(){

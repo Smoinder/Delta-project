@@ -20,12 +20,12 @@ public class Cistern extends ActiveElement {
     }
 
     public boolean canConnect(PipeEnd pipeEnd) {
-        System.out.print("Cistern.canConnect(): boolean");
+        System.out.print("Cistern.canConnect(PipeEnd): boolean");
         return true;
     }
 
     public void connectEnd(PipeEnd pipeEnd) {
-        System.out.println("Cistern.connectEnd()");
+        System.out.println("Cistern.connectEnd(PipeEnd)");
     }
 
     public PipeEnd disconnectEnd() {
