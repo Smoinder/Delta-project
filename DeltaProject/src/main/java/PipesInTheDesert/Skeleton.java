@@ -6,6 +6,7 @@ import PipesInTheDesert.Connectors.PipeEnd;
 import PipesInTheDesert.Elements.Pump;
 import PipesInTheDesert.Interfaces.IConnectable;
 import PipesInTheDesert.Players.Plumber;
+import PipesInTheDesert.Players.Saboteur;
 
 import java.util.Scanner;
 
@@ -135,7 +136,32 @@ public class Skeleton {
     }
 
     private static void SaboteurPuncturesPipe() {
-        // TODO: Implement Saboteur punctures a pipe use case
+        Scanner sc = new Scanner(System.in);
+        Saboteur tempSaboteur =  new Saboteur();
+        Pipe tempPipe = new Pipe();
+
+        tempSaboteur.puncturePipe(tempPipe);
+        System.out.print("Condition Check: pipe is not already leaking → !pipe.leaking (y/n): ");
+        String input = sc.nextLine().trim().toLowerCase();
+        if(input.equals("n")) {
+            System.out.println("Pipe not punctured: pipe is already leaking");
+            return;
+        } else if (!input.equals("y")) {
+            System.out.println("Invalid Input");
+            return;
+        }
+        System.out.print("Condition Check: saboteur is on the pipe → player.position == pipe (y/n): ");
+        input = sc.nextLine().trim().toLowerCase();
+        if(input.equals("n")){
+            System.out.println("Pipe not punctured: player is not on pipe");
+            return;
+        }
+        else if(!input.equals("y")){
+            System.out.println("Invalid Input");
+            return;
+        }
+        tempPipe.puncture();
+        System.out.println("Pipe punctured.");
     }
 
 }
