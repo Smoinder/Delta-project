@@ -6,13 +6,19 @@ import PipesInTheDesert.Connectors.PipeEnd;
 import PipesInTheDesert.Elements.Pump;
 import PipesInTheDesert.Interfaces.IConnectable;
 import PipesInTheDesert.Players.Plumber;
+import PipesInTheDesert.Players.Saboteur;
 
 import java.util.Scanner;
 
+/**
+ * Console skeleton that exposes analysis-model use cases as menu-driven actions.
+ */
 public class Skeleton {
+    /** Prevents instantiation of this static utility entry point. */
     private Skeleton(){
         throw new AssertionError("No instantiation for static factory class");
     }
+    /** Main menu listing the sequence-diagram scenarios from the skeleton plan. */
     private final static String MAIN_MENU =
             """
                     === MAIN MENU ===
@@ -71,26 +77,32 @@ public class Skeleton {
         }
     }
 
+    /** Use case placeholder: Start / Configure Game. */
     private static void StartGame(){
         // TODO: Implement Start / Configure Game use case
     }
 
+    /** Use case placeholder: Player walks on a pump. */
     private static void PlayerWalksOnPump() {
         // TODO: Implement Player walks on a pump use case
     }
 
+    /** Use case placeholder: Player walks on a pipe. */
     private static void PlayerWalksOnPipe() {
         // TODO: Implement Player walks on a pipe use case
     }
 
+    /** Use case placeholder: Player changes pump direction. */
     private static void PlayerChangesPumpDirection() {
         // TODO: Implement Player changes pump direction use case
     }
 
+    /** Use case placeholder: Plumber fixes a broken pump. */
     private static void PlumberFixesBrokenPump() {
         // TODO: Implement Plumber fixes a broken pump use case
     }
 
+    /** Use case placeholder: Plumber picks up a pump. */
     private static void PlumberPicksUpPump() {
         // TODO: Implement Plumber picks up a pump use case
     }
@@ -99,10 +111,12 @@ public class Skeleton {
         // TODO: Implement Plumber installs a new pump use case
     }
 
+    /** Use case placeholder: Plumber fixes a broken pipe. */
     private static void PlumberFixesBrokenPipe() {
         // TODO: Implement Plumber fixes a broken pipe use case
     }
 
+    /** Use case placeholder: Plumber picks a pipe end. */
     private static void PlumberPicksPipe() {
         // TODO: Implement Plumber picks a pipe (end) use case
     }
@@ -110,7 +124,11 @@ public class Skeleton {
     private static void PlumberInstallsPipe() {
         // TODO: Implement Plumber installs a new pipe use case
     }
-
+    /**
+     * Use case: Plumber redirects an end of a pipe
+     * Based on section 5.2.2.11 of the Planning the Skeleton.
+     * Called from the main menu.
+     */
     private static void PlumberRedirectsPipeEnd() {
         Scanner sc = new Scanner(System.in);
         Plumber tempPlumber =  new Plumber();
@@ -133,9 +151,38 @@ public class Skeleton {
             System.out.println("Invalid Input");
         }
     }
-
+    /**
+     * Use case: Saboteur punctures a pipe
+     * Based on section 5.2.2.12 of the Planning the Skeleton.
+     * Called from the main menu.
+     */
     private static void SaboteurPuncturesPipe() {
-        // TODO: Implement Saboteur punctures a pipe use case
+        Scanner sc = new Scanner(System.in);
+        Saboteur tempSaboteur =  new Saboteur();
+        Pipe tempPipe = new Pipe();
+
+        tempSaboteur.puncturePipe(tempPipe);
+        System.out.print("Condition Check: pipe is not already leaking → !pipe.leaking (y/n): ");
+        String input = sc.nextLine().trim().toLowerCase();
+        if(input.equals("n")) {
+            System.out.println("Pipe not punctured: pipe is already leaking");
+            return;
+        } else if (!input.equals("y")) {
+            System.out.println("Invalid Input");
+            return;
+        }
+        System.out.print("Condition Check: saboteur is on the pipe → player.position == pipe (y/n): ");
+        input = sc.nextLine().trim().toLowerCase();
+        if(input.equals("n")){
+            System.out.println("Pipe not punctured: player is not on pipe");
+            return;
+        }
+        else if(!input.equals("y")){
+            System.out.println("Invalid Input");
+            return;
+        }
+        tempPipe.puncture();
+        System.out.println("Pipe punctured.");
     }
 
 }

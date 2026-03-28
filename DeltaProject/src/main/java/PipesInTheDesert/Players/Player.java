@@ -5,11 +5,19 @@ import PipesInTheDesert.Interfaces.IOccupiable;
 import PipesInTheDesert.Connectors.Pipe;
 import PipesInTheDesert.Elements.Pump;
 
+/**
+ * Abstract base type for all players that move in the pipe network.
+ */
 public abstract class Player extends MapObject {
+    /** Current stamina available for actions. */
     public int stamina;
+    /** Maximum stamina restored at turn start. */
     public int maxStamina;
+    /** Current occupied map element, such as a pipe or a pump. */
     public IOccupiable position;
+    /** Unique identifier of this player. */
     public int playerId;
+    /** True when this player currently has the active turn. */
     public boolean isActive;
 
     public abstract boolean occupy(IOccupiable target);
