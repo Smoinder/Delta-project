@@ -10,10 +10,15 @@ import PipesInTheDesert.Players.Saboteur;
 
 import java.util.Scanner;
 
+/**
+ * Console skeleton that exposes analysis-model use cases as menu-driven actions.
+ */
 public class Skeleton {
+    /** Prevents instantiation of this static utility entry point. */
     private Skeleton(){
         throw new AssertionError("No instantiation for static factory class");
     }
+    /** Main menu listing the sequence-diagram scenarios from the skeleton plan. */
     private final static String MAIN_MENU =
             """
                     === MAIN MENU ===
@@ -72,26 +77,32 @@ public class Skeleton {
         }
     }
 
+    /** Use case placeholder: Start / Configure Game. */
     private static void StartGame(){
         // TODO: Implement Start / Configure Game use case
     }
 
+    /** Use case placeholder: Player walks on a pump. */
     private static void PlayerWalksOnPump() {
         // TODO: Implement Player walks on a pump use case
     }
 
+    /** Use case placeholder: Player walks on a pipe. */
     private static void PlayerWalksOnPipe() {
         // TODO: Implement Player walks on a pipe use case
     }
 
+    /** Use case placeholder: Player changes pump direction. */
     private static void PlayerChangesPumpDirection() {
         // TODO: Implement Player changes pump direction use case
     }
 
+    /** Use case placeholder: Plumber fixes a broken pump. */
     private static void PlumberFixesBrokenPump() {
         // TODO: Implement Plumber fixes a broken pump use case
     }
 
+    /** Use case placeholder: Plumber picks up a pump. */
     private static void PlumberPicksUpPump() {
         // TODO: Implement Plumber picks up a pump use case
     }
@@ -100,10 +111,12 @@ public class Skeleton {
         // TODO: Implement Plumber installs a new pump use case
     }
 
+    /** Use case placeholder: Plumber fixes a broken pipe. */
     private static void PlumberFixesBrokenPipe() {
         // TODO: Implement Plumber fixes a broken pipe use case
     }
 
+    /** Use case placeholder: Plumber picks a pipe end. */
     private static void PlumberPicksPipe() {
         // TODO: Implement Plumber picks a pipe (end) use case
     }
