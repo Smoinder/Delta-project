@@ -93,14 +93,65 @@ public class Skeleton {
         // TODO: Implement Player walks on a pipe use case
     }
 
-    /** Use case placeholder: Player changes pump direction. */
-    private static void PlayerChangesPumpDirection() {
-        // TODO: Implement Player changes pump direction use case
+    /**
+     * Use case: Player changes pump direction.
+     * Based on section 5.2.2.4 of the Planning the Skeleton.
+     * Called from the main menu.
+     */
+        private static void PlayerChangesPumpDirection() {
+        Scanner sc = new Scanner(System.in);
+        Plumber tempPlayer = new Plumber();
+        Pump tempPump = new Pump();
+        Pipe inputPipe = new Pipe();
+        Pipe outputPipe = new Pipe();
+        inputPipe.end1 = new PipeEnd();
+        inputPipe.end2 = new PipeEnd();
+        outputPipe.end1 = new PipeEnd();
+        outputPipe.end2 = new PipeEnd();
+        inputPipe.end1.connectedElement = tempPump;
+        outputPipe.end1.connectedElement = tempPump;
+        System.out.print("Condition Check: player is on a pump → player.position == pump (y/n) ");
+        String input = sc.nextLine().trim().toLowerCase();
+        if (input.equals("y")) {
+            tempPlayer.setIncomingPipe(tempPump, inputPipe);
+            tempPlayer.setOutgoingPipe(tempPump, outputPipe);
+            System.out.println("\nDirection updated.");
+        } else if (input.equals("n")) {
+            System.out.println("\nPump redirection failed: Player is not on pump");
+        } else {
+            System.out.println("Invalid Input");
+        }
     }
 
-    /** Use case placeholder: Plumber fixes a broken pump. */
+    /**
+     * Use case: Plumber fixes a broken pump.
+     * Based on section 5.2.2.5 of the Planning the Skeleton.
+     * Called from the main menu.
+     */
     private static void PlumberFixesBrokenPump() {
-        // TODO: Implement Plumber fixes a broken pump use case
+        Scanner sc = new Scanner(System.in);
+        Plumber tempPlumber = new Plumber();
+        Pump tempPump = new Pump();
+        tempPlumber.fixPump(tempPump);
+        System.out.print("Condition Check: player.position == pump (y/n) ");
+        String input = sc.nextLine().trim().toLowerCase();
+        if (input.equals("y")) {
+            System.out.print("Condition Check: !pump.isHealthy (y/n) ");
+            String input2 = sc.nextLine().trim().toLowerCase();
+            if (input2.equals("y")) {
+                tempPump.fix();
+                tempPlumber.consumeStamina(1);
+                System.out.println("\nPump repaired successfully.");
+            } else if (input2.equals("n")) {
+                System.out.println("\nPump not repaired: Pump is already healthy");
+            } else {
+                System.out.println("Invalid Input");
+            }
+        } else if (input.equals("n")) {
+            System.out.println("\nPump not repaired: Player is not on pump");
+        } else {
+            System.out.println("Invalid Input");
+        }
     }
 
     /** Use case placeholder: Plumber picks up a pump. */
@@ -162,9 +213,36 @@ public class Skeleton {
         System.out.println("Pump inserted.");
     }
 
-    /** Use case placeholder: Plumber fixes a broken pipe. */
+    /**
+     * Use case: Plumber fixes broken pump.
+     * Based on section 5.2.2.8 of the Planning the Skeleton.
+     * Called from the main menu.
+     */
     private static void PlumberFixesBrokenPipe() {
-        // TODO: Implement Plumber fixes a broken pipe use case
+        Scanner sc = new Scanner(System.in);
+        Plumber tempPlumber = new Plumber();
+        Pipe tempPipe = new Pipe();
+        tempPlumber.fixPipe(tempPipe);
+        System.out.print("Condition Check: pipe is leaking → pipe.leaking (y/n) ");
+        String input = sc.nextLine().trim().toLowerCase();
+        if (input.equals("y")) {
+            System.out.print("Condition Check: plumber is on the pipe → player.position == pipe (y/n) ");
+            String input2 = sc.nextLine().trim().toLowerCase();
+
+            if (input2.equals("y")) {
+                tempPipe.repair();
+                System.out.println("\nPipe repaired successfully.");
+            } else if (input2.equals("n")) {
+                System.out.println("\nPlumber is not on pipe. No action taken.");
+            } else {
+                System.out.println("Invalid Input");
+            }
+
+        } else if (input.equals("n")) {
+            System.out.println("\nPipe is not leaking. No action taken.");
+        } else {
+            System.out.println("Invalid Input");
+        }
     }
 
     /** Use case placeholder: Plumber picks a pipe end. */
