@@ -106,9 +106,38 @@ public class Skeleton {
     private static void PlumberPicksUpPump() {
         // TODO: Implement Plumber picks up a pump use case
     }
-
+    /**
+     * Use case: Plumber installs a new pump.
+     * Based on section 5.2.2.7 of the Planning the Skeleton.
+     * Called from the main menu.
+     */
     private static void PlumberInstallsPump() {
-        // TODO: Implement Plumber installs a new pump use case
+        Scanner sc = new Scanner(System.in);
+        Plumber plumber = new Plumber();
+        Pipe pipe = new Pipe();
+        Pump pump = new Pump();
+        pipe.end1 = new PipeEnd();
+        pipe.end2 = new PipeEnd();
+        plumber.insertPump(pipe, pump);
+        System.out.print("Condition Check: plumber is on a pipe →: ");
+        System.out.println("player.position == pipe");
+        System.out.print("(y/n): ");
+        String onPipe = sc.nextLine().trim().toLowerCase();
+        if (!onPipe.equals("y")) {
+            System.out.println("Pickup rejected: player not on pipe");
+            return;
+        }
+
+        System.out.print("Condition Check: plumber is holding a pump → : ");
+        System.out.println("plumber.holdingPump");
+        System.out.print("(y/n): ");
+        String holdingPump = sc.nextLine().trim().toLowerCase();
+        if (!holdingPump.equals("y")) {
+            System.out.println("Pickup rejected: player not holding a pump");
+            return;
+        }
+        
+        System.out.println("Pump inserted.");
     }
 
     /** Use case placeholder: Plumber fixes a broken pipe. */
@@ -120,9 +149,43 @@ public class Skeleton {
     private static void PlumberPicksPipe() {
         // TODO: Implement Plumber picks a pipe (end) use case
     }
-
+    /**
+     * Use case: Plumber installs a new pipe.
+     * Based on section 5.2.2.10 of the Planning the Skeleton.
+     * Called from the main menu.
+     */
     private static void PlumberInstallsPipe() {
-        // TODO: Implement Plumber installs a new pipe use case
+        Scanner sc = new Scanner(System.in);
+        Plumber plumber = new Plumber();
+        PipeEnd pipeEnd = new PipeEnd();
+        IConnectable element = new Pump();
+        plumber.connectPipeEnd(element);
+        System.out.print("Condition Check: Plumber has a held pipe end → ");
+        System.out.println("plumber.heldPipeEnd != null");
+        System.out.print("(y/n): ");
+        String hasPipeEnd = sc.nextLine().trim().toLowerCase();
+        if (!hasPipeEnd.equals("y")) {
+            System.out.println("Connection rejected: Plumber isn't holding a pipe end");
+            return;
+        }
+        System.out.print("Condition Check: pipe end is free → ");
+        pipeEnd.isFree();
+        System.out.print("(y/n): ");
+        String isFree = sc.nextLine().trim().toLowerCase();
+        if (!isFree.equals("y")) {
+            System.out.println("Connection rejected: Pipe End is not free");
+            return;
+        }
+        System.out.print("Condition Check: pipe end can connect → ");
+        pipeEnd.canConnect(element);
+        System.out.print("(y/n): ");
+        String canConnect = sc.nextLine().trim().toLowerCase();
+        if (!canConnect.equals("y")) {
+            System.out.println("Connection rejected: Pipe End cannot connect");
+            return;
+        }
+
+        System.out.println("Connection successful.");
     }
     /**
      * Use case: Plumber redirects an end of a pipe
