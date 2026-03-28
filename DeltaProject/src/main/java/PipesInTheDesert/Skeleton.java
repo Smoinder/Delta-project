@@ -100,7 +100,6 @@ public class Skeleton {
      * Called from the main menu.
      */
     private static void PlumberInstallsPump() {
-        System.out.println("PlumberInstallsPump() called");
         Scanner sc = new Scanner(System.in);
         Plumber plumber = new Plumber();
         Pipe pipe = new Pipe();
@@ -124,12 +123,8 @@ public class Skeleton {
             System.out.println("Pickup rejected: player not holding a pump");
             return;
         }
-        pipe.end1.disconnect();
-        pipe.end2.disconnect();
-        pipe.end1.connect(pump);
-        pipe.end2.connect(pump);
 
-        System.out.println("Pump inserted.");
+        plumber.insertPump(pipe, pump);
     }
 
     private static void PlumberFixesBrokenPipe() {
@@ -145,8 +140,6 @@ public class Skeleton {
      * Called from the main menu.
      */
     private static void PlumberInstallsPipe() {
-        System.out.println("PlumberInstallsPipe() called");
-
         Scanner sc = new Scanner(System.in);
         Plumber plumber = new Plumber();
         PipeEnd pipeEnd = new PipeEnd();
@@ -176,8 +169,7 @@ public class Skeleton {
             System.out.println("Connection rejected: Pipe End cannot connect");
             return;
         }
-        pipeEnd.connect(element);
-        System.out.println("Connection successful.");
+        plumber.connectPipeEnd(element);
     }
 
     private static void PlumberRedirectsPipeEnd() {
