@@ -36,18 +36,21 @@ public abstract class Player extends MapObject {
         System.out.print("Condition Check: Does the player currently have a valid path? (y/n): ");
         String input = sc.nextLine().trim().toLowerCase();
         if (!input.equals("y")) {
-            throw new IllegalStateException("Player does not have a valid path. Cannot walk on target.");
+            System.out.println("Player does not have a valid path. Cannot walk on target.");
+            return false;
         }
 
         System.out.print("Condition Check: Does the player have enough stamina? (y/n): ");
         input = sc.nextLine().trim().toLowerCase();
         if (!input.equals("y")) {
-            throw new IllegalStateException("Player does not have enough stamina. Cannot walk on target.");
+            System.out.println("Player does not have enough stamina. Cannot walk on target.");
+            return false;
         }
 
         boolean canAccept = target.canAccept(this);
         if (!canAccept) {
-            throw new IllegalStateException("Target cannot accept player. Cannot walk on target.");
+            System.out.println("Target cannot accept player. Cannot walk on target.");
+            return false;
         }
 
         target.addOccupant(this);
