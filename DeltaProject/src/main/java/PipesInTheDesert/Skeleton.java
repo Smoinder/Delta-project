@@ -108,7 +108,9 @@ public class Skeleton {
      * Called from the main menu.
      */
     private static void PlayerWalksOnPipe() {
-        // TODO: Implement Player walks on a pipe use case
+        Saboteur sab = new Saboteur();
+        Pipe pipe = new Pipe();
+        sab.occupy(pipe);
     }
 
     /**
