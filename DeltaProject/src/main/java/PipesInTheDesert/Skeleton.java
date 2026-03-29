@@ -91,12 +91,22 @@ public class Skeleton {
         System.out.println("Game started successfully.");
     }
 
-    /** Use case placeholder: Player walks on a pump. */
+    /**
+     * Use case: Player walks on a pump.
+     * Based on section 5.2.2.2 of the Planning the Skeleton.
+     * Called from the main menu.
+     */
     private static void PlayerWalksOnPump() {
-        // TODO: Implement Player walks on a pump use case
+        Plumber pl = new Plumber();
+        Pump pump = new Pump();
+        pl.occupy(pump);
     }
 
-    /** Use case placeholder: Player walks on a pipe. */
+    /**
+     * Use case: Player walks on a pipe.
+     * Based on section 5.2.2.3 of the Planning the Skeleton.
+     * Called from the main menu.
+     */
     private static void PlayerWalksOnPipe() {
         // TODO: Implement Player walks on a pipe use case
     }

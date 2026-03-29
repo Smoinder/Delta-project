@@ -1,10 +1,10 @@
 package PipesInTheDesert.Players;
 
-import PipesInTheDesert.Interfaces.IConnectable;
-import PipesInTheDesert.Interfaces.IOccupiable;
-import PipesInTheDesert.Connectors.*;
+import PipesInTheDesert.Connectors.Pipe;
+import PipesInTheDesert.Connectors.PipeEnd;
 import PipesInTheDesert.Elements.Cistern;
 import PipesInTheDesert.Elements.Pump;
+import PipesInTheDesert.Interfaces.IConnectable;
 
 /**
  * Player role focused on maintaining and extending the pipe system.
@@ -16,7 +16,7 @@ public class Plumber extends Player {
     public Pump heldPump;
     /** Pipe end currently held by this plumber. Null if not holding */
     public PipeEnd heldPipeEnd;
-    
+
     /**
      * Connects a held free pipe end to a target connectable element.
      *
@@ -29,7 +29,7 @@ public class Plumber extends Player {
     /**
      * Disconnects an end of a pipe from a target element.
      *
-     * @param pipe pipe whose end is disconnected
+     * @param pipe    pipe whose end is disconnected
      * @param element element currently connected to the pipe end
      */
     public void disconnectPipeEnd(Pipe pipe, IConnectable element) {
@@ -83,17 +83,6 @@ public class Plumber extends Player {
     }
 
     /**
-     * Tries to occupy a target map element.
-     *
-     * @param target occupiable target
-     * @return true when occupation succeeds
-     */
-    public boolean occupy(IOccupiable target) {
-        System.out.print("Plumber.occupy(IOccupiable): boolean");
-        return true;
-    }
-
-    /**
      * Moves the plumber through a pipe.
      *
      * @param pipe pipe to move on
@@ -135,7 +124,7 @@ public class Plumber extends Player {
     /**
      * Selects incoming pipe on a pump.
      *
-     * @param pump target pump
+     * @param pump     target pump
      * @param incoming selected incoming pipe
      */
     public void setIncomingPipe(Pump pump, Pipe incoming) {
@@ -145,7 +134,7 @@ public class Plumber extends Player {
     /**
      * Selects outgoing pipe on a pump.
      *
-     * @param pump target pump
+     * @param pump     target pump
      * @param outgoing selected outgoing pipe
      */
     public void setOutgoingPipe(Pump pump, Pipe outgoing) {
