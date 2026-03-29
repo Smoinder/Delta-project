@@ -1,9 +1,9 @@
 package PipesInTheDesert.Players;
 
-import PipesInTheDesert.MapObject;
-import PipesInTheDesert.Interfaces.IOccupiable;
 import PipesInTheDesert.Connectors.Pipe;
 import PipesInTheDesert.Elements.Pump;
+import PipesInTheDesert.Interfaces.IOccupiable;
+import PipesInTheDesert.MapObject;
 
 /**
  * Abstract base type for all players that move in the pipe network.
@@ -20,7 +20,16 @@ public abstract class Player extends MapObject {
     /** True when this player currently has the active turn. */
     public boolean isActive;
 
-    public abstract boolean occupy(IOccupiable target);
+    /**
+     * Tries to occupy a target map element.
+     *
+     * @param target occupiable target
+     * @return true when occupation succeeds
+     */
+    public boolean occupy(IOccupiable target) {
+        System.out.print("Plumber.occupy(IOccupiable): boolean");
+        return true;
+    };
 
     public abstract void moveAlongPipe(Pipe pipe);
 
@@ -29,7 +38,7 @@ public abstract class Player extends MapObject {
     public abstract boolean hasEnoughStamina(int cost);
 
     public abstract void consumeStamina(int amount);
-    
+
     public abstract void refreshStamina();
 
     public abstract void setIncomingPipe(Pump pump, Pipe incoming);

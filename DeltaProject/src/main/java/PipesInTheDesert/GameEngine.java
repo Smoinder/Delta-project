@@ -1,10 +1,14 @@
 package PipesInTheDesert;
 
-import PipesInTheDesert.Players.*;
-import PipesInTheDesert.Elements.*;
-import PipesInTheDesert.Connectors.Pipe;
-
 import java.util.List;
+
+import PipesInTheDesert.Connectors.Pipe;
+import PipesInTheDesert.Elements.Cistern;
+import PipesInTheDesert.Elements.Pump;
+import PipesInTheDesert.Elements.Spring;
+import PipesInTheDesert.Players.Player;
+import PipesInTheDesert.Players.Plumber;
+import PipesInTheDesert.Players.Saboteur;
 
 /**
  * Manages overall game state, turn progression, and water-flow simulation.
@@ -46,8 +50,13 @@ public class GameEngine {
         System.out.println("GameEngine.simulateWaterFlow()");
     }
 
-    /** Initializes and starts the game session. */
+    /** Initializes the game session, configures players. */
     public void startGame() {
         System.out.println("GameEngine.startGame()");
+    }
+
+    /** Initializes the game field. */
+    public void initGameField() {
+        System.out.println("GameEngine.initGameField()");
     }
 }

@@ -1,5 +1,6 @@
 package PipesInTheDesert;
 
+import java.util.Scanner;
 
 import PipesInTheDesert.Connectors.Pipe;
 import PipesInTheDesert.Connectors.PipeEnd;
@@ -9,34 +10,36 @@ import PipesInTheDesert.Interfaces.IConnectable;
 import PipesInTheDesert.Players.Plumber;
 import PipesInTheDesert.Players.Saboteur;
 
-import java.util.Scanner;
-
 /**
- * Console skeleton that exposes analysis-model use cases as menu-driven actions.
+ * Console skeleton that exposes analysis-model use cases as menu-driven
+ * actions.
  */
 public class Skeleton {
+    private static GameEngine gameEngine = new GameEngine();
+
     /** Prevents instantiation of this static utility entry point. */
-    private Skeleton(){
+    private Skeleton() {
         throw new AssertionError("No instantiation for static factory class");
     }
+
     /** Main menu listing the sequence-diagram scenarios from the skeleton plan. */
-    private final static String MAIN_MENU =
-            """
-                    === MAIN MENU ===
-                    1.\tStart Game
-                    2.\tPlayer walks on a pump
-                    3.\tPlayer walks on a pipe
-                    4.\tPlayer changes pump direction
-                    5.\tPlumber fixes a broken pump\s
-                    6.\tPlumber picks up a pump
-                    7.\tPlumber installs a new pump
-                    8.\tPlumber fixes a broken pipe
-                    9.\tPlumber picks a pipe
-                    10.\tPlumber installs a new pipe
-                    11.\tPlumber redirects an end of a pipe
-                    12.\tSaboteur punctures a pipe
-                    0.\tExit
-                    """;
+    private final static String MAIN_MENU = """
+            === MAIN MENU ===
+            1.\tStart Game
+            2.\tPlayer walks on a pump
+            3.\tPlayer walks on a pipe
+            4.\tPlayer changes pump direction
+            5.\tPlumber fixes a broken pump\s
+            6.\tPlumber picks up a pump
+            7.\tPlumber installs a new pump
+            8.\tPlumber fixes a broken pipe
+            9.\tPlumber picks a pipe
+            10.\tPlumber installs a new pipe
+            11.\tPlumber redirects an end of a pipe
+            12.\tSaboteur punctures a pipe
+            0.\tExit
+            """;
+
     public static void main(String[] args) throws InterruptedException {
         runSkeletonConsole();
     }
@@ -50,8 +53,8 @@ public class Skeleton {
             int choice;
             try {
                 choice = Integer.parseInt(sc.nextLine().trim());
-            }catch(NumberFormatException e){
-                choice =-1; //Defaults to Invalid input
+            } catch (NumberFormatException e) {
+                choice = -1; // Defaults to Invalid input
             }
             switch (choice) {
                 case 0 -> running = false;
@@ -70,27 +73,146 @@ public class Skeleton {
                 default -> System.out.println("Invalid choice, please try again.");
             }
             Thread.sleep(500);
-            if(running)
-            {
+            if (running) {
                 System.out.println("Press anything to return to main menu... ");
                 sc.nextLine();
             }
         }
     }
 
-    /** Use case placeholder: Start / Configure Game. */
-    private static void StartGame(){
-        // TODO: Implement Start / Configure Game use case
+    /**
+     * Use case: Start / Configure Game.
+     * Based on section 5.2.2.1 of the Planning the Skeleton.
+     * Called from the main menu.
+     */
+    private static void StartGame() {
+        // ===== Start startGame() =====
+        gameEngine.startGame();
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter number of plumber players: ");
+        String input = sc.nextLine();
+        if (!input.matches("\\d+")) {
+            System.out.println("Invalid input for number of plumber players. Please enter a valid integer.");
+            System.err.println("Invalid input for number of plumber players.");
+            return;
+        }
+        int numPlumbers = Integer.parseInt(input);
+
+        if (numPlumbers < 2) {
+            System.err.println("Condition Check: check failed, plumbers < 2.");
+            return;
+        }
+
+        System.out.println("Condition Check: check passed, plumbers >= 2");
+
+        System.out.print("Enter number of saboteur players: ");
+        input = sc.nextLine();
+        if (!input.matches("\\d+")) {
+            System.err.println(
+                    "Invalid input for number of saboteur players. Please enter a valid integer.");
+            return;
+        }
+        int numSaboteurs = Integer.parseInt(input);
+
+        if (numSaboteurs < 2) {
+            System.err.println("Condition Check: check failed, saboteurs < 2.");
+            return;
+        }
+
+        System.out.println("Condition Check: check passed, saboteurs >= 2");
+        // ----- End startGame() -----
+        // ===== Start initGameField() =====
+        gameEngine.initGameField();
+
+        System.out.println("GameEngine.addSpring()");
+        System.out.println("GameEngine.addPipe()");
+        System.out.println("GameEngine.addPump()");
+        System.out.println("GameEngine.addCistern()");
+        System.out.println("GameEngine.setInitialScores()");
+        // ----- End initGameField() -----
+
+        System.out.println("Game started successfully.");
     }
 
-    /** Use case placeholder: Player walks on a pump. */
+    /**
+     * Use case: Player walks on a pump.
+     * Based on section 5.2.2.2 of the Planning the Skeleton.
+     * Called from the main menu.
+     */
     private static void PlayerWalksOnPump() {
-        // TODO: Implement Player walks on a pump use case
+        Plumber pl = new Plumber();
+        Pump target = new Pump();
+        // ===== Start Player.occupy() =====
+        pl.occupy(target);
+
+        Scanner sc = new Scanner(System.in);
+        int cost = 1; // Example stamina cost for occupation action
+
+        System.out.print("Condition Check: Does the player currently have a valid path? (y/n): ");
+        String input = sc.nextLine().trim().toLowerCase();
+        if (!input.equals("y")) {
+            System.out.println("Player does not have a valid path. Cannot walk on target.");
+            return;
+        }
+
+        System.out.print("Condition Check: Does the player have enough stamina? (y/n): ");
+        input = sc.nextLine().trim().toLowerCase();
+        if (!input.equals("y")) {
+            System.out.println("Player does not have enough stamina. Cannot walk on target.");
+            return;
+        }
+
+        boolean canAccept = target.canAccept(pl);
+        if (!canAccept) {
+            System.out.println("Target cannot accept player. Cannot walk on target.");
+            return;
+        }
+
+        target.addOccupant(pl);
+        pl.consumeStamina(cost);
+        // ----- End Player.occupy() -----
+        System.out.println("Player walked on target successfully.");
     }
 
-    /** Use case placeholder: Player walks on a pipe. */
+    /**
+     * Use case: Player walks on a pipe.
+     * Based on section 5.2.2.3 of the Planning the Skeleton.
+     * Called from the main menu.
+     */
     private static void PlayerWalksOnPipe() {
-        // TODO: Implement Player walks on a pipe use case
+        Saboteur sab = new Saboteur();
+        Pipe target = new Pipe();
+        // ===== Start Player.occupy() =====
+        sab.occupy(target);
+
+        Scanner sc = new Scanner(System.in);
+        int cost = 1; // Example stamina cost for occupation action
+
+        System.out.print("Condition Check: Does the player currently have a valid path? (y/n): ");
+        String input = sc.nextLine().trim().toLowerCase();
+        if (!input.equals("y")) {
+            System.out.println("Player does not have a valid path. Cannot walk on target.");
+            return;
+        }
+
+        System.out.print("Condition Check: Does the player have enough stamina? (y/n): ");
+        input = sc.nextLine().trim().toLowerCase();
+        if (!input.equals("y")) {
+            System.out.println("Player does not have enough stamina. Cannot walk on target.");
+            return;
+        }
+
+        boolean canAccept = target.canAccept(sab);
+        if (!canAccept) {
+            System.out.println("Target cannot accept player. Cannot walk on target.");
+            return;
+        }
+
+        target.addOccupant(sab);
+        sab.consumeStamina(cost);
+        // ----- End Player.occupy() -----
+        System.out.println("Player walked on target successfully.");
     }
 
     /**
@@ -98,7 +220,7 @@ public class Skeleton {
      * Based on section 5.2.2.4 of the Planning the Skeleton.
      * Called from the main menu.
      */
-        private static void PlayerChangesPumpDirection() {
+    private static void PlayerChangesPumpDirection() {
         Scanner sc = new Scanner(System.in);
         Plumber tempPlayer = new Plumber();
         Pump tempPump = new Pump();
@@ -179,6 +301,7 @@ public class Skeleton {
             System.out.println("Invalid Input");
         }
     }
+
     /**
      * Use case: Plumber installs a new pump.
      * Based on section 5.2.2.7 of the Planning the Skeleton.
@@ -209,7 +332,7 @@ public class Skeleton {
             System.out.println("Pickup rejected: player not holding a pump");
             return;
         }
-        
+
         System.out.println("Pump inserted.");
     }
 
@@ -267,6 +390,7 @@ public class Skeleton {
             System.out.println("Invalid Input");
         }
     }
+
     /**
      * Use case: Plumber installs a new pipe.
      * Based on section 5.2.2.10 of the Planning the Skeleton.
@@ -305,6 +429,7 @@ public class Skeleton {
 
         System.out.println("Connection successful.");
     }
+
     /**
      * Use case: Plumber redirects an end of a pipe
      * Based on section 5.2.2.11 of the Planning the Skeleton.
@@ -312,7 +437,7 @@ public class Skeleton {
      */
     private static void PlumberRedirectsPipeEnd() {
         Scanner sc = new Scanner(System.in);
-        Plumber tempPlumber =  new Plumber();
+        Plumber tempPlumber = new Plumber();
         Pipe tempPipe = new Pipe();
         tempPipe.end1 = new PipeEnd();
         tempPipe.end2 = new PipeEnd();
@@ -322,16 +447,16 @@ public class Skeleton {
         tempPipe.end1.isConnected();
         System.out.print("(y/n) ");
         String input = sc.nextLine().trim().toLowerCase();
-        if(input.equals("y")) {
+        if (input.equals("y")) {
             tempPipe.end1.disconnect();
             System.out.println("\nDisconnection successful.");
         } else if (input.equals("n")) {
             System.out.println("\nDisconnection rejected: pipe already disconnected");
-        }
-        else{
+        } else {
             System.out.println("Invalid Input");
         }
     }
+
     /**
      * Use case: Saboteur punctures a pipe
      * Based on section 5.2.2.12 of the Planning the Skeleton.
@@ -339,13 +464,13 @@ public class Skeleton {
      */
     private static void SaboteurPuncturesPipe() {
         Scanner sc = new Scanner(System.in);
-        Saboteur tempSaboteur =  new Saboteur();
+        Saboteur tempSaboteur = new Saboteur();
         Pipe tempPipe = new Pipe();
 
         tempSaboteur.puncturePipe(tempPipe);
         System.out.print("Condition Check: pipe is not already leaking → !pipe.leaking (y/n): ");
         String input = sc.nextLine().trim().toLowerCase();
-        if(input.equals("n")) {
+        if (input.equals("n")) {
             System.out.println("Pipe not punctured: pipe is already leaking");
             return;
         } else if (!input.equals("y")) {
@@ -354,11 +479,10 @@ public class Skeleton {
         }
         System.out.print("Condition Check: saboteur is on the pipe → player.position == pipe (y/n): ");
         input = sc.nextLine().trim().toLowerCase();
-        if(input.equals("n")){
+        if (input.equals("n")) {
             System.out.println("Pipe not punctured: player is not on pipe");
             return;
-        }
-        else if(!input.equals("y")){
+        } else if (!input.equals("y")) {
             System.out.println("Invalid Input");
             return;
         }

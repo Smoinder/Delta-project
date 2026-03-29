@@ -2,10 +2,10 @@ package PipesInTheDesert.Players;
 
 import PipesInTheDesert.Connectors.Pipe;
 import PipesInTheDesert.Elements.Pump;
-import PipesInTheDesert.Interfaces.IOccupiable;
 
 /**
- * Player role focused on disrupting water delivery by damaging pipe-system elements.
+ * Player role focused on disrupting water delivery by damaging pipe-system
+ * elements.
  */
 public class Saboteur extends Player {
     /**
@@ -15,17 +15,6 @@ public class Saboteur extends Player {
      */
     public void puncturePipe(Pipe pipe) {
         System.out.println("Saboteur.puncturePipe(Pipe)");
-    }
-
-    /**
-     * Tries to occupy a target map element.
-     *
-     * @param target occupiable target
-     * @return true when occupation succeeds
-     */
-    public boolean occupy(IOccupiable target) {
-        System.out.print("Saboteur.occupy(IOccupiable): boolean");
-        return true;
     }
 
     /**
@@ -70,7 +59,7 @@ public class Saboteur extends Player {
     /**
      * Selects incoming pipe on a pump.
      *
-     * @param pump target pump
+     * @param pump     target pump
      * @param incoming selected incoming pipe
      */
     public void setIncomingPipe(Pump pump, Pipe incoming) {
@@ -80,7 +69,7 @@ public class Saboteur extends Player {
     /**
      * Selects outgoing pipe on a pump.
      *
-     * @param pump target pump
+     * @param pump     target pump
      * @param outgoing selected outgoing pipe
      */
     public void setOutgoingPipe(Pump pump, Pipe outgoing) {
