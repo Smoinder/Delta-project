@@ -61,13 +61,11 @@ public class GameEngine {
         String input = sc.nextLine();
         if (!input.matches("\\d+")) {
             System.out.println("Invalid input for number of plumber players. Please enter a valid integer.");
-            sc.close();
             throw new IllegalArgumentException("Invalid input for number of plumber players.");
         }
         int numPlumbers = Integer.parseInt(input);
 
         if (numPlumbers < 2) {
-            sc.close();
             throw new IllegalArgumentException("Condition Check: check failed, plumbers < 2.");
         }
 
@@ -76,20 +74,16 @@ public class GameEngine {
         System.out.print("Enter number of saboteur players: ");
         input = sc.nextLine();
         if (!input.matches("\\d+")) {
-            sc.close();
             throw new IllegalArgumentException(
                     "Invalid input for number of saboteur players. Please enter a valid integer.");
         }
         int numSaboteurs = Integer.parseInt(input);
 
         if (numSaboteurs < 2) {
-            sc.close();
             throw new IllegalArgumentException("Condition Check: check failed, saboteurs < 2.");
         }
 
         System.out.println("Condition Check: check passed, saboteurs >= 2");
-
-        sc.close();
     }
 
     /** Initializes the game field. */

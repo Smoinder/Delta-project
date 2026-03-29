@@ -30,30 +30,29 @@ public abstract class Player extends MapObject {
      */
     public boolean occupy(IOccupiable target) {
         System.out.print("Plumber.occupy(IOccupiable): boolean");
-        try (Scanner sc = new Scanner(System.in)) {
-            int cost = 1; // Example stamina cost for occupation action
+        Scanner sc = new Scanner(System.in);
+        int cost = 1; // Example stamina cost for occupation action
 
-            System.out.print("Condition Check: Does the player currently have a valid path? (y/n): ");
-            String input = sc.nextLine().trim().toLowerCase();
-            if (!input.equals("y")) {
-                throw new IllegalStateException("Player does not have a valid path. Cannot walk on target.");
-            }
-
-            System.out.print("Condition Check: Does the player have enough stamina? (y/n): ");
-            input = sc.nextLine().trim().toLowerCase();
-            if (!input.equals("y")) {
-                throw new IllegalStateException("Player does not have enough stamina. Cannot walk on target.");
-            }
-
-            boolean canAccept = target.canAccept(this);
-            if (!canAccept) {
-                throw new IllegalStateException("Target cannot accept player. Cannot walk on target.");
-            }
-
-            target.addOccupant(this);
-            this.consumeStamina(cost);
-            System.out.println("Player walked on target successfully.");
+        System.out.print("Condition Check: Does the player currently have a valid path? (y/n): ");
+        String input = sc.nextLine().trim().toLowerCase();
+        if (!input.equals("y")) {
+            throw new IllegalStateException("Player does not have a valid path. Cannot walk on target.");
         }
+
+        System.out.print("Condition Check: Does the player have enough stamina? (y/n): ");
+        input = sc.nextLine().trim().toLowerCase();
+        if (!input.equals("y")) {
+            throw new IllegalStateException("Player does not have enough stamina. Cannot walk on target.");
+        }
+
+        boolean canAccept = target.canAccept(this);
+        if (!canAccept) {
+            throw new IllegalStateException("Target cannot accept player. Cannot walk on target.");
+        }
+
+        target.addOccupant(this);
+        this.consumeStamina(cost);
+        System.out.println("Player walked on target successfully.");
         return true;
     };
 
