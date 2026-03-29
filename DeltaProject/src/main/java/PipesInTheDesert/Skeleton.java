@@ -86,8 +86,52 @@ public class Skeleton {
      * Called from the main menu.
      */
     private static void StartGame() {
+        // ===== Start startGame() =====
         gameEngine.startGame();
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter number of plumber players: ");
+        String input = sc.nextLine();
+        if (!input.matches("\\d+")) {
+            System.out.println("Invalid input for number of plumber players. Please enter a valid integer.");
+            System.err.println("Invalid input for number of plumber players.");
+            return;
+        }
+        int numPlumbers = Integer.parseInt(input);
+
+        if (numPlumbers < 2) {
+            System.err.println("Condition Check: check failed, plumbers < 2.");
+            return;
+        }
+
+        System.out.println("Condition Check: check passed, plumbers >= 2");
+
+        System.out.print("Enter number of saboteur players: ");
+        input = sc.nextLine();
+        if (!input.matches("\\d+")) {
+            System.err.println(
+                    "Invalid input for number of saboteur players. Please enter a valid integer.");
+            return;
+        }
+        int numSaboteurs = Integer.parseInt(input);
+
+        if (numSaboteurs < 2) {
+            System.err.println("Condition Check: check failed, saboteurs < 2.");
+            return;
+        }
+
+        System.out.println("Condition Check: check passed, saboteurs >= 2");
+        // ----- End startGame() -----
+        // ===== Start initGameField() =====
         gameEngine.initGameField();
+
+        System.out.println("GameEngine.addSpring()");
+        System.out.println("GameEngine.addPipe()");
+        System.out.println("GameEngine.addPump()");
+        System.out.println("GameEngine.addCistern()");
+        System.out.println("GameEngine.setInitialScores()");
+        // ----- End initGameField() -----
+
         System.out.println("Game started successfully.");
     }
 
@@ -98,8 +142,37 @@ public class Skeleton {
      */
     private static void PlayerWalksOnPump() {
         Plumber pl = new Plumber();
-        Pump pump = new Pump();
-        pl.occupy(pump);
+        Pump target = new Pump();
+        // ===== Start Player.occupy() =====
+        pl.occupy(target);
+
+        Scanner sc = new Scanner(System.in);
+        int cost = 1; // Example stamina cost for occupation action
+
+        System.out.print("Condition Check: Does the player currently have a valid path? (y/n): ");
+        String input = sc.nextLine().trim().toLowerCase();
+        if (!input.equals("y")) {
+            System.out.println("Player does not have a valid path. Cannot walk on target.");
+            return;
+        }
+
+        System.out.print("Condition Check: Does the player have enough stamina? (y/n): ");
+        input = sc.nextLine().trim().toLowerCase();
+        if (!input.equals("y")) {
+            System.out.println("Player does not have enough stamina. Cannot walk on target.");
+            return;
+        }
+
+        boolean canAccept = target.canAccept(pl);
+        if (!canAccept) {
+            System.out.println("Target cannot accept player. Cannot walk on target.");
+            return;
+        }
+
+        target.addOccupant(pl);
+        pl.consumeStamina(cost);
+        // ----- End Player.occupy() -----
+        System.out.println("Player walked on target successfully.");
     }
 
     /**
@@ -109,8 +182,37 @@ public class Skeleton {
      */
     private static void PlayerWalksOnPipe() {
         Saboteur sab = new Saboteur();
-        Pipe pipe = new Pipe();
-        sab.occupy(pipe);
+        Pipe target = new Pipe();
+        // ===== Start Player.occupy() =====
+        sab.occupy(target);
+
+        Scanner sc = new Scanner(System.in);
+        int cost = 1; // Example stamina cost for occupation action
+
+        System.out.print("Condition Check: Does the player currently have a valid path? (y/n): ");
+        String input = sc.nextLine().trim().toLowerCase();
+        if (!input.equals("y")) {
+            System.out.println("Player does not have a valid path. Cannot walk on target.");
+            return;
+        }
+
+        System.out.print("Condition Check: Does the player have enough stamina? (y/n): ");
+        input = sc.nextLine().trim().toLowerCase();
+        if (!input.equals("y")) {
+            System.out.println("Player does not have enough stamina. Cannot walk on target.");
+            return;
+        }
+
+        boolean canAccept = target.canAccept(sab);
+        if (!canAccept) {
+            System.out.println("Target cannot accept player. Cannot walk on target.");
+            return;
+        }
+
+        target.addOccupant(sab);
+        sab.consumeStamina(cost);
+        // ----- End Player.occupy() -----
+        System.out.println("Player walked on target successfully.");
     }
 
     /**

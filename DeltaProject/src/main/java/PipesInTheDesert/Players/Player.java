@@ -1,7 +1,5 @@
 package PipesInTheDesert.Players;
 
-import java.util.Scanner;
-
 import PipesInTheDesert.Connectors.Pipe;
 import PipesInTheDesert.Elements.Pump;
 import PipesInTheDesert.Interfaces.IOccupiable;
@@ -30,32 +28,6 @@ public abstract class Player extends MapObject {
      */
     public boolean occupy(IOccupiable target) {
         System.out.print("Plumber.occupy(IOccupiable): boolean");
-        Scanner sc = new Scanner(System.in);
-        int cost = 1; // Example stamina cost for occupation action
-
-        System.out.print("Condition Check: Does the player currently have a valid path? (y/n): ");
-        String input = sc.nextLine().trim().toLowerCase();
-        if (!input.equals("y")) {
-            System.out.println("Player does not have a valid path. Cannot walk on target.");
-            return false;
-        }
-
-        System.out.print("Condition Check: Does the player have enough stamina? (y/n): ");
-        input = sc.nextLine().trim().toLowerCase();
-        if (!input.equals("y")) {
-            System.out.println("Player does not have enough stamina. Cannot walk on target.");
-            return false;
-        }
-
-        boolean canAccept = target.canAccept(this);
-        if (!canAccept) {
-            System.out.println("Target cannot accept player. Cannot walk on target.");
-            return false;
-        }
-
-        target.addOccupant(this);
-        this.consumeStamina(cost);
-        System.out.println("Player walked on target successfully.");
         return true;
     };
 
