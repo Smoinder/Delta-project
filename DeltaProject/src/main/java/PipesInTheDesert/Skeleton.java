@@ -1,5 +1,6 @@
 package PipesInTheDesert;
 
+import java.util.Scanner;
 
 import PipesInTheDesert.Connectors.Pipe;
 import PipesInTheDesert.Connectors.PipeEnd;
@@ -9,34 +10,36 @@ import PipesInTheDesert.Interfaces.IConnectable;
 import PipesInTheDesert.Players.Plumber;
 import PipesInTheDesert.Players.Saboteur;
 
-import java.util.Scanner;
-
 /**
- * Console skeleton that exposes analysis-model use cases as menu-driven actions.
+ * Console skeleton that exposes analysis-model use cases as menu-driven
+ * actions.
  */
 public class Skeleton {
+    private static GameEngine gameEngine = new GameEngine();
+
     /** Prevents instantiation of this static utility entry point. */
-    private Skeleton(){
+    private Skeleton() {
         throw new AssertionError("No instantiation for static factory class");
     }
+
     /** Main menu listing the sequence-diagram scenarios from the skeleton plan. */
-    private final static String MAIN_MENU =
-            """
-                    === MAIN MENU ===
-                    1.\tStart Game
-                    2.\tPlayer walks on a pump
-                    3.\tPlayer walks on a pipe
-                    4.\tPlayer changes pump direction
-                    5.\tPlumber fixes a broken pump\s
-                    6.\tPlumber picks up a pump
-                    7.\tPlumber installs a new pump
-                    8.\tPlumber fixes a broken pipe
-                    9.\tPlumber picks a pipe
-                    10.\tPlumber installs a new pipe
-                    11.\tPlumber redirects an end of a pipe
-                    12.\tSaboteur punctures a pipe
-                    0.\tExit
-                    """;
+    private final static String MAIN_MENU = """
+            === MAIN MENU ===
+            1.\tStart Game
+            2.\tPlayer walks on a pump
+            3.\tPlayer walks on a pipe
+            4.\tPlayer changes pump direction
+            5.\tPlumber fixes a broken pump\s
+            6.\tPlumber picks up a pump
+            7.\tPlumber installs a new pump
+            8.\tPlumber fixes a broken pipe
+            9.\tPlumber picks a pipe
+            10.\tPlumber installs a new pipe
+            11.\tPlumber redirects an end of a pipe
+            12.\tSaboteur punctures a pipe
+            0.\tExit
+            """;
+
     public static void main(String[] args) throws InterruptedException {
         runSkeletonConsole();
     }
@@ -50,8 +53,8 @@ public class Skeleton {
             int choice;
             try {
                 choice = Integer.parseInt(sc.nextLine().trim());
-            }catch(NumberFormatException e){
-                choice =-1; //Defaults to Invalid input
+            } catch (NumberFormatException e) {
+                choice = -1; // Defaults to Invalid input
             }
             switch (choice) {
                 case 0 -> running = false;
@@ -70,17 +73,22 @@ public class Skeleton {
                 default -> System.out.println("Invalid choice, please try again.");
             }
             Thread.sleep(500);
-            if(running)
-            {
+            if (running) {
                 System.out.println("Press anything to return to main menu... ");
                 sc.nextLine();
             }
         }
     }
 
-    /** Use case placeholder: Start / Configure Game. */
-    private static void StartGame(){
-        // TODO: Implement Start / Configure Game use case
+    /**
+     * Use case: Start / Configure Game.
+     * Based on section 5.2.2.1 of the Planning the Skeleton.
+     * Called from the main menu.
+     */
+    private static void StartGame() {
+        gameEngine.startGame();
+        gameEngine.initGameField();
+        System.out.println("Game started successfully.");
     }
 
     /** Use case placeholder: Player walks on a pump. */
@@ -98,7 +106,7 @@ public class Skeleton {
      * Based on section 5.2.2.4 of the Planning the Skeleton.
      * Called from the main menu.
      */
-        private static void PlayerChangesPumpDirection() {
+    private static void PlayerChangesPumpDirection() {
         Scanner sc = new Scanner(System.in);
         Plumber tempPlayer = new Plumber();
         Pump tempPump = new Pump();
@@ -179,6 +187,7 @@ public class Skeleton {
             System.out.println("Invalid Input");
         }
     }
+
     /**
      * Use case: Plumber installs a new pump.
      * Based on section 5.2.2.7 of the Planning the Skeleton.
@@ -209,7 +218,7 @@ public class Skeleton {
             System.out.println("Pickup rejected: player not holding a pump");
             return;
         }
-        
+
         System.out.println("Pump inserted.");
     }
 
@@ -267,6 +276,7 @@ public class Skeleton {
             System.out.println("Invalid Input");
         }
     }
+
     /**
      * Use case: Plumber installs a new pipe.
      * Based on section 5.2.2.10 of the Planning the Skeleton.
@@ -305,6 +315,7 @@ public class Skeleton {
 
         System.out.println("Connection successful.");
     }
+
     /**
      * Use case: Plumber redirects an end of a pipe
      * Based on section 5.2.2.11 of the Planning the Skeleton.
@@ -312,7 +323,7 @@ public class Skeleton {
      */
     private static void PlumberRedirectsPipeEnd() {
         Scanner sc = new Scanner(System.in);
-        Plumber tempPlumber =  new Plumber();
+        Plumber tempPlumber = new Plumber();
         Pipe tempPipe = new Pipe();
         tempPipe.end1 = new PipeEnd();
         tempPipe.end2 = new PipeEnd();
@@ -322,16 +333,16 @@ public class Skeleton {
         tempPipe.end1.isConnected();
         System.out.print("(y/n) ");
         String input = sc.nextLine().trim().toLowerCase();
-        if(input.equals("y")) {
+        if (input.equals("y")) {
             tempPipe.end1.disconnect();
             System.out.println("\nDisconnection successful.");
         } else if (input.equals("n")) {
             System.out.println("\nDisconnection rejected: pipe already disconnected");
-        }
-        else{
+        } else {
             System.out.println("Invalid Input");
         }
     }
+
     /**
      * Use case: Saboteur punctures a pipe
      * Based on section 5.2.2.12 of the Planning the Skeleton.
@@ -339,13 +350,13 @@ public class Skeleton {
      */
     private static void SaboteurPuncturesPipe() {
         Scanner sc = new Scanner(System.in);
-        Saboteur tempSaboteur =  new Saboteur();
+        Saboteur tempSaboteur = new Saboteur();
         Pipe tempPipe = new Pipe();
 
         tempSaboteur.puncturePipe(tempPipe);
         System.out.print("Condition Check: pipe is not already leaking → !pipe.leaking (y/n): ");
         String input = sc.nextLine().trim().toLowerCase();
-        if(input.equals("n")) {
+        if (input.equals("n")) {
             System.out.println("Pipe not punctured: pipe is already leaking");
             return;
         } else if (!input.equals("y")) {
@@ -354,11 +365,10 @@ public class Skeleton {
         }
         System.out.print("Condition Check: saboteur is on the pipe → player.position == pipe (y/n): ");
         input = sc.nextLine().trim().toLowerCase();
-        if(input.equals("n")){
+        if (input.equals("n")) {
             System.out.println("Pipe not punctured: player is not on pipe");
             return;
-        }
-        else if(!input.equals("y")){
+        } else if (!input.equals("y")) {
             System.out.println("Invalid Input");
             return;
         }
