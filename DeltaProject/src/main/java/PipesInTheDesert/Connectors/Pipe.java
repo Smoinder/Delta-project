@@ -2,11 +2,12 @@ package PipesInTheDesert.Connectors;
 
 import PipesInTheDesert.Interfaces.IOccupiable;
 import PipesInTheDesert.Players.Player;
+import PipesInTheDesert.MapObject;
 
 /**
  * Connector that transports water between active elements through two endpoints.
  */
-public class Pipe implements IOccupiable{
+public class Pipe extends MapObject implements IOccupiable{
     /** First endpoint of the pipe. */
     public PipeEnd end1;
     /** Second endpoint of the pipe. */
