@@ -4,6 +4,7 @@ import PipesInTheDesert.GameEngine;
 import PipesInTheDesert.MapObject;
 import PipesInTheDesert.Elements.Pump;
 import PipesInTheDesert.Exceptions.WrongGameModeException;
+import PipesInTheDesert.Exceptions.AlreadyOccupiedException;
 import PipesInTheDesert.Players.Player;
 import PipesInTheDesert.Team;
 import PipesInTheDesert.Connectors.Pipe;
@@ -53,7 +54,7 @@ public class DebugModeCommands {
 
     }
 
-    public static void teleportPlayer(GameEngine ge, Player p, MapObject object) throws WrongGameModeException {
+    public static void teleportPlayer(GameEngine ge, Player p, MapObject object) throws WrongGameModeException, AlreadyOccupiedException {
 
     }
 }
