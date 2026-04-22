@@ -1,6 +1,6 @@
 package PipesInTheDesert.Exceptions;
 
-public class PlayerNotOnElementException extends Exception {
+public class PlayerNotOnElementException extends GameException {
     public PlayerNotOnElementException(String message) {
         super(message);
     }

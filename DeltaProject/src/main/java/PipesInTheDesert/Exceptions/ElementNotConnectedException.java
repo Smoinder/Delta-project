@@ -1,6 +1,6 @@
 package PipesInTheDesert.Exceptions;
 
-public class ElementNotConnectedException extends Exception {
+public class ElementNotConnectedException extends GameException {
     public ElementNotConnectedException(String message) {
         super(message);
     }    

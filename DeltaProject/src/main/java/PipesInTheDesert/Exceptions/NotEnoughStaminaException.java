@@ -1,6 +1,6 @@
 package PipesInTheDesert.Exceptions;
 
-public class NotEnoughStaminaException extends Exception {
+public class NotEnoughStaminaException extends GameException {
     public NotEnoughStaminaException(String message) {
         super(message);
     }
