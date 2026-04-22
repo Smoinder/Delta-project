@@ -4,9 +4,10 @@ import PipesInTheDesert.Interfaces.IOccupiable;
 import PipesInTheDesert.Players.Player;
 
 /**
- * Connector that transports water between active elements through two endpoints.
+ * Connector that transports water between active elements through two
+ * endpoints.
  */
-public class Pipe implements IOccupiable{
+public class Pipe implements IOccupiable {
     /** First endpoint of the pipe. */
     public PipeEnd end1;
     /** Second endpoint of the pipe. */

@@ -34,6 +34,15 @@ public class GameEngine {
     public int saboteursScore;
     /** Current turn index of the game. */
     public int turnNumber;
+    private Mode mode;
+
+    public void setMode(Mode mode) {
+        this.mode = mode;
+    }
+
+    public Mode getMode() {
+        return mode;
+    }
 
     /** Ends the game and finalizes the result. */
     public void endGame() {
