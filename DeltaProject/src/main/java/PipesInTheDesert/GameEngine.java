@@ -2,11 +2,15 @@ package PipesInTheDesert;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import PipesInTheDesert.Connectors.Pipe;
 import PipesInTheDesert.Elements.Cistern;
 import PipesInTheDesert.Elements.Pump;
 import PipesInTheDesert.Elements.Spring;
+import PipesInTheDesert.Exceptions.GameAlreadyStartedException;
+import PipesInTheDesert.Exceptions.InvalidArgumentException;
+import PipesInTheDesert.Exceptions.WrongGameModeException;
 import PipesInTheDesert.Players.Player;
 import PipesInTheDesert.Players.Plumber;
 import PipesInTheDesert.Players.Saboteur;
@@ -36,7 +40,9 @@ public class GameEngine {
     /** Current turn index of the game. */
     public int turnNumber;
 
-    private Mode mode;
+    private Mode _mode = Mode.PLAYER;
+
+    private boolean _started = false;
 
     public void setActivePlayer(Player p) {
         this._activePlayer = p;
@@ -95,11 +101,11 @@ public class GameEngine {
     }
 
     public void setMode(Mode mode) {
-        this.mode = mode;
+        this._mode = mode;
     }
 
     public Mode getMode() {
-        return mode;
+        return this._mode;
     }
 
     /** Ends the game and finalizes the result. */
@@ -118,8 +124,43 @@ public class GameEngine {
     }
 
     /** Initializes the game session, configures players. */
-    public void startGame() {
-        System.out.println("GameEngine.startGame()");
+    public void startGame() throws WrongGameModeException, GameAlreadyStartedException, InvalidArgumentException {
+        if (!this._started) {
+            throw new GameAlreadyStartedException("Game already started");
+        }
+        if (this._mode != Mode.PLAYER) {
+            throw new WrongGameModeException("Game mode should be 'PLAYER");
+        }
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter number of plumber players: ");
+        String input = sc.nextLine();
+        if (!input.matches("\\d+"))
+            throw new InvalidArgumentException("Invalid input for number of plumber players.");
+        int numPlumbers = Integer.parseInt(input);
+        if (numPlumbers < 2)
+            throw new InvalidArgumentException("Invalid input for number of plumber players. Should be at least 2.");
+
+        System.out.print("Enter number of saboteur players: ");
+        input = sc.nextLine();
+        if (!input.matches("\\d+"))
+            throw new InvalidArgumentException("Invalid input for number of saboteur players. Please enter a valid integer.");
+        int numSaboteurs = Integer.parseInt(input);
+        if (numSaboteurs < 2)
+            throw new InvalidArgumentException("Invalid input for number of saboteur players. Should be at least 2.");
+
+        for (int i = 0; i < numPlumbers; i++) {
+            Plumber p = new Plumber();
+            this.addPlumber(p);
+        }
+
+        for (int i = 0; i < numSaboteurs; i++) {
+            Saboteur p = new Saboteur();
+            this.addSaboteur(p);
+        }
+
+        this._started = true;
     }
 
     /** Initializes the game field. */
