@@ -124,29 +124,15 @@ public class GameEngine {
     }
 
     /** Initializes the game session, configures players. */
-    public void startGame() throws WrongGameModeException, GameAlreadyStartedException, InvalidArgumentException {
+    public void startGame(int numPlumbers, int numSaboteurs) throws WrongGameModeException, GameAlreadyStartedException, InvalidArgumentException {
         if (!this._started) {
             throw new GameAlreadyStartedException("Game already started");
         }
         if (this._mode != Mode.PLAYER) {
             throw new WrongGameModeException("Game mode should be 'PLAYER");
         }
-
-        Scanner sc = new Scanner(System.in);
-
-        System.out.print("Enter number of plumber players: ");
-        String input = sc.nextLine();
-        if (!input.matches("\\d+"))
-            throw new InvalidArgumentException("Invalid input for number of plumber players.");
-        int numPlumbers = Integer.parseInt(input);
         if (numPlumbers < 2)
             throw new InvalidArgumentException("Invalid input for number of plumber players. Should be at least 2.");
-
-        System.out.print("Enter number of saboteur players: ");
-        input = sc.nextLine();
-        if (!input.matches("\\d+"))
-            throw new InvalidArgumentException("Invalid input for number of saboteur players. Please enter a valid integer.");
-        int numSaboteurs = Integer.parseInt(input);
         if (numSaboteurs < 2)
             throw new InvalidArgumentException("Invalid input for number of saboteur players. Should be at least 2.");
 

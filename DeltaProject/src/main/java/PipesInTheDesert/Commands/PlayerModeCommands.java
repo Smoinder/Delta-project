@@ -32,8 +32,8 @@ public class PlayerModeCommands {
 
     }
 
-    public static void startGame(GameEngine ge) throws WrongGameModeException, GameAlreadyStartedException, InvalidArgumentException {
-        ge.startGame();
+    public static void startGame(GameEngine ge, int numPlumbers, int numSaboteurs) throws WrongGameModeException, GameAlreadyStartedException, InvalidArgumentException {
+        ge.startGame(numPlumbers, numSaboteurs);
     }
 
     public static void loadMap(GameEngine ge) throws WrongGameModeException, MapNotEmptyException {
