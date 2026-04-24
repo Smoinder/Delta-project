@@ -37,7 +37,7 @@ public class PlayerModeCommands {
     }
 
     public static void loadMap(GameEngine ge) throws WrongGameModeException, MapNotEmptyException {
-
+        ge.loadMap();
     }
 
     public static void move(GameEngine ge, IOccupiable elem)

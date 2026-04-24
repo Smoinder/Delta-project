@@ -10,6 +10,7 @@ import PipesInTheDesert.Elements.Pump;
 import PipesInTheDesert.Elements.Spring;
 import PipesInTheDesert.Exceptions.GameAlreadyStartedException;
 import PipesInTheDesert.Exceptions.InvalidArgumentException;
+import PipesInTheDesert.Exceptions.MapNotEmptyException;
 import PipesInTheDesert.Exceptions.WrongGameModeException;
 import PipesInTheDesert.Players.Player;
 import PipesInTheDesert.Players.Plumber;
@@ -43,6 +44,8 @@ public class GameEngine {
     private Mode _mode = Mode.PLAYER;
 
     private boolean _started = false;
+
+    private boolean _mapLoaded = false;
 
     public void setActivePlayer(Player p) {
         this._activePlayer = p;
@@ -149,8 +152,100 @@ public class GameEngine {
         this._started = true;
     }
 
-    /** Initializes the game field. */
-    public void initGameField() {
-        System.out.println("GameEngine.initGameField()");
+    /**
+     * Initializes small map, containing one spring and one cistern
+     */
+    private void _loadSmallMap() {
+//        Create a spring
+        this.addSpring(new Spring());
+//        Create a cistern
+        this.addCistern(new Cistern());
     }
+
+    /**
+     * Initializes default map, containing two springs, two cisterns, and a
+     * pump connected to one cistern and one spring
+     * ---
+     * spring1      spring2
+     *   |
+     * pump1
+     *   |
+     * cistern1     cistern2
+     */
+    private void _loadDefaultMap() {
+//        Create springs
+        Spring s1 = new Spring();
+        this.addSpring(s1);
+        this.addSpring(new Spring());
+//        Create cisterns
+        Cistern c1 = new Cistern();
+        this.addCistern(c1);
+        this.addCistern(new Cistern());
+
+//        Create pump
+        Pump p = new Pump();
+        this.addPump(p);
+
+//        Connect all elements with pipes
+        Pipe p1 = new Pipe();
+//        TODO: connect to s1, p1
+        this.addPipe(p1);
+        Pipe p2 = new Pipe();
+//        TODO: connect to p1, c1
+        this.addPipe(p2);
+    }
+
+    /**
+     * Initializes large map, containing two springs, two cisterns, and
+     * two pumps, in sequence connecting one cistern to one spring
+     * ---
+     * spring1      spring2
+     *   |
+     * pump1
+     *   |
+     * pump2
+     *   |
+     * cistern1     cistern2
+     */
+    private void _loadLargeMap() {
+//        Create springs
+        Spring s1 = new Spring();
+        this.addSpring(s1);
+        this.addSpring(new Spring());
+//        Create cisterns
+        Cistern c1 = new Cistern();
+        this.addCistern(c1);
+        this.addCistern(new Cistern());
+
+//        Create pumps
+        Pump pump1 = new Pump();
+        this.addPump(pump1);
+        Pump pump2 = new Pump();
+        this.addPump(pump2);
+
+//        Connect all elements with pipes
+        Pipe p1 = new Pipe();
+//        TODO: connect to s1, p1
+        this.addPipe(p1);
+        Pipe p2 = new Pipe();
+//        TODO: connect to p1, p2
+        this.addPipe(p2);
+        Pipe p3 = new Pipe();
+//        TODO: connect to p2, c1
+        this.addPipe(p3);
+    }
+
+    /** Initializes the game field. */
+    public void loadMap(MapType mapType) throws MapNotEmptyException {
+        if (this._mapLoaded) throw new MapNotEmptyException("Map already loaded");
+        switch (mapType) {
+            case SMALL -> this._loadSmallMap();
+            case DEFAULT -> this._loadDefaultMap();
+            case LARGE -> this._loadLargeMap();
+        }
+        this._mapLoaded = true;
+    }
+
+    /** Initializes the game field with the default map. */
+    public void loadMap() throws MapNotEmptyException { this.loadMap(MapType.DEFAULT); }
 }
