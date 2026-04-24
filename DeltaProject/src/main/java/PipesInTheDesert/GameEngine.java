@@ -236,8 +236,11 @@ public class GameEngine {
     }
 
     /** Initializes the game field. */
-    public void loadMap(MapType mapType) throws MapNotEmptyException {
+    public void loadMap(MapType mapType) throws MapNotEmptyException, WrongGameModeException {
         if (this._mapLoaded) throw new MapNotEmptyException("Map already loaded");
+        if (this._mode != Mode.PLAYER) {
+            throw new WrongGameModeException("Game mode should be 'PLAYER");
+        }
         switch (mapType) {
             case SMALL -> this._loadSmallMap();
             case DEFAULT -> this._loadDefaultMap();
@@ -247,5 +250,5 @@ public class GameEngine {
     }
 
     /** Initializes the game field with the default map. */
-    public void loadMap() throws MapNotEmptyException { this.loadMap(MapType.DEFAULT); }
+    public void loadMap() throws MapNotEmptyException, WrongGameModeException { this.loadMap(MapType.DEFAULT); }
 }
