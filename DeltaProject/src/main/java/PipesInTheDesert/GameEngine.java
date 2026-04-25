@@ -126,13 +126,31 @@ public class GameEngine {
         System.out.println("GameEngine.simulateWaterFlow()");
     }
 
+    /**
+     * Initializes the game session, just prints that it was called. Used in skeleton
+     * @deprecated use {@link #startGame(int, int)} instead
+     */
+    @Deprecated
+    public void startGame() {
+        System.out.println("GameEngine.startGame()");
+    }
+
+    /**
+     * Initializes the game field, just prints that it was called. Used in skeleton
+     * @deprecated use {@link #loadMap()} instead
+     */
+    @Deprecated
+    public void initGameField() {
+        System.out.println("GameEngine.initGameField()");
+    }
+
     /** Initializes the game session, configures players. */
     public void startGame(int numPlumbers, int numSaboteurs) throws WrongGameModeException, GameAlreadyStartedException, InvalidArgumentException {
-        if (!this._started) {
+        if (this._started) {
             throw new GameAlreadyStartedException("Game already started");
         }
         if (this._mode != Mode.PLAYER) {
-            throw new WrongGameModeException("Game mode should be 'PLAYER");
+            throw new WrongGameModeException("Game mode should be 'PLAYER'");
         }
         if (numPlumbers < 2)
             throw new InvalidArgumentException("Invalid input for number of plumber players. Should be at least 2.");
@@ -164,13 +182,15 @@ public class GameEngine {
 
     /**
      * Initializes default map, containing two springs, two cisterns, and a
-     * pump connected to one cistern and one spring
-     * ---
+     * pump connected to one cistern and one spring.
+     * TODO: connection is not implemented.
+     * <pre>
      * spring1      spring2
      *   |
      * pump1
      *   |
      * cistern1     cistern2
+     * </pre>
      */
     private void _loadDefaultMap() {
 //        Create springs
@@ -197,8 +217,9 @@ public class GameEngine {
 
     /**
      * Initializes large map, containing two springs, two cisterns, and
-     * two pumps, in sequence connecting one cistern to one spring
-     * ---
+     * two pumps, in sequence connecting one cistern to one spring.
+     * TODO: Connection is not implemented
+     * <pre>
      * spring1      spring2
      *   |
      * pump1
@@ -206,6 +227,7 @@ public class GameEngine {
      * pump2
      *   |
      * cistern1     cistern2
+     * </pre>
      */
     private void _loadLargeMap() {
 //        Create springs
