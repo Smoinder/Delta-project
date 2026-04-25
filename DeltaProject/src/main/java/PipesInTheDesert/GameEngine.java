@@ -12,6 +12,7 @@ import PipesInTheDesert.Exceptions.GameAlreadyStartedException;
 import PipesInTheDesert.Exceptions.InvalidArgumentException;
 import PipesInTheDesert.Exceptions.MapNotEmptyException;
 import PipesInTheDesert.Exceptions.WrongGameModeException;
+import PipesInTheDesert.Interfaces.IOccupiable;
 import PipesInTheDesert.Players.Player;
 import PipesInTheDesert.Players.Plumber;
 import PipesInTheDesert.Players.Saboteur;
@@ -261,7 +262,7 @@ public class GameEngine {
     public void loadMap(MapType mapType) throws MapNotEmptyException, WrongGameModeException {
         if (this._mapLoaded) throw new MapNotEmptyException("Map already loaded");
         if (this._mode != Mode.PLAYER) {
-            throw new WrongGameModeException("Game mode should be 'PLAYER");
+            throw new WrongGameModeException("Game mode should be 'PLAYER'");
         }
         switch (mapType) {
             case SMALL -> this._loadSmallMap();
