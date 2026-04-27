@@ -1,7 +1,11 @@
 package PipesInTheDesert.Players;
 
 import PipesInTheDesert.Connectors.Pipe;
+import PipesInTheDesert.Constants;
 import PipesInTheDesert.Elements.Pump;
+import PipesInTheDesert.Exceptions.AlreadyOccupiedException;
+import PipesInTheDesert.Exceptions.ElementNotReachableException;
+import PipesInTheDesert.Exceptions.NotEnoughStaminaException;
 import PipesInTheDesert.Interfaces.IOccupiable;
 import PipesInTheDesert.MapObject;
 
@@ -10,15 +14,33 @@ import PipesInTheDesert.MapObject;
  */
 public abstract class Player extends MapObject {
     /** Current stamina available for actions. */
-    public int stamina;
+    protected int _stamina;
     /** Maximum stamina restored at turn start. */
-    public int maxStamina;
+    protected final int _maxStamina;
     /** Current occupied map element, such as a pipe or a pump. */
-    public IOccupiable position;
+    private IOccupiable _position;
+    /** Last known player id. Used to have unique player ids for new players */
+    private static int _lastPlayerId = 0;
     /** Unique identifier of this player. */
-    public int playerId;
+    private final int _playerId;
     /** True when this player currently has the active turn. */
-    public boolean isActive;
+    private boolean _isActive;
+
+    Player(IOccupiable position, int maxStamina, boolean isActive) {
+        this._maxStamina = maxStamina;
+        this._stamina = maxStamina;
+        this._position = position;
+        this._playerId = Player._lastPlayerId++;
+        this._isActive = isActive;
+    }
+
+    Player(IOccupiable position, int maxStamina) {
+        this(position, maxStamina, false);
+    }
+
+    Player(IOccupiable position) {
+        this(position, Constants.PLAYER_MAX_STAMINA);
+    }
 
     /**
      * Tries to occupy a target map element.
@@ -26,20 +48,79 @@ public abstract class Player extends MapObject {
      * @param target occupiable target
      * @return true when occupation succeeds
      */
-    public boolean occupy(IOccupiable target) {
-        System.out.print("Plumber.occupy(IOccupiable): boolean");
+    public boolean occupy(IOccupiable target) throws AlreadyOccupiedException{
+        if (!target.canAccept(this))
+            throw new AlreadyOccupiedException();
+        target.addOccupant(this);
+        this._position = target;
         return true;
     };
 
-    public abstract void moveAlongPipe(Pipe pipe);
+    /**
+     * Move to the pipe, connected to the current {@code _position}
+     * @param pipe destination
+     * @throws AlreadyOccupiedException if pipe already has another player on it
+     * @throws ElementNotReachableException if the pipe is not connected to the current {@code _position}
+     */
+    public void moveAlongPipe(Pipe pipe) throws AlreadyOccupiedException, ElementNotReachableException, NotEnoughStaminaException {
+//        do nothing if already on the target
+        if (pipe == this._position)
+            return;
+        if (!pipe.canAccept(this))
+            throw new AlreadyOccupiedException();
+//        pipes cannot be connected with each other -> no option to go directly to any other pipe
+        if (this._position instanceof Pipe)
+            throw new ElementNotReachableException("Pipe not reachable");
 
-    public abstract void endTurn();
+//        TODO: add check if current element is connected to target pipe
+        this.consumeStamina(Constants.PLAYER_WALK_ON_A_PIPE_STAMINA);
+        this._position.removeOccupant(this);
+        pipe.addOccupant(this);
+        this._position = pipe;
+    }
 
-    public abstract boolean hasEnoughStamina(int cost);
+    /**
+     * Starts player's turn, refreshing the stamina and activating the player
+     */
+    public void startTurn() {
+        this.refreshStamina();
+        this._isActive = false;
+    }
 
-    public abstract void consumeStamina(int amount);
+    /**
+     * Ends player's turn, refreshing the stamina and disable the player
+     */
+    public void endTurn() {
+        this.refreshStamina();
+        this._isActive = false;
+    };
 
-    public abstract void refreshStamina();
+    /**
+     * Determine if the player can take action with corresponding {@code cost}
+     * @param cost
+     * @return {@code true} if player has enough stamina; {@code false} otherwise
+     */
+    public boolean hasEnoughStamina(int cost) {
+        return this._stamina >= cost;
+    };
+
+    /**
+     * Consumes stamina for some action
+     * @param amount - amount of stamina to consume
+     * @throws NotEnoughStaminaException if current stamina level is below {@code amount}
+     */
+    public void consumeStamina(int amount) throws NotEnoughStaminaException {
+        if (!this.hasEnoughStamina(amount))
+            throw new NotEnoughStaminaException("Player " + this._playerId + " has not enough stamina");
+        this._stamina -= amount;
+    };
+
+    /**
+     * Refills {@code stamina} level, returning it to the {@code maxStamina}
+     */
+    public void refreshStamina() {
+        this._stamina = this._maxStamina;
+    };
 
     public abstract void setIncomingPipe(Pump pump, Pipe incoming);
 
