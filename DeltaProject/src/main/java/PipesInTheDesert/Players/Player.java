@@ -48,7 +48,9 @@ public abstract class Player extends MapObject {
      * @param target occupiable target
      * @return true when occupation succeeds
      */
-    public boolean occupy(IOccupiable target) {
+    public boolean occupy(IOccupiable target) throws AlreadyOccupiedException{
+        if (!target.canAccept(this))
+            throw new AlreadyOccupiedException();
         target.addOccupant(this);
         this._position = target;
         return true;
