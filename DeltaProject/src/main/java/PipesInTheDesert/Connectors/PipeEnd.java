@@ -8,9 +8,25 @@ import PipesInTheDesert.Interfaces.IConnectable;
  */
 public class PipeEnd extends MapObject {
     /** Pipe that owns this endpoint. */
-    public Pipe pipe;
+    private Pipe pipe;
     /** Element currently connected to this endpoint. */
-    public IConnectable connectedElement;
+    private IConnectable connectedElement;
+
+    /**
+     * Constructor. Initializes with no connections.
+     */
+    public PipeEnd() {
+        super();
+        this.pipe = null;
+        this.connectedElement = null;
+    }
+    /**
+     * Getters and Setters
+     */
+    public Pipe getPipe() { return pipe; }
+    public void setPipe(Pipe pipe) { this.pipe = pipe; }
+    public IConnectable getConnectedElement() { return connectedElement; }
+    public void setConnectedElement(IConnectable element) { this.connectedElement = element; }
 
     /**
      * Reports whether this endpoint is currently connected.
@@ -18,8 +34,7 @@ public class PipeEnd extends MapObject {
      * @return true when a connection exists
      */
     public boolean isConnected() {
-        System.out.print("PipeEnd.isConnected(): boolean");
-        return true;
+        return connectedElement != null;
     }
 
     /**
@@ -28,22 +43,30 @@ public class PipeEnd extends MapObject {
      * @return true when no element is connected
      */
     public boolean isFree() {
-        System.out.print("PipeEnd.isFree(): boolean");
-        return true;
+        return connectedElement == null;
     }
 
     /**
      * Connects this endpoint to the provided connectable element.
      *
      * @param element element to connect
+     * @throws InvalidArgumentException if connection is not possible
      */
     public void connect(IConnectable element) {
-        System.out.println("PipeEnd.connect(IConnectable)");
+        if (!canConnect(element)) {
+            throw new InvalidArgumentException();
+        }
+        this.connectedElement = element;
     }
 
-    /** Disconnects this endpoint from its current element. */
+    /** Disconnects this endpoint from its current element.
+     * @throws PipeNotConnectedException if already disconnected
+     */
     public void disconnect(){
-        System.out.println("PipeEnd.disconnect()");
+        if (!isConnected()) {
+            throw new PipeNotConnectedException();
+        }
+        this.connectedElement = null;
     }
 
     /**
@@ -53,7 +76,13 @@ public class PipeEnd extends MapObject {
      * @return true when connection is allowed
      */
     public boolean canConnect(IConnectable element) {
-        System.out.print("PipeEnd.canConnect(IConnectable): boolean");
+        if (connectedElement != null) {
+            return false;
+        }
+        if (element instanceof Pump) {
+            Pump pump = (Pump) element;
+            return pump.getConnectedPipes().size() < pump.getMaxConnectedPipes();
+        }
         return true;
     }
 }
