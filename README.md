@@ -1,7 +1,21 @@
-# Delta-project
-## Code rules
-- Rely on chapter 5.2 
-- 20% must be comments 
-- comments should be java doc, see whatsup group
-- conditions for calling method inside a method should be checked interactively 
-- use cases must be implemented in Skeleton class as static methods which should be could from main method
+# DeltaProject
+
+## Console command format
+
+The command parser accepts object references in the form `typeN`, where `type` is the lowercase object type and `N` is the 1-based numeric ID.
+
+Examples:
+- `plumber1`
+- `saboteur2`
+- `pipe1`
+- `pump3`
+- `cistern1`
+- `spring1`
+
+## Notes
+
+- `Prototype` is a thin console loop that delegates to `Parsers.CommandsParser`.
+- Token parsing lives in `Parsers.ArgumentsParser`.
+- Implemented command logic lives in the `Commands` package.
+- Unimplemented commands print `NotImplementedYet`.
+
