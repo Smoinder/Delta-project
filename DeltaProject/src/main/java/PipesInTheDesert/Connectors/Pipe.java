@@ -129,7 +129,7 @@ public class Pipe implements IOccupiable{
      */
     public void puncture() {
         if (leaking) {
-            throw new PipeAlreadyLeakingException();
+            throw new PipeAlreadyLeakingException("Pipe is already leaking");
         }
         this.leaking = true;
     }
@@ -139,7 +139,7 @@ public class Pipe implements IOccupiable{
      */
     public void repair() {
         if (!leaking) {
-            throw new PipeAlreadyIntactException();
+            throw new PipeAlreadyIntactException("Pipe is already intact");
         }
         this.leaking = false;
     }
@@ -190,7 +190,7 @@ public class Pipe implements IOccupiable{
             this.occupant = null;
         }
         else {
-            throw new PlayerNotOnPipeException();
+            throw new PlayerNotOnPipeException("Player is not on this pipe");
         }
     }
 
@@ -205,7 +205,7 @@ public class Pipe implements IOccupiable{
         } else if (end2.isFree()) {
             end2.connect(element);
         } else {
-            throw new PipeHasNoFreeEndsException();
+            throw new PipeHasNoFreeEndsException("Pipe has no free ends");
         }
     }
 

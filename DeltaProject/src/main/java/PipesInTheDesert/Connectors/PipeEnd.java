@@ -66,7 +66,7 @@ public class PipeEnd extends MapObject {
      */
     public void disconnect(){
         if (!isConnected()) {
-            throw new PipeNotConnectedException();
+            throw new PipeNotConnectedException("Pipe end is not connected");
         }
         this.connectedElement = null;
     }
