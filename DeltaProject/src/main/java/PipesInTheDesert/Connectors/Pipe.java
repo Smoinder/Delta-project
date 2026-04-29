@@ -8,6 +8,11 @@ import PipesInTheDesert.Players.Player;
  * endpoints.
  */
 public class Pipe implements IOccupiable {
+    /** Counter for unique pipe IDs (type-specific). */
+    private static int _count = 0;
+    /** Unique identifier of this pipe (1-indexed). */
+    private final int _id = ++_count;
+
     /** First endpoint of the pipe. */
     public PipeEnd end1;
     /** Second endpoint of the pipe. */
@@ -20,6 +25,16 @@ public class Pipe implements IOccupiable {
     public Player occupant;
     /** Pipe length value used by game logic. */
     public int length;
+
+
+    /**
+     * Gets the unique ID of this pipe.
+     *
+     * @return pipe ID (1-indexed)
+     */
+    public int getId() {
+        return this._id;
+    }
 
     /** Marks this pipe as leaking. */
     public void puncture() {

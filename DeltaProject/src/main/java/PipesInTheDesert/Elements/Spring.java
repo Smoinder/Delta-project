@@ -6,8 +6,23 @@ import PipesInTheDesert.Connectors.*;
  * Active source element where water enters the pipe system.
  */
 public class Spring extends ActiveElement {
+    /** Counter for unique spring IDs (type-specific). */
+    private static int _count = 0;
+    /** Unique identifier of this spring (1-indexed). */
+    private final int _id = ++_count;
+
     /** Amount of water emitted during water-flow simulation. */
     public int throughput;
+
+
+    /**
+     * Gets the unique ID of this spring.
+     *
+     * @return spring ID (1-indexed)
+     */
+    public int getId() {
+        return this._id;
+    }
 
     /**
      * Checks whether the provided endpoint can connect to this spring.

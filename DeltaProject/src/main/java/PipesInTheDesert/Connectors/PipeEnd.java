@@ -7,10 +7,25 @@ import PipesInTheDesert.Interfaces.IConnectable;
  * Endpoint of a pipe that can connect to active elements in the network.
  */
 public class PipeEnd extends MapObject {
+    /** Counter for unique pipe end IDs (type-specific). */
+    private static int _count = 0;
+    /** Unique identifier of this pipe end (1-indexed). */
+    private final int _id = ++_count;
+
     /** Pipe that owns this endpoint. */
     public Pipe pipe;
     /** Element currently connected to this endpoint. */
     public IConnectable connectedElement;
+
+
+    /**
+     * Gets the unique ID of this pipe end.
+     *
+     * @return pipe end ID (1-indexed)
+     */
+    public int getId() {
+        return this._id;
+    }
 
     /**
      * Reports whether this endpoint is currently connected.
