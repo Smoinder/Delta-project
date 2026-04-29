@@ -1,8 +1,11 @@
 package PipesInTheDesert.Commands;
 
+import PipesInTheDesert.Constants;
 import PipesInTheDesert.GameEngine;
 import PipesInTheDesert.Interfaces.IConnectable;
 import PipesInTheDesert.Interfaces.IOccupiable;
+import PipesInTheDesert.MapType;
+import PipesInTheDesert.Mode;
 import PipesInTheDesert.Players.Plumber;
 import PipesInTheDesert.Connectors.Pipe;
 import PipesInTheDesert.Elements.Pump;
@@ -16,70 +19,78 @@ public class PlayerModeCommands {
     public static void disconnect(GameEngine ge, Plumber pl, Pipe p, IConnectable elem)
             throws PlayerNotOnElementException, ElementNotConnectedException, WrongGameModeException,
             WrongTeamOfActivePlayerException {
-
+        notImplemented();
     }
 
     public static void endTurn(GameEngine ge) throws WrongGameModeException {
-
+        notImplemented();
     }
 
-    public static String printState(GameEngine ge) throws WrongGameModeException { // Return a string, don't print it
+    public static void printState(GameEngine ge) throws WrongGameModeException { // Return a string, don't print it
                                                                                    // here
-        return "";
+        notImplemented();
     }
 
     public static void debugMode(GameEngine ge) throws WrongGameModeException {
-
+        ge.setMode(Mode.DEBUG);
+        System.out.println("DebugMode OK");
     }
 
     public static void startGame(GameEngine ge, int numPlumbers, int numSaboteurs) throws WrongGameModeException, GameAlreadyStartedException, InvalidArgumentException {
         ge.startGame(numPlumbers, numSaboteurs);
+        System.out.println("StartGame OK");
     }
 
-    public static void loadMap(GameEngine ge) throws WrongGameModeException, MapNotEmptyException {
-        ge.loadMap();
+    public static void loadMap(GameEngine ge, MapType mapType) throws WrongGameModeException, MapNotEmptyException {
+        ge.loadMap(mapType);
+        System.out.println("LoadMap OK");
     }
 
     public static void move(GameEngine ge, IOccupiable elem)
             throws WrongGameModeException, ElementNotReachableException, NotEnoughStaminaException {
-
+        notImplemented();
     }
 
     public static void fix(GameEngine ge, Pipe p)
             throws WrongGameModeException, PlayerNotOnElementException, NotEnoughStaminaException,
             WrongTeamOfActivePlayerException {
-
+        notImplemented();
     }
 
     public static void fixPump(GameEngine ge, Pump p)
             throws WrongGameModeException, PlayerNotOnElementException, NotEnoughStaminaException,
             WrongTeamOfActivePlayerException {
-
+        notImplemented();
     }
 
     public static void puncture(GameEngine ge, Pipe p)
             throws WrongGameModeException, PlayerNotOnElementException, NotEnoughStaminaException,
             WrongTeamOfActivePlayerException {
-
+        notImplemented();
     }
 
     public static void setPumpDirection(GameEngine ge, Pump pump, Pipe inputPipe, Pipe outputPipe)
             throws WrongGameModeException, PlayerNotOnElementException, NotEnoughStaminaException {
-
+        notImplemented();
     }
 
     public static void pickUpPump(GameEngine ge) throws WrongGameModeException, WrongTeamOfActivePlayerException,
             NoFreePumpsException, AlredayHoldingPumpException, NotEnoughStaminaException, PlayerNotOnElementException {
-
+        notImplemented();
     }
 
     public static void installPump(GameEngine ge, Pipe p) throws WrongGameModeException,
             WrongTeamOfActivePlayerException, PlayerNotOnElementException, NotEnoughStaminaException {
-
+        notImplemented();
     }
 
     public static void connect(GameEngine ge, Pipe p, IConnectable elem)
             throws WrongGameModeException, WrongTeamOfActivePlayerException, PlayerNotOnElementException,
             NotEnoughStaminaException, PipeHasNoFreeEndsException {
+        notImplemented();
+    }
+
+    private static void notImplemented() {
+        System.out.println(Constants.NOT_IMPLEMENTED_YET);
     }
 }

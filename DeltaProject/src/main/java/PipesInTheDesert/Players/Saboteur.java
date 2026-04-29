@@ -8,6 +8,20 @@ import PipesInTheDesert.Elements.Pump;
  * elements.
  */
 public class Saboteur extends Player {
+    /** Counter for unique saboteur IDs (type-specific). */
+    private static int _count = 0;
+    /** Unique identifier of this saboteur (1-indexed, saboteur-specific). */
+    private final int _id = ++_count;
+
+    /**
+     * Gets the unique ID of this saboteur.
+     *
+     * @return saboteur ID (1-indexed)
+     */
+    public int getId() {
+        return this._id;
+    }
+
     /**
      * Creates a leak in a target pipe.
      *

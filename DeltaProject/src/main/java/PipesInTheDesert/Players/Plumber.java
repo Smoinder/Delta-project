@@ -10,12 +10,27 @@ import PipesInTheDesert.Interfaces.IConnectable;
  * Player role focused on maintaining and extending the pipe system.
  */
 public class Plumber extends Player {
+    /** Counter for unique plumber IDs (type-specific). */
+    private static int _count = 0;
+    /** Unique identifier of this plumber (1-indexed, plumber-specific). */
+    private final int _id = ++_count;
+
     /** True when the plumber currently carries a pump. */
     public boolean holdingPump;
     /** Pump currently carried by this plumber. Null if not holding */
     public Pump heldPump;
     /** Pipe end currently held by this plumber. Null if not holding */
     public PipeEnd heldPipeEnd;
+
+
+    /**
+     * Gets the unique ID of this plumber.
+     *
+     * @return plumber ID (1-indexed)
+     */
+    public int getId() {
+        return this._id;
+    }
 
     /**
      * Connects a held free pipe end to a target connectable element.

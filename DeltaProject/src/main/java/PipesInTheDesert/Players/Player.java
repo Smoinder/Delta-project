@@ -22,7 +22,7 @@ public abstract class Player extends MapObject {
     /** Last known player id. Used to have unique player ids for new players */
     private static int _lastPlayerId = 0;
     /** Unique identifier of this player. */
-    private final int _playerId;
+    private final int _playerId = ++Player._lastPlayerId;
     /** True when this player currently has the active turn. */
     private boolean _isActive;
 
@@ -30,7 +30,6 @@ public abstract class Player extends MapObject {
         this._maxStamina = maxStamina;
         this._stamina = maxStamina;
         this._position = position;
-        this._playerId = Player._lastPlayerId++;
         this._isActive = isActive;
     }
 
@@ -40,6 +39,20 @@ public abstract class Player extends MapObject {
 
     Player(IOccupiable position) {
         this(position, Constants.PLAYER_MAX_STAMINA);
+    }
+
+    Player(){
+        //TODO: Remove default constructor when Plumbers and Saboteurs are concretely defined
+        _maxStamina = Constants.PLAYER_MAX_STAMINA;
+    }
+
+    /**
+     * Gets the unique ID of this player.
+     *
+     * @return player ID (1-indexed)
+     */
+    public int getPlayerId() {
+        return this._playerId;
     }
 
     /**

@@ -9,6 +9,11 @@ import PipesInTheDesert.Interfaces.IOccupiable;
  * Active element that moves water from an input pipe to an output pipe and can be occupied by players.
  */
 public class Pump extends ActiveElement implements IOccupiable {
+    /** Counter for unique pump IDs (type-specific). */
+    private static int _count = 0;
+    /** Unique identifier of this pump (1-indexed). */
+    private final int _id = ++_count;
+
     /** Endpoints currently connected to this pump. */
     public List<PipeEnd> connectedPipes;
     /** Maximum number of endpoints that may be connected. */
@@ -23,6 +28,16 @@ public class Pump extends ActiveElement implements IOccupiable {
     public List<Player> occupants;
     /** Current stored water amount in the pump tank. */
     public double waterTankLevel;
+
+
+    /**
+     * Gets the unique ID of this pump.
+     *
+     * @return pump ID (1-indexed)
+     */
+    public int getId() {
+        return this._id;
+    }
 
     /** Restores the pump to working state. */
     public void fix() {

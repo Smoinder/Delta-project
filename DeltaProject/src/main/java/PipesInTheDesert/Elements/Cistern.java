@@ -7,6 +7,11 @@ import PipesInTheDesert.Connectors.*;
  * Destination active element where water is collected and where new pipes and pumps are manufactured.
  */
 public class Cistern extends ActiveElement {
+    /** Counter for unique cistern IDs (type-specific). */
+    private static int _count = 0;
+    /** Unique identifier of this cistern (1-indexed). */
+    private final int _id = ++_count;
+
     /** Current accumulated progress toward creating new pipes. */
     public double pipeGenerationState;
     /** Pipe production speed applied at the end of each turn. */
@@ -19,6 +24,16 @@ public class Cistern extends ActiveElement {
     public List<Pipe> generatedPipes;
     /** Pumps currently manufactured and stored by this cistern. */
     public List<Pump> generatedPumps;
+
+
+    /**
+     * Gets the unique ID of this cistern.
+     *
+     * @return cistern ID (1-indexed)
+     */
+    public int getId() {
+        return this._id;
+    }
 
     /** Advances pipe manufacturing and creates new pipe instances when progress reaches full units. */
     public void generatePipes() {
