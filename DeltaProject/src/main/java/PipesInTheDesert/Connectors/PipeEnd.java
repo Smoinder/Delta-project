@@ -2,7 +2,9 @@ package PipesInTheDesert.Connectors;
 
 import PipesInTheDesert.MapObject;
 import PipesInTheDesert.Interfaces.IConnectable;
-
+import PipesInTheDesert.Exceptions.InvalidArgumentException;
+import PipesInTheDesert.Exceptions.PipeNotConnectedException;
+import PipesInTheDesert.Elements.Pump;
 /**
  * Endpoint of a pipe that can connect to active elements in the network.
  */
@@ -54,7 +56,7 @@ public class PipeEnd extends MapObject {
      */
     public void connect(IConnectable element) {
         if (!canConnect(element)) {
-            throw new InvalidArgumentException();
+            throw new InvalidArgumentException("Connection not possible");
         }
         this.connectedElement = element;
     }

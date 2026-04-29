@@ -3,6 +3,10 @@ package PipesInTheDesert.Connectors;
 import PipesInTheDesert.Interfaces.IOccupiable;
 import PipesInTheDesert.Players.Player;
 import PipesInTheDesert.Interfaces.IConnectable;
+import PipesInTheDesert.Exceptions.PipeAlreadyLeakingException;
+import PipesInTheDesert.Exceptions.PipeAlreadyIntactException;
+import PipesInTheDesert.Exceptions.PipeNotFreeException;
+import PipesInTheDesert.Exceptions.PlayerNotOnPipeException;
 /**
  * Connector that transports water between active elements through two endpoints.
  */
@@ -179,18 +183,21 @@ public class Pipe implements IOccupiable{
      * Removes the given player from this pipe.
      *
      * @param player player to remove
+     * @throws PlayerNotOnPipeException if the player is not the current occupant
      */
     public void removeOccupant(Player player) {
         if (this.occupant == player) {
             this.occupant = null;
+        }
+        else {
+            throw new PlayerNotOnPipeException();
         }
     }
 
     /**
      * Connects a free end of this pipe to the specified element.
      * @param element the element to connect to (must implement IConnectable)
-     * @throws PipeNotFreeException if both ends are already connected
-     * @throws InvalidArgumentException if the connection is not possible
+     * @throws PipeHasNoFreeEndsException if both ends are already connected
      */
     public void connectToElement(IConnectable element) {
         if (end1.isFree()) {
@@ -198,7 +205,7 @@ public class Pipe implements IOccupiable{
         } else if (end2.isFree()) {
             end2.connect(element);
         } else {
-            throw new PipeNotFreeException();
+            throw new PipeHasNoFreeEndsException();
         }
     }
 
