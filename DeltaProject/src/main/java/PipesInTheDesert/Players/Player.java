@@ -55,6 +55,14 @@ public abstract class Player extends MapObject {
         return this._playerId;
     }
 
+    public void setStamina(int stamina) {
+        this._stamina = stamina;
+    }
+
+    public int getStamina() {
+        return this._stamina;
+    }
+
     /**
      * Tries to occupy a target map element.
      *
@@ -138,4 +146,7 @@ public abstract class Player extends MapObject {
     public abstract void setIncomingPipe(Pump pump, Pipe incoming);
 
     public abstract void setOutgoingPipe(Pump pump, Pipe outgoing);
+
+
+
 }

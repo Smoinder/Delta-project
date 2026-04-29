@@ -2,157 +2,185 @@ package PipesInTheDesert.Players;
 
 import PipesInTheDesert.Connectors.Pipe;
 import PipesInTheDesert.Connectors.PipeEnd;
+import PipesInTheDesert.Constants;
 import PipesInTheDesert.Elements.Cistern;
 import PipesInTheDesert.Elements.Pump;
+import PipesInTheDesert.Exceptions.NotEnoughStaminaException;
 import PipesInTheDesert.Interfaces.IConnectable;
+import PipesInTheDesert.Interfaces.IOccupiable;
 
 /**
  * Player role focused on maintaining and extending the pipe system.
  */
 public class Plumber extends Player {
-    /** Counter for unique plumber IDs (type-specific). */
     private static int _count = 0;
-    /** Unique identifier of this plumber (1-indexed, plumber-specific). */
     private final int _id = ++_count;
+    private boolean _holdingPump = false;
+    private Pump _heldPump = null;
+    private PipeEnd _heldPipeEnd = null;
 
-    /** True when the plumber currently carries a pump. */
-    public boolean holdingPump;
-    /** Pump currently carried by this plumber. Null if not holding */
-    public Pump heldPump;
-    /** Pipe end currently held by this plumber. Null if not holding */
-    public PipeEnd heldPipeEnd;
+    public Plumber(IOccupiable position, int maxStamina, boolean isActive) {
+        super(position, maxStamina, isActive);
+    }
 
+    public Plumber(IOccupiable position, int maxStamina) {
+        super(position, maxStamina);
+    }
 
-    /**
-     * Gets the unique ID of this plumber.
-     *
-     * @return plumber ID (1-indexed)
-     */
+    public Plumber(IOccupiable position) {
+        super(position);
+    }
+    
     public int getId() {
-        return this._id;
+        return _id;
     }
 
-    /**
-     * Connects a held free pipe end to a target connectable element.
-     *
-     * @param element target element to connect
-     */
+    public boolean isHoldingPump() {
+        return _holdingPump;
+    }
+
+    public void setHoldingPump(boolean holdingPump) {
+        this._holdingPump = holdingPump;
+    }
+
+    public Pump getHeldPump() {
+        return _heldPump;
+    }
+
+    public void setHeldPump(Pump heldPump) {
+        this._heldPump = heldPump;
+        this._holdingPump = heldPump != null;
+    }
+
+    public PipeEnd getHeldPipeEnd() {
+        return _heldPipeEnd;
+    }
+
+    public void setHeldPipeEnd(PipeEnd heldPipeEnd) {
+        this._heldPipeEnd = heldPipeEnd;
+    }
+
     public void connectPipeEnd(IConnectable element) {
-        System.out.println("Plumber.connectPipeEnd(IConnectable)");
+        if (_holdingPump) {
+            throw new RuntimeException("PlayerHoldingPumpException");
+        }
+        if (_heldPipeEnd == null) {
+            throw new RuntimeException("InvalidArgumentException");
+        }
+        if (!_heldPipeEnd.isFree()) {
+            throw new RuntimeException("PipeNotFreeException");
+        }
+        if (!_heldPipeEnd.canConnect(element)) {
+            throw new RuntimeException("InvalidArgumentException");
+        }
+
+        _heldPipeEnd.connect(element);
+        _heldPipeEnd = null;
+        consumeOrWrap(Constants.PLAYER_CHANGE_PUMP_INPUT_STAMINA);
     }
 
-    /**
-     * Disconnects an end of a pipe from a target element.
-     *
-     * @param pipe    pipe whose end is disconnected
-     * @param element element currently connected to the pipe end
-     */
     public void disconnectPipeEnd(Pipe pipe, IConnectable element) {
-        System.out.println("Plumber.disconnectPipeEnd(Pipe, IConnectable)");
+        if (_holdingPump) {
+            throw new RuntimeException("PlayerHoldingPumpException");
+        }
+
+        PipeEnd end = findPipeEndConnectedTo(pipe, element);
+        if (end == null) {
+            throw new RuntimeException("PipeNotConnectedException");
+        }
+
+        end.disconnect();
+        _heldPipeEnd = end;
+        consumeOrWrap(Constants.PLAYER_CHANGE_PUMP_INPUT_STAMINA);
     }
 
-    /**
-     * Repairs a leaking pipe.
-     *
-     * @param pipe target pipe
-     */
     public void fixPipe(Pipe pipe) {
-        System.out.println("Plumber.fixPipe(Pipe)");
+        if (_holdingPump) {
+            throw new RuntimeException("PlayerHoldingPumpException");
+        }
+
+        pipe.repair();
+        consumeOrWrap(Constants.PLAYER_FIX_PIPE_STAMINA);
     }
 
-    /**
-     * Repairs a broken pump.
-     *
-     * @param pump target pump
-     */
     public void fixPump(Pump pump) {
-        System.out.println("Plumber.fixPump(Pump)");
+        if (_holdingPump) {
+            throw new RuntimeException("PlayerHoldingPumpException");
+        }
+
+        pump.fix();
+        consumeOrWrap(Constants.PLAYER_FIX_PUMP_STAMINA);
     }
 
-    /**
-     * Picks a specific pipe end for later connect or disconnect operations.
-     *
-     * @param eop selected pipe end
-     */
     public void getEnd(PipeEnd eop) {
-        System.out.println("Plumber.getEnd(PipeEnd)");
+        if (eop == null) {
+            throw new RuntimeException("InvalidArgumentException");
+        }
+
+        _heldPipeEnd = eop;
     }
 
-    /**
-     * Inserts a pump into an existing pipe segment.
-     *
-     * @param pipe pipe being split
-     * @param pump pump inserted between resulting ends
-     */
     public void insertPump(Pipe pipe, Pump pump) {
-        System.out.println("Plumber.insertPump(Pipe, Pump)");
+        if (!_holdingPump || _heldPump == null) {
+            throw new RuntimeException("PlayerNotHoldingPumpException");
+        }
+
+        _heldPump = null;
+        _holdingPump = false;
+        consumeOrWrap(Constants.PLAYER_PLACE_PUMP_STAMINA);
     }
 
-    /**
-     * Picks up a manufactured pump from a cistern.
-     *
-     * @param cistern source cistern
-     */
     public void pickUpPump(Cistern cistern) {
-        System.out.println("Plumber.pickUpPump(Cistern)");
+        if (_holdingPump) {
+            throw new RuntimeException("PlayerHoldingPumpException");
+        }
+        if (cistern.generatedPumps == null || cistern.generatedPumps.isEmpty()) {
+            throw new RuntimeException("InvalidArgumentException");
+        }
+
+        _heldPump = cistern.generatedPumps.remove(0);
+        _holdingPump = true;
+        consumeOrWrap(Constants.PLAYER_PICKUP_PUMP_STAMINA);
     }
 
-    /**
-     * Moves the plumber through a pipe.
-     *
-     * @param pipe pipe to move on
-     */
-    public void moveAlongPipe(Pipe pipe) {
-        System.out.println("Plumber.moveAlongPipe(Pipe)");
-    }
-
-    /** Ends the plumber turn. */
-    public void endTurn() {
-        System.out.println("Plumber.endTurn()");
-    }
-
-    /**
-     * Checks stamina availability for an action.
-     *
-     * @param cost required stamina cost
-     * @return true when enough stamina is available
-     */
-    public boolean hasEnoughStamina(int cost) {
-        System.out.print("Plumber.hasEnoughStamina(int): boolean");
-        return true;
-    }
-
-    /**
-     * Deducts stamina after an action.
-     *
-     * @param amount stamina amount to consume
-     */
-    public void consumeStamina(int amount) {
-        System.out.println("Plumber.consumeStamina(int)");
-    }
-
-    /** Restores stamina at turn refresh. */
-    public void refreshStamina() {
-        System.out.println("Plumber.refreshStamina()");
-    }
-
-    /**
-     * Selects incoming pipe on a pump.
-     *
-     * @param pump     target pump
-     * @param incoming selected incoming pipe
-     */
+    @Override
     public void setIncomingPipe(Pump pump, Pipe incoming) {
-        System.out.println("Plumber.setIncomingPipe(Pump, Pipe)");
+        PipeEnd end = findPipeEndConnectedTo(incoming, pump);
+        if (end == null) {
+            throw new RuntimeException("InvalidArgumentException");
+        }
+
+        pump.setInput(end);
     }
 
-    /**
-     * Selects outgoing pipe on a pump.
-     *
-     * @param pump     target pump
-     * @param outgoing selected outgoing pipe
-     */
+    @Override
     public void setOutgoingPipe(Pump pump, Pipe outgoing) {
-        System.out.println("Plumber.setOutgoingPipe(Pump, Pipe)");
+        PipeEnd end = findPipeEndConnectedTo(outgoing, pump);
+        if (end == null) {
+            throw new RuntimeException("InvalidArgumentException");
+        }
+
+        pump.setOutput(end);
+    }
+
+    private PipeEnd findPipeEndConnectedTo(Pipe pipe, IConnectable element) {
+        if (pipe == null) {
+            return null;
+        }
+        if (pipe.end1 != null && pipe.end1.connectedElement == element) {
+            return pipe.end1;
+        }
+        if (pipe.end2 != null && pipe.end2.connectedElement == element) {
+            return pipe.end2;
+        }
+        return null;
+    }
+
+    private void consumeOrWrap(int cost) {
+        try {
+            consumeStamina(cost);
+        } catch (NotEnoughStaminaException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
