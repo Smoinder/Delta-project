@@ -32,6 +32,8 @@ public class PlayerModeCommands {
     }
 
     public static void debugMode(GameEngine ge) throws WrongGameModeException {
+        if(ge.getMode() == Mode.DEBUG)
+            throw new WrongGameModeException("MODE:DEBUG is already the current mode");
         ge.setMode(Mode.DEBUG);
         System.out.println("DebugMode OK");
     }

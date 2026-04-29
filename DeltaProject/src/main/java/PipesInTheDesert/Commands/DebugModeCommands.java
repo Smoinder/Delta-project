@@ -17,8 +17,7 @@ public class DebugModeCommands {
     }
 
     public static void playerMode(GameEngine ge) throws WrongGameModeException {
-        ge.setMode(Mode.PLAYER);
-        System.out.println("PlayerMode OK");
+        notImplemented();
     }
 
     public static void breakPump(GameEngine ge, Pump p) throws WrongGameModeException {
