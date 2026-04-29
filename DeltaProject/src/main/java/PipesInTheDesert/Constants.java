@@ -13,4 +13,5 @@ public class Constants {
     public final static int PLAYER_FIX_PUMP_STAMINA = 12;
     public final static int PLAYER_CHANGE_PUMP_INPUT_STAMINA = 8;
     public final static double PUMP_BREAK_CHANCE = 0.1;
+    public static final String NOT_IMPLEMENTED_YET = "NotImplementedYet";
 }
