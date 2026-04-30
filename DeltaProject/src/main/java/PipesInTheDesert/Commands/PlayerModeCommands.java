@@ -114,9 +114,78 @@ public class PlayerModeCommands {
         System.out.println("Puncture OK");
     }
 
+    /**
+     * Player action: changes a pump's direction by selecting which connected
+     * pipe is the input and which is the output (use case 4, §5.2.2.4 of the
+     * skeleton plan). Both Plumbers and Saboteurs are allowed to perform this
+     * action; only one pipe may be the input and only one the output, and any
+     * other connected pipes implicitly become "closed pipes".
+     *
+     * <p>Conditions checked, in order:
+     * <ol>
+     *   <li>Game mode is {@link Mode#PLAYER}.</li>
+     *   <li>The active player is currently positioned on the target pump.</li>
+     *   <li>The two selected pipes are different.</li>
+     *   <li>Each selected pipe has an endpoint currently connected to the pump.</li>
+     *   <li>The active player has at least
+     *       {@link Constants#PLAYER_CHANGE_PUMP_INPUT_STAMINA} stamina available.</li>
+     * </ol>
+     *
+     * @param ge         active game engine
+     * @param pump       pump whose direction is being changed
+     * @param inputPipe  pipe to mark as the new input
+     * @param outputPipe pipe to mark as the new output
+     * @throws WrongGameModeException        if the game is not in PLAYER mode
+     * @throws PlayerNotOnElementException   if the active player is not on the
+     *                                       target pump
+     * @throws InvalidArgumentException      if the input and output pipes are the
+     *                                       same instance
+     * @throws ElementNotConnectedException  if either selected pipe is not
+     *                                       connected to the pump
+     * @throws NotEnoughStaminaException     if the player has insufficient stamina
+     */
     public static void setPumpDirection(GameEngine ge, Pump pump, Pipe inputPipe, Pipe outputPipe)
-            throws WrongGameModeException, PlayerNotOnElementException, NotEnoughStaminaException {
-        notImplemented();
+            throws WrongGameModeException, PlayerNotOnElementException, NotEnoughStaminaException,
+            InvalidArgumentException, ElementNotConnectedException {
+        if (ge.getMode() != Mode.PLAYER) {
+            throw new WrongGameModeException("Game mode should be 'PLAYER'");
+        }
+        Player active = ge.getActivePlayer();
+        if (active == null || active.getPosition() != pump) {
+            throw new PlayerNotOnElementException("Active player is not on the target pump");
+        }
+        if (inputPipe == outputPipe) {
+            throw new InvalidArgumentException("Input and output pipes must differ");
+        }
+        PipeEnd inputEnd = endConnectedTo(inputPipe, pump);
+        if (inputEnd == null) {
+            throw new ElementNotConnectedException("Input pipe is not connected to the pump");
+        }
+        PipeEnd outputEnd = endConnectedTo(outputPipe, pump);
+        if (outputEnd == null) {
+            throw new ElementNotConnectedException("Output pipe is not connected to the pump");
+        }
+        active.consumeStamina(Constants.PLAYER_CHANGE_PUMP_INPUT_STAMINA);
+        pump.setInput(inputEnd);
+        pump.setOutput(outputEnd);
+        System.out.println("SetPumpDirection OK");
+    }
+
+    /**
+     * Returns the endpoint of {@code pipe} that is currently connected to
+     * {@code pump}, or {@code null} if neither end is.
+     */
+    private static PipeEnd endConnectedTo(Pipe pipe, Pump pump) {
+        if (pipe == null) {
+            return null;
+        }
+        if (pipe.end1 != null && pipe.end1.connectedElement == pump) {
+            return pipe.end1;
+        }
+        if (pipe.end2 != null && pipe.end2.connectedElement == pump) {
+            return pipe.end2;
+        }
+        return null;
     }
 
     public static void pickUpPump(GameEngine ge) throws WrongGameModeException, WrongTeamOfActivePlayerException,
