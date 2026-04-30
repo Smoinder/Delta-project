@@ -11,6 +11,7 @@ import PipesInTheDesert.Players.Plumber;
 import PipesInTheDesert.Players.Saboteur;
 import PipesInTheDesert.Connectors.Pipe;
 import PipesInTheDesert.Connectors.PipeEnd;
+import PipesInTheDesert.Elements.ActiveElement;
 import PipesInTheDesert.Elements.Cistern;
 import PipesInTheDesert.Elements.Pump;
 import PipesInTheDesert.Exceptions.*;
@@ -243,9 +244,70 @@ public class PlayerModeCommands {
         System.out.println("PickUpPump OK");
     }
 
+    /**
+     * Plumber action: installs the pump the plumber is carrying on the pipe
+     * the plumber is standing on (use case 7, §5.2.2.7 of the skeleton plan).
+     *
+     * <p>Conditions checked, in order:
+     * <ol>
+     *   <li>Game mode is {@link Mode#PLAYER}.</li>
+     *   <li>The active player is a {@link Plumber}.</li>
+     *   <li>The plumber is currently positioned on the target pipe.</li>
+     *   <li>The plumber is currently holding a pump.</li>
+     *   <li>The pipe has at least one initialized endpoint.</li>
+     *   <li>The plumber has at least
+     *       {@link Constants#PLAYER_PLACE_PUMP_STAMINA} stamina available.</li>
+     * </ol>
+     *
+     * <p>On success, the held pump is inserted on one end of the pipe per the
+     * skeleton flow (PipeEnd.disconnect; PipeEnd.connect(pump)): the chosen
+     * pipe end is detached from its previous element (if any) and attached to
+     * the pump. The plumber's heldPump slot is cleared and stamina is consumed.
+     *
+     * @param ge active game engine
+     * @param p  pipe on which to install the pump
+     * @throws WrongGameModeException           if the game is not in PLAYER mode
+     * @throws WrongTeamOfActivePlayerException if the active player is not a
+     *                                          plumber
+     * @throws PlayerNotOnElementException      if the plumber is not on the
+     *                                          target pipe
+     * @throws InvalidArgumentException         if the plumber is not holding a
+     *                                          pump or the pipe has no usable
+     *                                          endpoint
+     * @throws NotEnoughStaminaException        if the plumber has insufficient
+     *                                          stamina
+     */
     public static void installPump(GameEngine ge, Pipe p) throws WrongGameModeException,
-            WrongTeamOfActivePlayerException, PlayerNotOnElementException, NotEnoughStaminaException {
-        notImplemented();
+            WrongTeamOfActivePlayerException, PlayerNotOnElementException, NotEnoughStaminaException,
+            InvalidArgumentException {
+        if (ge.getMode() != Mode.PLAYER) {
+            throw new WrongGameModeException("Game mode should be 'PLAYER'");
+        }
+        Player active = ge.getActivePlayer();
+        if (!(active instanceof Plumber plumber)) {
+            throw new WrongTeamOfActivePlayerException("InstallPump is a plumber action");
+        }
+        if (plumber.getPosition() != p) {
+            throw new PlayerNotOnElementException("Plumber is not on the target pipe");
+        }
+        if (!plumber.holdingPump || plumber.heldPump == null) {
+            throw new InvalidArgumentException("Plumber is not holding a pump");
+        }
+        PipeEnd target = (p.end1 != null) ? p.end1 : p.end2;
+        if (target == null) {
+            throw new InvalidArgumentException("Pipe has no usable endpoints");
+        }
+        plumber.consumeStamina(Constants.PLAYER_PLACE_PUMP_STAMINA);
+        Pump pump = plumber.heldPump;
+        IConnectable previous = target.connectedElement;
+        if (previous instanceof ActiveElement prev) {
+            prev.removeConnectedPipe(target);
+        }
+        target.connectedElement = pump;
+        pump.connectEnd(target);
+        plumber.heldPump = null;
+        plumber.holdingPump = false;
+        System.out.println("InstallPump OK");
     }
 
     public static void connect(GameEngine ge, Pipe p, IConnectable elem)
