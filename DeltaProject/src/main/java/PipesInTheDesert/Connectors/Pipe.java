@@ -36,14 +36,14 @@ public class Pipe implements IOccupiable {
         return this._id;
     }
 
-    /** Marks this pipe as leaking. */
+    /** Marks this pipe as leaking (idempotent). */
     public void puncture() {
-        System.out.println("Pipe.puncture()");
+        this.leaking = true;
     }
 
-    /** Repairs this pipe and restores non-leaking state. */
+    /** Repairs this pipe and restores non-leaking state (idempotent). */
     public void repair() {
-        System.out.println("Pipe.repair()");
+        this.leaking = false;
     }
 
     /**
