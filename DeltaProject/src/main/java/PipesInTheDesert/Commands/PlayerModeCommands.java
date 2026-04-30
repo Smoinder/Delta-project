@@ -310,10 +310,85 @@ public class PlayerModeCommands {
         System.out.println("InstallPump OK");
     }
 
+    /**
+     * Plumber action: connects a free pipe end of the given pipe to the
+     * specified active element (use case 10, §5.2.2.10 of the skeleton plan).
+     *
+     * <p>Conditions checked, in order:
+     * <ol>
+     *   <li>Game mode is {@link Mode#PLAYER}.</li>
+     *   <li>The active player is a {@link Plumber}.</li>
+     *   <li>The plumber is currently positioned on the target element.</li>
+     *   <li>Both arguments are non-null.</li>
+     *   <li>The pipe has a free endpoint (not already connected to an element).</li>
+     *   <li>The element accepts the chosen pipe end
+     *       ({@link IConnectable#canConnect(PipeEnd)}).</li>
+     *   <li>The plumber has at least
+     *       {@link Constants#PLAYER_CONNECT_PIPE_STAMINA} stamina available.</li>
+     * </ol>
+     *
+     * <p>On success, the free pipe end's {@code connectedElement} is set to
+     * the target element, the element registers the pipe end via
+     * {@link IConnectable#connectEnd(PipeEnd)}, the plumber's
+     * {@link Plumber#heldPipeEnd held pipe end} reference is cleared, and
+     * stamina is consumed.
+     *
+     * @param ge   active game engine
+     * @param p    pipe with a free endpoint
+     * @param elem active element to attach the free endpoint to
+     * @throws WrongGameModeException           if the game is not in PLAYER mode
+     * @throws WrongTeamOfActivePlayerException if the active player is not a
+     *                                          plumber
+     * @throws PlayerNotOnElementException      if the plumber is not on the
+     *                                          target element
+     * @throws InvalidArgumentException         if either argument is null or the
+     *                                          element refuses the connection
+     * @throws PipeHasNoFreeEndsException       if the pipe has no free endpoints
+     * @throws NotEnoughStaminaException        if the plumber has insufficient
+     *                                          stamina
+     */
     public static void connect(GameEngine ge, Pipe p, IConnectable elem)
             throws WrongGameModeException, WrongTeamOfActivePlayerException, PlayerNotOnElementException,
-            NotEnoughStaminaException, PipeHasNoFreeEndsException {
-        notImplemented();
+            NotEnoughStaminaException, PipeHasNoFreeEndsException, InvalidArgumentException {
+        if (ge.getMode() != Mode.PLAYER) {
+            throw new WrongGameModeException("Game mode should be 'PLAYER'");
+        }
+        Player active = ge.getActivePlayer();
+        if (!(active instanceof Plumber plumber)) {
+            throw new WrongTeamOfActivePlayerException("Connect is a plumber action");
+        }
+        if (p == null || elem == null) {
+            throw new InvalidArgumentException("Pipe and element must be non-null");
+        }
+        if (plumber.getPosition() != elem) {
+            throw new PlayerNotOnElementException("Plumber is not on the target element");
+        }
+        PipeEnd freeEnd = freeEndOf(p);
+        if (freeEnd == null) {
+            throw new PipeHasNoFreeEndsException("Pipe has no free ends to connect");
+        }
+        if (!elem.canConnect(freeEnd)) {
+            throw new InvalidArgumentException("Element cannot accept this pipe end");
+        }
+        plumber.consumeStamina(Constants.PLAYER_CONNECT_PIPE_STAMINA);
+        freeEnd.connectedElement = elem;
+        elem.connectEnd(freeEnd);
+        plumber.heldPipeEnd = null;
+        System.out.println("Connect OK");
+    }
+
+    /**
+     * Returns the first free endpoint of {@code pipe}, or {@code null} if both
+     * endpoints are already attached to elements.
+     */
+    private static PipeEnd freeEndOf(Pipe pipe) {
+        if (pipe.end1 != null && pipe.end1.connectedElement == null) {
+            return pipe.end1;
+        }
+        if (pipe.end2 != null && pipe.end2.connectedElement == null) {
+            return pipe.end2;
+        }
+        return null;
     }
 
     private static void notImplemented() {
