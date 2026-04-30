@@ -188,9 +188,59 @@ public class PlayerModeCommands {
         return null;
     }
 
+    /**
+     * Plumber action: picks up a manufactured pump from the cistern the
+     * plumber is standing on (use case 6, §5.2.2.6 of the skeleton plan).
+     * The plumber may carry at most one pump at a time.
+     *
+     * <p>Conditions checked, in order:
+     * <ol>
+     *   <li>Game mode is {@link Mode#PLAYER}.</li>
+     *   <li>The active player is a {@link Plumber}.</li>
+     *   <li>The plumber is currently positioned on a {@link Cistern}.</li>
+     *   <li>The plumber is not already holding a pump.</li>
+     *   <li>The cistern has at least one manufactured pump available.</li>
+     *   <li>The plumber has at least
+     *       {@link Constants#PLAYER_PICKUP_PUMP_STAMINA} stamina available.</li>
+     * </ol>
+     *
+     * <p>On success, one pump is removed from the cistern's generated-pump
+     * inventory and assigned to the plumber.
+     *
+     * @param ge active game engine
+     * @throws WrongGameModeException           if the game is not in PLAYER mode
+     * @throws WrongTeamOfActivePlayerException if the active player is not a
+     *                                          plumber
+     * @throws PlayerNotOnElementException      if the plumber is not on a cistern
+     * @throws AlredayHoldingPumpException      if the plumber already holds a pump
+     * @throws NoFreePumpsException             if the cistern has no available pumps
+     * @throws NotEnoughStaminaException        if the plumber has insufficient
+     *                                          stamina
+     */
     public static void pickUpPump(GameEngine ge) throws WrongGameModeException, WrongTeamOfActivePlayerException,
             NoFreePumpsException, AlredayHoldingPumpException, NotEnoughStaminaException, PlayerNotOnElementException {
-        notImplemented();
+        if (ge.getMode() != Mode.PLAYER) {
+            throw new WrongGameModeException("Game mode should be 'PLAYER'");
+        }
+        Player active = ge.getActivePlayer();
+        if (!(active instanceof Plumber plumber)) {
+            throw new WrongTeamOfActivePlayerException("PickUpPump is a plumber action");
+        }
+        if (!(plumber.getPosition() instanceof Cistern cistern)) {
+            throw new PlayerNotOnElementException("Plumber must be on a cistern to pick up a pump");
+        }
+        if (plumber.holdingPump) {
+            throw new AlredayHoldingPumpException("Plumber is already holding a pump");
+        }
+        java.util.List<Pump> available = cistern.getGeneratedPumps();
+        if (available.isEmpty()) {
+            throw new NoFreePumpsException("Cistern has no free pumps to pick up");
+        }
+        plumber.consumeStamina(Constants.PLAYER_PICKUP_PUMP_STAMINA);
+        Pump picked = available.remove(0);
+        plumber.heldPump = picked;
+        plumber.holdingPump = true;
+        System.out.println("PickUpPump OK");
     }
 
     public static void installPump(GameEngine ge, Pipe p) throws WrongGameModeException,
