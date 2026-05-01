@@ -48,6 +48,24 @@ public class GameEngine {
 
     private boolean _mapLoaded = false;
 
+    private boolean _randomEnabled = true;
+
+    public boolean isRandomEnabled() {
+        return _randomEnabled;
+    }
+
+    public void setRandomEnabled(boolean randomEnabled) {
+        this._randomEnabled = randomEnabled;
+    }
+
+    public void setPlumbersScore(int score) {
+        this.plumbersScore = score;
+    }
+
+    public void setSaboteursScore(int score) {
+        this.saboteursScore = score;
+    }
+
     public void setActivePlayer(Player p) {
         this._activePlayer = p;
     }
@@ -159,13 +177,17 @@ public class GameEngine {
             throw new InvalidArgumentException("Invalid input for number of saboteur players. Should be at least 2.");
 
         for (int i = 0; i < numPlumbers; i++) {
-            Plumber p = new Plumber();
+            Pump randomPump = this._pumps.get((int) (Math.random() * this._pumps.size()));
+            Plumber p = new Plumber(randomPump);
+            randomPump.addOccupant(p);
             this.addPlumber(p);
         }
 
         for (int i = 0; i < numSaboteurs; i++) {
-            Saboteur p = new Saboteur();
-            this.addSaboteur(p);
+            Pump randomPump = this._pumps.get((int) (Math.random() * this._pumps.size()));
+            Saboteur s = new Saboteur(randomPump);
+            randomPump.addOccupant(s);
+            this.addSaboteur(s);
         }
 
         this._started = true;
