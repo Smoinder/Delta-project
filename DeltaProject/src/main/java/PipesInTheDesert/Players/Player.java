@@ -8,6 +8,8 @@ import PipesInTheDesert.Exceptions.ElementNotReachableException;
 import PipesInTheDesert.Exceptions.NotEnoughStaminaException;
 import PipesInTheDesert.Interfaces.IOccupiable;
 import PipesInTheDesert.MapObject;
+import PipesInTheDesert.Exceptions.InvalidArgumentException;
+import PipesInTheDesert.Exceptions.NotEnoughStaminaException;
 
 /**
  * Abstract base type for all players that move in the pipe network.
@@ -53,6 +55,14 @@ public abstract class Player extends MapObject {
      */
     public int getPlayerId() {
         return this._playerId;
+    }
+
+    public void setStamina(int stamina) {
+        this._stamina = stamina;
+    }
+
+    public int getStamina() {
+        return this._stamina;
     }
 
     /**
@@ -135,7 +145,12 @@ public abstract class Player extends MapObject {
         this._stamina = this._maxStamina;
     };
 
-    public abstract void setIncomingPipe(Pump pump, Pipe incoming);
+    public abstract void setIncomingPipe(Pump pump, Pipe incoming)
+            throws InvalidArgumentException, NotEnoughStaminaException;
 
-    public abstract void setOutgoingPipe(Pump pump, Pipe outgoing);
+    public abstract void setOutgoingPipe(Pump pump, Pipe outgoing)
+            throws InvalidArgumentException, NotEnoughStaminaException;
+
+
+
 }
