@@ -168,15 +168,6 @@ public class DebugModeCommands {
     public static void addWater(GameEngine ge, int amount) throws WrongGameModeException {
         notImplemented();
     }
-    /**
-     * Moves a player directly to any element, bypassing movement rules.
-     * @param ge GameEngine instance
-     * @param p player to move
-     * @param object destination element
-     * @throws WrongGameModeException if not in Debug Mode
-     * @throws InvalidArgumentException if player or object is null, or destination not occupiable
-     * @throws AlreadyOccupiedException if target pipe is already occupied
-     */
     public static void teleportPlayer(GameEngine ge, Player p, MapObject object)
             throws WrongGameModeException, AlreadyOccupiedException, InvalidArgumentException {
         if (ge.getMode() != Mode.DEBUG) {
@@ -189,11 +180,14 @@ public class DebugModeCommands {
             throw new InvalidArgumentException("Destination is not occupiable");
         }
 
-        IOccupiable target = (IOccupiable) object;
-        if (object instanceof Pipe && ((Pipe) object).getOccupant() != null) {
-            throw new AlreadyOccupiedException();
+        if (object instanceof Pipe) {
+            Pipe pipe = (Pipe) object;
+            if (pipe.getOccupant() != null) {
+                throw new AlreadyOccupiedException();
+            }
         }
-        p.occupy(target);
+
+        p.occupy((IOccupiable) object);
     }
 
     /**

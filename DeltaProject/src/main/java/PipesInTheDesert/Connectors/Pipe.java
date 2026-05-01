@@ -5,7 +5,7 @@ import PipesInTheDesert.Players.Player;
 import PipesInTheDesert.Interfaces.IConnectable;
 import PipesInTheDesert.Exceptions.PipeAlreadyLeakingException;
 import PipesInTheDesert.Exceptions.PipeAlreadyIntactException;
-import PipesInTheDesert.Exceptions.PipeNotFreeException;
+import PipesInTheDesert.Exceptions.PipeHasNoFreeEndsException;
 import PipesInTheDesert.Exceptions.PlayerNotOnPipeException;
 /**
  * Connector that transports water between active elements through two endpoints.
