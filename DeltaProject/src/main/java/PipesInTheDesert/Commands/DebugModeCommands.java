@@ -115,10 +115,37 @@ public class DebugModeCommands {
         }
 
         IOccupiable target = (IOccupiable) object;
-        if (object instanceof Pipe && ((Pipe) object).getOccupant() != null) {
-            throw new AlreadyOccupiedException();
-        }
         p.occupy(target);
+    }
+
+
+
+    /**
+     * Teleports a player directly to the specified pipe, bypassing normal movement rules.
+     *
+     * <p>This command is only available in Debug mode and forcibly moves the player to
+     * the given pipe. It performs validation of the arguments and ensures the
+     * destination pipe is not already occupied.</p>
+     *
+     * @param ge the GameEngine instance
+     * @param p the player to teleport
+     * @param pipe the destination pipe
+     * @throws WrongGameModeException if the game is not in Debug mode
+     * @throws InvalidArgumentException if the player or pipe is null
+     * @throws AlreadyOccupiedException if the target pipe is already occupied
+     */
+    public static void teleportPlayer(GameEngine ge, Player p, Pipe pipe) throws WrongGameModeException, AlreadyOccupiedException, InvalidArgumentException {
+        if (ge.getMode() != Mode.DEBUG) {
+            throw new WrongGameModeException("Cannot teleport player: not in Debug Mode");
+        }
+        if (p == null || pipe == null) {
+            throw new InvalidArgumentException("Player or destination cannot be null");
+        }
+
+        if(pipe.getOccupant() != null) {
+            throw new AlreadyOccupiedException("Target pipe is already occupied by another player");
+        }
+        p.occupy(pipe);
     }
 
     private static void notImplemented() {

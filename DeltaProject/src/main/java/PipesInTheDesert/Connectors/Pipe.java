@@ -5,12 +5,17 @@ import PipesInTheDesert.Players.Player;
 import PipesInTheDesert.Interfaces.IConnectable;
 import PipesInTheDesert.Exceptions.PipeAlreadyLeakingException;
 import PipesInTheDesert.Exceptions.PipeAlreadyIntactException;
-import PipesInTheDesert.Exceptions.PipeNotFreeException;
+import PipesInTheDesert.Exceptions.PipeHasNoFreeEndsException;
 import PipesInTheDesert.Exceptions.PlayerNotOnPipeException;
+import PipesInTheDesert.Exceptions.InvalidArgumentException;
 /**
  * Connector that transports water between active elements through two endpoints.
  */
 public class Pipe implements IOccupiable{
+    /** Counter for unique pipe IDs (type-specific). */
+    private static int _count = 0;
+    /** Unique identifier of this pipe (1-indexed). */
+    private final int _id = ++_count;
     /** First endpoint of the pipe. */
     private PipeEnd end1;
     /** Second endpoint of the pipe. */
@@ -124,10 +129,19 @@ public class Pipe implements IOccupiable{
     }
 
     /**
+    * Gets the unique ID of this pipe.
+    *
+    * @return pipe ID (1-indexed)
+    */
+    public int getId() {
+        return this._id;
+    }
+
+    /**
      * Marks this pipe as leaking.
      * @throws PipeAlreadyLeakingException if the pipe is already leaking
      */
-    public void puncture() {
+    public void puncture() throws PipeAlreadyLeakingException {
         if (leaking) {
             throw new PipeAlreadyLeakingException("Pipe is already leaking");
         }
@@ -137,7 +151,7 @@ public class Pipe implements IOccupiable{
      * Repairs this pipe and restores non-leaking state.
      * @throws PipeAlreadyIntactException if the pipe is already intact (not leaking)
      */
-    public void repair() {
+    public void repair() throws PipeAlreadyIntactException {
         if (!leaking) {
             throw new PipeAlreadyIntactException("Pipe is already intact");
         }
@@ -185,7 +199,7 @@ public class Pipe implements IOccupiable{
      * @param player player to remove
      * @throws PlayerNotOnPipeException if the player is not the current occupant
      */
-    public void removeOccupant(Player player) {
+    public void removeOccupant(Player player) throws PlayerNotOnPipeException {
         if (this.occupant == player) {
             this.occupant = null;
         }
@@ -198,8 +212,9 @@ public class Pipe implements IOccupiable{
      * Connects a free end of this pipe to the specified element.
      * @param element the element to connect to (must implement IConnectable)
      * @throws PipeHasNoFreeEndsException if both ends are already connected
+     * @throws InvalidArgumentException if the connection is not possible
      */
-    public void connectToElement(IConnectable element) {
+    public void connectToElement(IConnectable element) throws PipeHasNoFreeEndsException, InvalidArgumentException {
         if (end1.isFree()) {
             end1.connect(element);
         } else if (end2.isFree()) {

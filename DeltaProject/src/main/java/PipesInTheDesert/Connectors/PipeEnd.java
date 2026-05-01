@@ -54,7 +54,7 @@ public class PipeEnd extends MapObject {
      * @param element element to connect
      * @throws InvalidArgumentException if connection is not possible
      */
-    public void connect(IConnectable element) {
+    public void connect(IConnectable element) throws InvalidArgumentException {
         if (!canConnect(element)) {
             throw new InvalidArgumentException("Connection not possible");
         }
@@ -64,7 +64,7 @@ public class PipeEnd extends MapObject {
     /** Disconnects this endpoint from its current element.
      * @throws PipeNotConnectedException if already disconnected
      */
-    public void disconnect(){
+    public void disconnect() throws PipeNotConnectedException {
         if (!isConnected()) {
             throw new PipeNotConnectedException("Pipe end is not connected");
         }
@@ -83,7 +83,7 @@ public class PipeEnd extends MapObject {
         }
         if (element instanceof Pump) {
             Pump pump = (Pump) element;
-            return pump.getConnectedPipes().size() < pump.getMaxConnectedPipes();
+            return pump.getConnectedPipes().size() < pump.maxConnectedPipes;
         }
         return true;
     }
