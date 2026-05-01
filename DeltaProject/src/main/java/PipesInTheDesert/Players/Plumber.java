@@ -97,7 +97,7 @@ public class Plumber extends Player {
 
     public void fixPipe(Pipe pipe)
             throws InvalidArgumentException,
-            NotEnoughStaminaException, PipeAlreadyIntactExceptions {
+            NotEnoughStaminaException, PipeAlreadyIntactException {
 
         if (isHoldingPump()) {
             throw new InvalidArgumentException("Already holding pump");
@@ -200,11 +200,11 @@ public class Plumber extends Player {
         if (pipe == null || element == null) {
             return null;
         }
-        if (pipe.end1 != null && pipe.end1.connectedElement == element) {
-            return pipe.end1;
+        if (pipe.getEnd1() != null && pipe.getEnd1().getConnectedElement() == element) {
+            return pipe.getEnd1();
         }
-        if (pipe.end2 != null && pipe.end2.connectedElement == element) {
-            return pipe.end2;
+        if (pipe.getEnd2() != null && pipe.getEnd2().getConnectedElement() == element) {
+            return pipe.getEnd2();
         }
         return null;
     }

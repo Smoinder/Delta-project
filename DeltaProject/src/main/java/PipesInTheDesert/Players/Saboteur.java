@@ -6,6 +6,7 @@ import PipesInTheDesert.Constants;
 import PipesInTheDesert.Elements.Pump;
 import PipesInTheDesert.Exceptions.InvalidArgumentException;
 import PipesInTheDesert.Exceptions.NotEnoughStaminaException;
+import PipesInTheDesert.Exceptions.PipeAlreadyLeakingException;
 import PipesInTheDesert.Interfaces.IConnectable;
 import PipesInTheDesert.Interfaces.IOccupiable;
 
@@ -33,12 +34,12 @@ public class Saboteur extends Player {
     }
 
     public void puncturePipe(Pipe pipe)
-            throws InvalidArgumentException, NotEnoughStaminaException {
+            throws InvalidArgumentException, NotEnoughStaminaException, PipeAlreadyLeakingException {
 
         if (pipe == null) {
             throw new InvalidArgumentException("Pipe cannot be null");
         }
-        if (pipe.leaking) {
+        if (pipe.isLeaking()) {
             throw new InvalidArgumentException("Pipe already leaking");
         }
         consumeStamina(Constants.PLAYER_PUNCTURE_PIPE_STAMINA);
@@ -77,11 +78,11 @@ public class Saboteur extends Player {
         if (pipe == null || element == null) {
             return null;
         }
-        if (pipe.end1 != null && pipe.end1.connectedElement == element) {
-            return pipe.end1;
+        if (pipe.getEnd1() != null && pipe.getEnd1().getConnectedElement() == element) {
+            return pipe.getEnd1();
         }
-        if (pipe.end2 != null && pipe.end2.connectedElement == element) {
-            return pipe.end2;
+        if (pipe.getEnd2() != null && pipe.getEnd2().getConnectedElement() == element) {
+            return pipe.getEnd2();
         }
         return null;
     }
