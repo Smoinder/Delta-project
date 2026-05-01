@@ -2,30 +2,33 @@ package PipesInTheDesert.Connectors;
 
 import PipesInTheDesert.MapObject;
 import PipesInTheDesert.Interfaces.IConnectable;
-
+import PipesInTheDesert.Exceptions.InvalidArgumentException;
+import PipesInTheDesert.Exceptions.PipeNotConnectedException;
+import PipesInTheDesert.Elements.Pump;
 /**
  * Endpoint of a pipe that can connect to active elements in the network.
  */
 public class PipeEnd extends MapObject {
-    /** Counter for unique pipe end IDs (type-specific). */
-    private static int _count = 0;
-    /** Unique identifier of this pipe end (1-indexed). */
-    private final int _id = ++_count;
-
     /** Pipe that owns this endpoint. */
-    public Pipe pipe;
+    private Pipe pipe;
     /** Element currently connected to this endpoint. */
-    public IConnectable connectedElement;
-
+    private IConnectable connectedElement;
 
     /**
-     * Gets the unique ID of this pipe end.
-     *
-     * @return pipe end ID (1-indexed)
+     * Constructor. Initializes with no connections.
      */
-    public int getId() {
-        return this._id;
+    public PipeEnd() {
+        super();
+        this.pipe = null;
+        this.connectedElement = null;
     }
+    /**
+     * Getters and Setters
+     */
+    public Pipe getPipe() { return pipe; }
+    public void setPipe(Pipe pipe) { this.pipe = pipe; }
+    public IConnectable getConnectedElement() { return connectedElement; }
+    public void setConnectedElement(IConnectable element) { this.connectedElement = element; }
 
     /**
      * Reports whether this endpoint is currently connected.
@@ -33,8 +36,7 @@ public class PipeEnd extends MapObject {
      * @return true when a connection exists
      */
     public boolean isConnected() {
-        System.out.print("PipeEnd.isConnected(): boolean");
-        return true;
+        return connectedElement != null;
     }
 
     /**
@@ -43,22 +45,30 @@ public class PipeEnd extends MapObject {
      * @return true when no element is connected
      */
     public boolean isFree() {
-        System.out.print("PipeEnd.isFree(): boolean");
-        return true;
+        return connectedElement == null;
     }
 
     /**
      * Connects this endpoint to the provided connectable element.
      *
      * @param element element to connect
+     * @throws InvalidArgumentException if connection is not possible
      */
-    public void connect(IConnectable element) {
-        System.out.println("PipeEnd.connect(IConnectable)");
+    public void connect(IConnectable element) throws InvalidArgumentException {
+        if (!canConnect(element)) {
+            throw new InvalidArgumentException("Connection not possible");
+        }
+        this.connectedElement = element;
     }
 
-    /** Disconnects this endpoint from its current element. */
-    public void disconnect(){
-        System.out.println("PipeEnd.disconnect()");
+    /** Disconnects this endpoint from its current element.
+     * @throws PipeNotConnectedException if already disconnected
+     */
+    public void disconnect() throws PipeNotConnectedException {
+        if (!isConnected()) {
+            throw new PipeNotConnectedException("Pipe end is not connected");
+        }
+        this.connectedElement = null;
     }
 
     /**
@@ -68,7 +78,13 @@ public class PipeEnd extends MapObject {
      * @return true when connection is allowed
      */
     public boolean canConnect(IConnectable element) {
-        System.out.print("PipeEnd.canConnect(IConnectable): boolean");
+        if (connectedElement != null) {
+            return false;
+        }
+        if (element instanceof Pump) {
+            Pump pump = (Pump) element;
+            return pump.getConnectedPipes().size() < pump.maxConnectedPipes;
+        }
         return true;
     }
 }
