@@ -47,7 +47,7 @@ public class DebugModeCommands {
             throw new InvalidArgumentException("Pump cannot be null");
         }
 
-        if (!p.isHealthy) {
+        if (!p.isHealthy()) {
             throw new InvalidArgumentException("Pump is already broken");
         }
 

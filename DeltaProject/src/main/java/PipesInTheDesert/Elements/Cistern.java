@@ -149,12 +149,12 @@ public class Cistern extends ActiveElement implements IOccupiable {
         while (this._pipeGenerationState >= 1.0) {
             Pipe pipe = new Pipe();
             PipeEnd cisternSide = new PipeEnd();
-            cisternSide.pipe = pipe;
-            cisternSide.connectedElement = this;
+            cisternSide.setPipe(pipe);
+            cisternSide.setConnectedElement(this);
             PipeEnd freeSide = new PipeEnd();
-            freeSide.pipe = pipe;
-            pipe.end1 = cisternSide;
-            pipe.end2 = freeSide;
+            freeSide.setPipe(pipe);
+            pipe.setEnd1(cisternSide);
+            pipe.setEnd2(freeSide);
             this.addConnectedPipe(cisternSide);
             this._generatedPipes.add(pipe);
             this._pipeGenerationState -= 1.0;
@@ -229,7 +229,7 @@ public class Cistern extends ActiveElement implements IOccupiable {
         if (ends.isEmpty()) {
             return null;
         }
-        return ends.get(0).pipe;
+        return ends.get(0).getPipe();
     }
 
     /**

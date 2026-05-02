@@ -266,7 +266,7 @@ public class Pump extends ActiveElement implements IOccupiable {
         if (ends.isEmpty()) {
             return null;
         }
-        return ends.get(0).pipe;
+        return ends.get(0).getPipe();
     }
 
     /**

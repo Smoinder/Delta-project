@@ -105,6 +105,6 @@ public class Spring extends ActiveElement {
         if (ends.isEmpty()) {
             return null;
         }
-        return ends.get(0).pipe;
+        return ends.get(0).getPipe();
     }
 }

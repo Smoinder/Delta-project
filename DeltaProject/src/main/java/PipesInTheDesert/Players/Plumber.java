@@ -123,7 +123,7 @@ public class Plumber extends Player {
         if (pump == null) {
             throw new InvalidArgumentException("Pump cannot be null");
         }
-        if (pump.isHealthy) {
+        if (pump.isHealthy()) {
             throw new InvalidArgumentException("Pump is already healthy");
         }
 
@@ -164,12 +164,12 @@ public class Plumber extends Player {
         if (cistern == null) {
             throw new InvalidArgumentException("Cistern cannot be null");
         }
-        if (cistern.generatedPumps == null || cistern.generatedPumps.isEmpty()) {
+        if (cistern.getGeneratedPumps() == null || cistern.getGeneratedPumps().isEmpty()) {
             throw new NoFreePumpsException("No free pumps");
         }
 
         consumeStamina(Constants.PLAYER_PICKUP_PUMP_STAMINA);
-        _heldPump = cistern.generatedPumps.remove(0);
+        _heldPump = cistern.getGeneratedPumps().remove(0);
     }
 
     @Override

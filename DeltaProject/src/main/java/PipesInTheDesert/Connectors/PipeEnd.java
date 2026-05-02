@@ -83,7 +83,7 @@ public class PipeEnd extends MapObject {
         }
         if (element instanceof Pump) {
             Pump pump = (Pump) element;
-            return pump.getConnectedPipes().size() < pump.maxConnectedPipes;
+            return pump.getConnectedPipes().size() < pump.getMaxConnectedPipes();
         }
         return true;
     }

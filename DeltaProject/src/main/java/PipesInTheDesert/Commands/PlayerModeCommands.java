@@ -100,7 +100,7 @@ public class PlayerModeCommands {
      */
     public static void puncture(GameEngine ge, Pipe p)
             throws WrongGameModeException, PlayerNotOnElementException, NotEnoughStaminaException,
-            WrongTeamOfActivePlayerException {
+            WrongTeamOfActivePlayerException, PipeAlreadyLeakingException {
         if (ge.getMode() != Mode.PLAYER) {
             throw new WrongGameModeException("Game mode should be 'PLAYER'");
         }
@@ -217,7 +217,8 @@ public class PlayerModeCommands {
      *                                          stamina
      */
     public static void pickUpPump(GameEngine ge) throws WrongGameModeException, WrongTeamOfActivePlayerException,
-            NoFreePumpsException, AlredayHoldingPumpException, NotEnoughStaminaException, PlayerNotOnElementException {
+            NoFreePumpsException, AlredayHoldingPumpException, NotEnoughStaminaException, PlayerNotOnElementException,
+            InvalidArgumentException {
         if (ge.getMode() != Mode.PLAYER) {
             throw new WrongGameModeException("Game mode should be 'PLAYER'");
         }
@@ -228,7 +229,7 @@ public class PlayerModeCommands {
         if (!(plumber.getPosition() instanceof Cistern cistern)) {
             throw new PlayerNotOnElementException("Plumber must be on a cistern to pick up a pump");
         }
-        if (plumber.holdingPump) {
+        if (plumber.isHoldingPump()) {
             throw new AlredayHoldingPumpException("Plumber is already holding a pump");
         }
         List<Pump> available = cistern.getGeneratedPumps();
@@ -285,7 +286,7 @@ public class PlayerModeCommands {
         if (plumber.getPosition() != p) {
             throw new PlayerNotOnElementException("Plumber is not on the target pipe");
         }
-        if (!plumber.holdingPump || plumber.heldPump == null) {
+        if (!plumber.isHoldingPump() || plumber.getHeldPump() == null) {
             throw new InvalidArgumentException("Plumber is not holding a pump");
         }
         PipeEnd target = (p.getEnd1() != null) ? p.getEnd1() : p.getEnd2();
@@ -293,15 +294,14 @@ public class PlayerModeCommands {
             throw new InvalidArgumentException("Pipe has no usable endpoints");
         }
         plumber.consumeStamina(Constants.PLAYER_PLACE_PUMP_STAMINA);
-        Pump pump = plumber.heldPump;
+        Pump pump = plumber.getHeldPump();
         IConnectable previous = target.getConnectedElement();
         if (previous instanceof ActiveElement prev) {
             prev.removeConnectedPipe(target);
         }
         target.setConnectedElement(pump);
         pump.connectEnd(target);
-        plumber.heldPump = null;
-        plumber.holdingPump = false;
+        plumber.setHeldPump(null);
         System.out.println("InstallPump OK");
     }
 
@@ -368,7 +368,7 @@ public class PlayerModeCommands {
         plumber.consumeStamina(Constants.PLAYER_CONNECT_PIPE_STAMINA);
         freeEnd.setConnectedElement(elem);
         elem.connectEnd(freeEnd);
-        plumber.heldPipeEnd = null;
+        plumber.setHeldPipeEnd(null);
         System.out.println("Connect OK");
     }
 
