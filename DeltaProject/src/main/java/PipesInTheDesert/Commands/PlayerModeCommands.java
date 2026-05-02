@@ -15,6 +15,7 @@ import PipesInTheDesert.Elements.ActiveElement;
 import PipesInTheDesert.Elements.Cistern;
 import PipesInTheDesert.Elements.Pump;
 import PipesInTheDesert.Exceptions.*;
+import java.util.List;
 
 public class PlayerModeCommands {
     private PlayerModeCommands() {
@@ -158,17 +159,14 @@ public class PlayerModeCommands {
         if (inputPipe == outputPipe) {
             throw new InvalidArgumentException("Input and output pipes must differ");
         }
-        PipeEnd inputEnd = endConnectedTo(inputPipe, pump);
-        if (inputEnd == null) {
+        if (endConnectedTo(inputPipe, pump) == null) {
             throw new ElementNotConnectedException("Input pipe is not connected to the pump");
         }
-        PipeEnd outputEnd = endConnectedTo(outputPipe, pump);
-        if (outputEnd == null) {
+        if (endConnectedTo(outputPipe, pump) == null) {
             throw new ElementNotConnectedException("Output pipe is not connected to the pump");
         }
-        active.consumeStamina(Constants.PLAYER_CHANGE_PUMP_INPUT_STAMINA);
-        pump.setInput(inputEnd);
-        pump.setOutput(outputEnd);
+        active.setIncomingPipe(pump, inputPipe);
+        active.setOutgoingPipe(pump, outputPipe);
         System.out.println("SetPumpDirection OK");
     }
 
@@ -233,14 +231,11 @@ public class PlayerModeCommands {
         if (plumber.holdingPump) {
             throw new AlredayHoldingPumpException("Plumber is already holding a pump");
         }
-        java.util.List<Pump> available = cistern.getGeneratedPumps();
+        List<Pump> available = cistern.getGeneratedPumps();
         if (available.isEmpty()) {
             throw new NoFreePumpsException("Cistern has no free pumps to pick up");
         }
-        plumber.consumeStamina(Constants.PLAYER_PICKUP_PUMP_STAMINA);
-        Pump picked = available.remove(0);
-        plumber.heldPump = picked;
-        plumber.holdingPump = true;
+        plumber.pickUpPump(cistern);
         System.out.println("PickUpPump OK");
     }
 
