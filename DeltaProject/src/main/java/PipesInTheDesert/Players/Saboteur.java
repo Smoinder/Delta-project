@@ -1,92 +1,89 @@
 package PipesInTheDesert.Players;
 
 import PipesInTheDesert.Connectors.Pipe;
+import PipesInTheDesert.Connectors.PipeEnd;
+import PipesInTheDesert.Constants;
 import PipesInTheDesert.Elements.Pump;
+import PipesInTheDesert.Exceptions.InvalidArgumentException;
+import PipesInTheDesert.Exceptions.NotEnoughStaminaException;
+import PipesInTheDesert.Exceptions.PipeAlreadyLeakingException;
+import PipesInTheDesert.Interfaces.IConnectable;
+import PipesInTheDesert.Interfaces.IOccupiable;
 
 /**
- * Player role focused on disrupting water delivery by damaging pipe-system
- * elements.
+ * Player role focused on disrupting water delivery.
  */
 public class Saboteur extends Player {
-    /** Counter for unique saboteur IDs (type-specific). */
     private static int _count = 0;
-    /** Unique identifier of this saboteur (1-indexed, saboteur-specific). */
     private final int _id = ++_count;
 
-    /**
-     * Gets the unique ID of this saboteur.
-     *
-     * @return saboteur ID (1-indexed)
-     */
+    public Saboteur(IOccupiable position, int maxStamina, boolean isActive) {
+        super(position, maxStamina, isActive);
+    }
+
+    public Saboteur(IOccupiable position, int maxStamina) {
+        super(position, maxStamina);
+    }
+
+    public Saboteur(IOccupiable position) {
+        super(position);
+    }
+
     public int getId() {
-        return this._id;
+        return _id;
     }
 
-    /**
-     * Creates a leak in a target pipe.
-     *
-     * @param pipe pipe to puncture
-     */
-    public void puncturePipe(Pipe pipe) {
-        System.out.println("Saboteur.puncturePipe(Pipe)");
+    public void puncturePipe(Pipe pipe)
+            throws InvalidArgumentException, NotEnoughStaminaException, PipeAlreadyLeakingException {
+
+        if (pipe == null) {
+            throw new InvalidArgumentException("Pipe cannot be null");
+        }
+        if (pipe.isLeaking()) {
+            throw new InvalidArgumentException("Pipe already leaking");
+        }
+        consumeStamina(Constants.PLAYER_PUNCTURE_PIPE_STAMINA);
+        pipe.puncture();
     }
 
-    /**
-     * Moves the saboteur through a pipe.
-     *
-     * @param pipe pipe to move on
-     */
-    public void moveAlongPipe(Pipe pipe) {
-        System.out.println("Saboteur.moveAlongPipe(Pipe)");
+    @Override
+    public void setIncomingPipe(Pump pump, Pipe incoming)
+            throws InvalidArgumentException, NotEnoughStaminaException {
+
+        PipeEnd end = findPipeEndConnectedTo(incoming, pump);
+        if (end == null) {
+            throw new InvalidArgumentException("Pipe not connected to pump");
+        }
+
+        consumeStamina(Constants.PLAYER_CHANGE_PUMP_INPUT_STAMINA);
+
+        pump.setInput(end);
     }
 
-    /** Ends the saboteur turn. */
-    public void endTurn() {
-        System.out.println("Saboteur.endTurn()");
+    @Override
+    public void setOutgoingPipe(Pump pump, Pipe outgoing)
+            throws InvalidArgumentException, NotEnoughStaminaException {
+
+        PipeEnd end = findPipeEndConnectedTo(outgoing, pump);
+        if (end == null) {
+            throw new InvalidArgumentException("Pipe not connected to pump");
+        }
+
+        consumeStamina(Constants.PLAYER_CHANGE_PUMP_INPUT_STAMINA);
+
+        pump.setOutput(end);
     }
 
-    /**
-     * Checks stamina availability for an action.
-     *
-     * @param cost required stamina cost
-     * @return true when enough stamina is available
-     */
-    public boolean hasEnoughStamina(int cost) {
-        System.out.print("Saboteur.hasEnoughStamina(int): boolean");
-        return true;
-    }
-
-    /**
-     * Deducts stamina after an action.
-     *
-     * @param amount stamina amount to consume
-     */
-    public void consumeStamina(int amount) {
-        System.out.println("Saboteur.consumeStamina(int)");
-    }
-
-    /** Restores stamina at turn refresh. */
-    public void refreshStamina() {
-        System.out.println("Saboteur.refreshStamina()");
-    }
-
-    /**
-     * Selects incoming pipe on a pump.
-     *
-     * @param pump     target pump
-     * @param incoming selected incoming pipe
-     */
-    public void setIncomingPipe(Pump pump, Pipe incoming) {
-        System.out.println("Saboteur.setIncomingPipe(Pump, Pipe)");
-    }
-
-    /**
-     * Selects outgoing pipe on a pump.
-     *
-     * @param pump     target pump
-     * @param outgoing selected outgoing pipe
-     */
-    public void setOutgoingPipe(Pump pump, Pipe outgoing) {
-        System.out.println("Saboteur.setOutgoingPipe(Pump, Pipe)");
+    private PipeEnd findPipeEndConnectedTo(Pipe pipe, IConnectable element) {
+        if (pipe == null || element == null) {
+            return null;
+        }
+        if (pipe.getEnd1() != null && pipe.getEnd1().getConnectedElement() == element) {
+            return pipe.getEnd1();
+        }
+        if (pipe.getEnd2() != null && pipe.getEnd2().getConnectedElement() == element) {
+            return pipe.getEnd2();
+        }
+        return null;
     }
 }

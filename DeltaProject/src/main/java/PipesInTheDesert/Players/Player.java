@@ -6,8 +6,11 @@ import PipesInTheDesert.Elements.Pump;
 import PipesInTheDesert.Exceptions.AlreadyOccupiedException;
 import PipesInTheDesert.Exceptions.ElementNotReachableException;
 import PipesInTheDesert.Exceptions.NotEnoughStaminaException;
+import PipesInTheDesert.Exceptions.PlayerNotOnPipeException;
 import PipesInTheDesert.Interfaces.IOccupiable;
 import PipesInTheDesert.MapObject;
+import PipesInTheDesert.Exceptions.InvalidArgumentException;
+import PipesInTheDesert.Exceptions.NotEnoughStaminaException;
 
 /**
  * Abstract base type for all players that move in the pipe network.
@@ -41,8 +44,9 @@ public abstract class Player extends MapObject {
         this(position, Constants.PLAYER_MAX_STAMINA);
     }
 
-    Player(){
-        //TODO: Remove default constructor when Plumbers and Saboteurs are concretely defined
+    Player() {
+        // TODO: Remove default constructor when Plumbers and Saboteurs are concretely
+        // defined
         _maxStamina = Constants.PLAYER_MAX_STAMINA;
     }
 
@@ -53,6 +57,14 @@ public abstract class Player extends MapObject {
      */
     public int getPlayerId() {
         return this._playerId;
+    }
+
+    public void setStamina(int stamina) {
+        this._stamina = stamina;
+    }
+
+    public int getStamina() {
+        return this._stamina;
     }
 
     /**
@@ -83,9 +95,9 @@ public abstract class Player extends MapObject {
      * @param target occupiable target
      * @return true when occupation succeeds
      */
-    public boolean occupy(IOccupiable target) throws AlreadyOccupiedException{
+    public boolean occupy(IOccupiable target) throws AlreadyOccupiedException {
         if (!target.canAccept(this))
-            throw new AlreadyOccupiedException();
+            throw new AlreadyOccupiedException("Target is already occupied by another player");
         target.addOccupant(this);
         this._position = target;
         return true;
@@ -93,21 +105,29 @@ public abstract class Player extends MapObject {
 
     /**
      * Move to the pipe, connected to the current {@code _position}
+     * 
      * @param pipe destination
-     * @throws AlreadyOccupiedException if pipe already has another player on it
-     * @throws ElementNotReachableException if the pipe is not connected to the current {@code _position}
+     * @throws AlreadyOccupiedException     if pipe already has another player on it
+     * @throws ElementNotReachableException if the pipe is not connected to the
+     *                                      current {@code _position}
+     * @throws NotEnoughStaminaException    if player does not have enough stamina
+     *                                      to move
+     * @throws PlayerNotOnPipeException     if the player is not currently on a pipe
+     * 
      */
-    public void moveAlongPipe(Pipe pipe) throws AlreadyOccupiedException, ElementNotReachableException, NotEnoughStaminaException {
-//        do nothing if already on the target
+    public void moveAlongPipe(Pipe pipe) throws AlreadyOccupiedException, ElementNotReachableException,
+            NotEnoughStaminaException, PlayerNotOnPipeException {
+        // do nothing if already on the target
         if (pipe == this._position)
             return;
         if (!pipe.canAccept(this))
-            throw new AlreadyOccupiedException();
-//        pipes cannot be connected with each other -> no option to go directly to any other pipe
+            throw new AlreadyOccupiedException("Target pipe is already occupied by another player");
+        // pipes cannot be connected with each other -> no option to go directly to any
+        // other pipe
         if (this._position instanceof Pipe)
             throw new ElementNotReachableException("Pipe not reachable");
 
-//        TODO: add check if current element is connected to target pipe
+        // TODO: add check if current element is connected to target pipe
         this.consumeStamina(Constants.PLAYER_WALK_ON_A_PIPE_STAMINA);
         this._position.removeOccupant(this);
         pipe.addOccupant(this);
@@ -132,6 +152,7 @@ public abstract class Player extends MapObject {
 
     /**
      * Determine if the player can take action with corresponding {@code cost}
+     * 
      * @param cost
      * @return {@code true} if player has enough stamina; {@code false} otherwise
      */
@@ -141,8 +162,10 @@ public abstract class Player extends MapObject {
 
     /**
      * Consumes stamina for some action
+     * 
      * @param amount - amount of stamina to consume
-     * @throws NotEnoughStaminaException if current stamina level is below {@code amount}
+     * @throws NotEnoughStaminaException if current stamina level is below
+     *                                   {@code amount}
      */
     public void consumeStamina(int amount) throws NotEnoughStaminaException {
         if (!this.hasEnoughStamina(amount))
@@ -157,7 +180,12 @@ public abstract class Player extends MapObject {
         this._stamina = this._maxStamina;
     };
 
-    public abstract void setIncomingPipe(Pump pump, Pipe incoming);
+    public abstract void setIncomingPipe(Pump pump, Pipe incoming)
+            throws InvalidArgumentException, NotEnoughStaminaException;
 
-    public abstract void setOutgoingPipe(Pump pump, Pipe outgoing);
+    public abstract void setOutgoingPipe(Pump pump, Pipe outgoing)
+            throws InvalidArgumentException, NotEnoughStaminaException;
+
+
+
 }

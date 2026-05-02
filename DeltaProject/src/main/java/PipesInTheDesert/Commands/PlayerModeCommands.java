@@ -178,11 +178,11 @@ public class PlayerModeCommands {
         if (pipe == null) {
             return null;
         }
-        if (pipe.end1 != null && pipe.end1.connectedElement == pump) {
-            return pipe.end1;
+        if (pipe.getEnd1() != null && pipe.getEnd1().getConnectedElement() == pump) {
+            return pipe.getEnd1();
         }
-        if (pipe.end2 != null && pipe.end2.connectedElement == pump) {
-            return pipe.end2;
+        if (pipe.getEnd2() != null && pipe.getEnd2().getConnectedElement() == pump) {
+            return pipe.getEnd2();
         }
         return null;
     }
@@ -288,17 +288,17 @@ public class PlayerModeCommands {
         if (!plumber.holdingPump || plumber.heldPump == null) {
             throw new InvalidArgumentException("Plumber is not holding a pump");
         }
-        PipeEnd target = (p.end1 != null) ? p.end1 : p.end2;
+        PipeEnd target = (p.getEnd1() != null) ? p.getEnd1() : p.getEnd2();
         if (target == null) {
             throw new InvalidArgumentException("Pipe has no usable endpoints");
         }
         plumber.consumeStamina(Constants.PLAYER_PLACE_PUMP_STAMINA);
         Pump pump = plumber.heldPump;
-        IConnectable previous = target.connectedElement;
+        IConnectable previous = target.getConnectedElement();
         if (previous instanceof ActiveElement prev) {
             prev.removeConnectedPipe(target);
         }
-        target.connectedElement = pump;
+        target.setConnectedElement(pump);
         pump.connectEnd(target);
         plumber.heldPump = null;
         plumber.holdingPump = false;
@@ -366,7 +366,7 @@ public class PlayerModeCommands {
             throw new InvalidArgumentException("Element cannot accept this pipe end");
         }
         plumber.consumeStamina(Constants.PLAYER_CONNECT_PIPE_STAMINA);
-        freeEnd.connectedElement = elem;
+        freeEnd.setConnectedElement(elem);
         elem.connectEnd(freeEnd);
         plumber.heldPipeEnd = null;
         System.out.println("Connect OK");
@@ -377,11 +377,11 @@ public class PlayerModeCommands {
      * endpoints are already attached to elements.
      */
     private static PipeEnd freeEndOf(Pipe pipe) {
-        if (pipe.end1 != null && pipe.end1.connectedElement == null) {
-            return pipe.end1;
+        if (pipe.getEnd1() != null && pipe.getEnd1().getConnectedElement() == null) {
+            return pipe.getEnd1();
         }
-        if (pipe.end2 != null && pipe.end2.connectedElement == null) {
-            return pipe.end2;
+        if (pipe.getEnd2() != null && pipe.getEnd2().getConnectedElement() == null) {
+            return pipe.getEnd2();
         }
         return null;
     }
