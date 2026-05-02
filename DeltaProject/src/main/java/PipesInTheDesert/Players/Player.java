@@ -68,6 +68,28 @@ public abstract class Player extends MapObject {
     }
 
     /**
+     * Returns the element this player is currently located on. Used by
+     * command-layer condition checks (e.g. "player is on a pipe").
+     *
+     * @return current occupied map element, or {@code null} when the player
+     *     has not yet been placed on the field
+     */
+    public IOccupiable getPosition() {
+        return this._position;
+    }
+
+    /**
+     * Updates the element this player is currently located on. Intended for
+     * map-loading / debug commands; gameplay movement should go through
+     * {@link #occupy(IOccupiable)} or {@link #moveAlongPipe(Pipe)}.
+     *
+     * @param position new occupied element
+     */
+    public void setPosition(IOccupiable position) {
+        this._position = position;
+    }
+
+    /**
      * Tries to occupy a target map element.
      *
      * @param target occupiable target
