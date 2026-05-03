@@ -1,0 +1,11 @@
+.idea/
+**/.idea/
+.vscode/
+target/
+build/
+out/
+# Compiled classes
+*.class
+*.jar
+*.war
+*.ear

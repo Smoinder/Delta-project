@@ -26,4 +26,8 @@ public class Constants {
     public final static int SPRING_DEFAULT_THROUGHPUT = 10;
 
     public static final String NOT_IMPLEMENTED_YET = "NotImplementedYet";
+
+    // I/O Mode Constants
+    public static final String OUTPUT_PREFIX = "[OUTPUT] ";
+    public static final String TESTS_DIRECTORY = "tests/cases";
 }
