@@ -76,8 +76,8 @@ public class Prototype {
         try {
             GameEngine gameEngine = new GameEngine();
 
-            try (BufferedReader reader = new BufferedReader(new FileReader(inputFileName));
-                 PrintStream outputStream = new PrintStream(new File(outputFileName))) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(Constants.TESTS_DIRECTORY + "/" + inputFileName));
+                 PrintStream outputStream = new PrintStream(new File(Constants.TESTS_DIRECTORY + "/" + outputFileName))) {
 
                 String line;
                 while ((line = reader.readLine()) != null) {
