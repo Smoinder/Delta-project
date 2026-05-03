@@ -140,6 +140,21 @@ public abstract class Player extends MapObject {
         this._position = pipe;
     }
 
+    public void moveToActiveElement(IOccupiable destination) throws AlreadyOccupiedException, InvalidArgumentException {
+        if (destination == this._position)
+            return;
+        if (!destination.canAccept(this))
+            throw new AlreadyOccupiedException("Target element cannot accept this player");
+        if (!(destination instanceof ActiveElement activeElement) || !(this._position instanceof Pipe pipe))
+            throw new InvalidArgumentException("Wrong method used to move");
+        if (activeElement !== pipe.getEnd1().getConnectedElement() && activeElement !== pipe.getEnd2().getConnectedElement())
+            throw new ElementNotReachableException("Element not reachable");
+        this.consumeStamina(Constants.PLAYER_WALK_ON_A_PUMP_STAMINA);
+        this._position.removeOccupant(this);
+        activeElement.addOccupant(this);
+        this._position = activeElement;
+    }
+
     /**
      * Starts player's turn, refreshing the stamina and activating the player
      */

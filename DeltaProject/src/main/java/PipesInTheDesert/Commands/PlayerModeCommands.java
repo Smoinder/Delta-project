@@ -69,8 +69,8 @@ public class PlayerModeCommands {
         }
         if (elem instanceof Pipe pipe) {
             active.moveAlongPipe(pipe);
-        } else if (elem instanceof Pump pump) {
-            active.occupy(pump);
+        } else if (elem instanceof ActiveElement activeElement) {
+            active.moveToActiveElement(activeElement);
         } else {
             throw new ElementNotReachableException("Target element is not a pipe or pump");
         }
