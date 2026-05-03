@@ -206,7 +206,6 @@ public class GameEngine {
     /**
      * Initializes default map, containing two springs, two cisterns, and a
      * pump connected to one cistern and one spring.
-     * TODO: connection is not implemented.
      * <pre>
      * spring1      spring2
      *   |
@@ -231,17 +230,18 @@ public class GameEngine {
 
 //        Connect all elements with pipes
         Pipe p1 = new Pipe();
-//        TODO: connect to s1, p1
+        p1.getEnd1().setConnectedElement(s1);
+        p1.getEnd2().setConnectedElement(p);
         this.addPipe(p1);
         Pipe p2 = new Pipe();
-//        TODO: connect to p1, c1
+        p2.getEnd1().setConnectedElement(p);
+        p2.getEnd2().setConnectedElement(c1);
         this.addPipe(p2);
     }
 
     /**
      * Initializes large map, containing two springs, two cisterns, and
      * two pumps, in sequence connecting one cistern to one spring.
-     * TODO: Connection is not implemented
      * <pre>
      * spring1      spring2
      *   |
@@ -270,13 +270,16 @@ public class GameEngine {
 
 //        Connect all elements with pipes
         Pipe p1 = new Pipe();
-//        TODO: connect to s1, p1
+        p1.getEnd1().setConnectedElement(s1);
+        p1.getEnd2().setConnectedElement(pump1);
         this.addPipe(p1);
         Pipe p2 = new Pipe();
-//        TODO: connect to p1, p2
+        p2.getEnd1().setConnectedElement(pump1);
+        p2.getEnd2().setConnectedElement(pump2);
         this.addPipe(p2);
         Pipe p3 = new Pipe();
-//        TODO: connect to p2, c1
+        p3.getEnd1().setConnectedElement(pump2);
+        p3.getEnd2().setConnectedElement(c1);
         this.addPipe(p3);
     }
 

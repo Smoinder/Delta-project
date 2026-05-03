@@ -265,8 +265,4 @@ public class DebugModeCommands {
             throw new WrongGameModeException("Command is only available in Debug Mode");
         }
     }
-
-    private static void notImplemented() {
-        System.out.println(Constants.NOT_IMPLEMENTED_YET);
-    }
 }

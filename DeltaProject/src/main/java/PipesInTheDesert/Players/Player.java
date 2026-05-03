@@ -1,7 +1,9 @@
 package PipesInTheDesert.Players;
 
 import PipesInTheDesert.Connectors.Pipe;
+import PipesInTheDesert.Connectors.PipeEnd;
 import PipesInTheDesert.Constants;
+import PipesInTheDesert.Elements.ActiveElement;
 import PipesInTheDesert.Elements.Pump;
 import PipesInTheDesert.Exceptions.AlreadyOccupiedException;
 import PipesInTheDesert.Exceptions.ElementNotReachableException;
@@ -44,12 +46,6 @@ public abstract class Player extends MapObject {
         this(position, Constants.PLAYER_MAX_STAMINA);
     }
 
-    Player() {
-        // TODO: Remove default constructor when Plumbers and Saboteurs are concretely
-        // defined
-        _maxStamina = Constants.PLAYER_MAX_STAMINA;
-    }
-
     /**
      * Gets the unique ID of this player.
      *
@@ -72,7 +68,7 @@ public abstract class Player extends MapObject {
      * command-layer condition checks (e.g. "player is on a pipe").
      *
      * @return current occupied map element, or {@code null} when the player
-     *     has not yet been placed on the field
+     *         has not yet been placed on the field
      */
     public IOccupiable getPosition() {
         return this._position;
@@ -124,10 +120,20 @@ public abstract class Player extends MapObject {
             throw new AlreadyOccupiedException("Target pipe is already occupied by another player");
         // pipes cannot be connected with each other -> no option to go directly to any
         // other pipe
-        if (this._position instanceof Pipe)
+        if (this._position instanceof Pipe && !(this._position instanceof ActiveElement))
             throw new ElementNotReachableException("Pipe not reachable");
 
-        // TODO: add check if current element is connected to target pipe
+        ActiveElement currentElement = (ActiveElement) this._position;
+        boolean reachable = false;
+        for (PipeEnd end : currentElement.getConnectedPipes()) {
+            if (end != null && end.getPipe() == pipe && end.getConnectedElement() == currentElement) {
+                reachable = true;
+                break;
+            }
+        }
+        if (!reachable) {
+            throw new ElementNotReachableException("Pipe not reachable");
+        }
         this.consumeStamina(Constants.PLAYER_WALK_ON_A_PIPE_STAMINA);
         this._position.removeOccupant(this);
         pipe.addOccupant(this);
@@ -185,7 +191,5 @@ public abstract class Player extends MapObject {
 
     public abstract void setOutgoingPipe(Pump pump, Pipe outgoing)
             throws InvalidArgumentException, NotEnoughStaminaException;
-
-
 
 }
