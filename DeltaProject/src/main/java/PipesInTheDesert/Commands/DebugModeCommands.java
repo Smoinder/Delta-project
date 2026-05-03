@@ -31,6 +31,7 @@ public class DebugModeCommands {
     public static void playerMode(GameEngine ge) throws WrongGameModeException {
         requireDebugMode(ge);
         ge.setMode(Mode.PLAYER);
+        System.out.println("PlayerMode OK");
     }
 
     /**
@@ -52,6 +53,7 @@ public class DebugModeCommands {
         }
 
         p.goOutOfOrder();
+        System.out.println("PumpBroken OK");
     }
 
     /**
@@ -64,6 +66,7 @@ public class DebugModeCommands {
     public static void setRandom(GameEngine ge, boolean enabled) throws WrongGameModeException {
         requireDebugMode(ge);
         ge.setRandomEnabled(enabled);
+        System.out.println("SetRandom OK");
     }
 
     /**
@@ -93,6 +96,7 @@ public class DebugModeCommands {
         }
 
         p.setStamina(stamina);
+        System.out.println("SetStamina OK");
     }
 
     /**
@@ -116,6 +120,7 @@ public class DebugModeCommands {
             case SABOTEURS -> ge.setSaboteursScore(score);
             default -> throw new InvalidArgumentException("Invalid team");
         }
+        System.out.println("SetScore OK");
     }
 
     /**
@@ -133,6 +138,7 @@ public class DebugModeCommands {
             throw new InvalidArgumentException("Player cannot be null");
         }
         ge.setActivePlayer(player);
+        System.out.println("SetActivePlayer OK");
     }
 
     /**
@@ -151,6 +157,7 @@ public class DebugModeCommands {
             throw new InvalidArgumentException("Pipe cannot be null");
         }
         pipe.setLeaking(leak);
+        System.out.println("SetPipeLeak OK");
     }
 
     /**
@@ -167,10 +174,27 @@ public class DebugModeCommands {
             throw new InvalidArgumentException("Round count must be positive");
         }
         ge.turnNumber = value;
+        System.out.println("SetRounds OK");
     }
 
-    public static void addWater(GameEngine ge, int amount) throws WrongGameModeException {
-        notImplemented();
+    /**
+     * Adds water directly to the first pump's internal tank.
+     *
+     * @param ge     GameEngine instance
+     * @param amount amount of water to add (must be >= 0)
+     * @throws WrongGameModeException   if not in Debug Mode
+     * @throws InvalidArgumentException if amount is negative or pump is null
+     */
+    public static void addWater(GameEngine ge, Pump pump, int amount) throws WrongGameModeException, InvalidArgumentException {
+        requireDebugMode(ge);
+        if (amount < 0) {
+            throw new InvalidArgumentException("Water amount cannot be negative");
+        }
+        if (pump == null) {
+            throw new InvalidArgumentException("Pump cannot be null");
+        }
+        pump.setWaterTankLevel(pump.getWaterTankLevel() + amount);
+        System.out.println("AddWater OK");
     }
 
     /**
@@ -196,6 +220,7 @@ public class DebugModeCommands {
 
         IOccupiable target = (IOccupiable) object;
         p.occupy(target);
+        System.out.println("TeleportPlayer OK");
     }
 
     /**
@@ -226,6 +251,7 @@ public class DebugModeCommands {
             throw new AlreadyOccupiedException("Target pipe is already occupied by another player");
         }
         p.occupy(pipe);
+        System.out.println("TeleportPlayer OK");
     }
 
     /**
