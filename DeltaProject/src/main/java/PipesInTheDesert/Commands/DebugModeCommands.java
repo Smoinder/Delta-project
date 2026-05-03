@@ -169,8 +169,24 @@ public class DebugModeCommands {
         ge.turnNumber = value;
     }
 
+    /**
+     * Adds water directly to the first pump's internal tank.
+     *
+     * @param ge     GameEngine instance
+     * @param amount amount of water to add (must be >= 0)
+     * @throws WrongGameModeException   if not in Debug Mode
+     * @throws InvalidArgumentException if amount is negative or no pumps exist
+     */
     public static void addWater(GameEngine ge, int amount) throws WrongGameModeException {
-        notImplemented();
+        requireDebugMode(ge);
+        if (amount < 0) {
+            throw new InvalidArgumentException("Water amount cannot be negative");
+        }
+        if (ge.getPumps() == null || ge.getPumps().isEmpty()) {
+            throw new InvalidArgumentException("No pumps available");
+        }
+        Pump pump = ge.getPumps().get(0);
+        pump.setWaterTankLevel(pump.getWaterTankLevel() + amount);
     }
 
     /**
