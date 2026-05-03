@@ -177,7 +177,7 @@ public class DebugModeCommands {
      * @throws WrongGameModeException   if not in Debug Mode
      * @throws InvalidArgumentException if amount is negative or no pumps exist
      */
-    public static void addWater(GameEngine ge, int amount) throws WrongGameModeException {
+    public static void addWater(GameEngine ge, int amount) throws WrongGameModeException, InvalidArgumentException {
         requireDebugMode(ge);
         if (amount < 0) {
             throw new InvalidArgumentException("Water amount cannot be negative");
