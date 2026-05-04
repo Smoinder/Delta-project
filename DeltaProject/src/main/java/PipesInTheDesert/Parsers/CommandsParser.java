@@ -23,7 +23,7 @@ public final class CommandsParser {
      * Output is prefixed with [OUTPUT] and sent to System.out.
      *
      * @param gameEngine active game engine instance
-     * @param line raw command line
+     * @param line       raw command line
      * @return true when the console loop should terminate
      */
     public static boolean handleCommand(GameEngine gameEngine, String line) {
@@ -32,15 +32,17 @@ public final class CommandsParser {
 
     /**
      * Parses and executes a single console command with output routing.
-     * Captures all System.out output, prefixes it, and sends to the provided stream.
+     * Captures all System.out output, prefixes it, and sends to the provided
+     * stream.
      *
-     * @param gameEngine active game engine instance
-     * @param line raw command line
+     * @param gameEngine   active game engine instance
+     * @param line         raw command line
      * @param outputStream destination for command output
      * @param outputPrefix prefix to prepend to each line (e.g., "[OUTPUT] " or "")
      * @return true when the console loop should terminate
      */
-    public static boolean handleCommand(GameEngine gameEngine, String line, PrintStream outputStream, String outputPrefix) {
+    public static boolean handleCommand(GameEngine gameEngine, String line, PrintStream outputStream,
+            String outputPrefix) {
         String[] parts = line.trim().split("\\s+");
         String command = parts[0].toLowerCase();
 
@@ -68,6 +70,8 @@ public final class CommandsParser {
                 case "setpumpdirection" -> handleSetPumpDirection(gameEngine, parts);
                 case "pickuppump" -> handlePickUpPump(gameEngine, parts);
                 case "installpump" -> handleInstallPump(gameEngine, parts);
+                case "pickuppipe" -> handlePickUpPipe(gameEngine, parts);
+                case "installpipe" -> handleInstallPipe(gameEngine, parts);
                 case "connect" -> handleConnect(gameEngine, parts);
                 case "breakpump" -> handleBreakPump(gameEngine, parts);
                 case "setrandom" -> handleSetRandom(gameEngine, parts);
@@ -102,8 +106,8 @@ public final class CommandsParser {
      * Each non-empty line gets the prefix prepended.
      *
      * @param outputStream destination stream
-     * @param content text content to emit
-     * @param prefix prefix for each line (e.g., "[OUTPUT] " or "")
+     * @param content      text content to emit
+     * @param prefix       prefix for each line (e.g., "[OUTPUT] " or "")
      */
     private static void emitOutput(PrintStream outputStream, String content, String prefix) {
         String[] lines = content.split("\n");
@@ -114,7 +118,6 @@ public final class CommandsParser {
                 outputStream.println(prefix + line);
         }
     }
-
 
     private static boolean handleStartGame(GameEngine gameEngine, String[] parts) throws GameException {
         ArgumentsParser.requireArgumentCount(parts, 3);
@@ -210,6 +213,19 @@ public final class CommandsParser {
     private static boolean handleInstallPump(GameEngine gameEngine, String[] parts) throws GameException {
         ArgumentsParser.requireArgumentCount(parts, 2);
         PlayerModeCommands.installPump(gameEngine, ArgumentsParser.parsePipe(gameEngine, parts[1]));
+        return false;
+    }
+
+    private static boolean handlePickUpPipe(GameEngine gameEngine, String[] parts) throws GameException {
+        ArgumentsParser.requireArgumentCount(parts, 1);
+        PlayerModeCommands.pickUpPipe(gameEngine);
+        return false;
+    }
+
+    private static boolean handleInstallPipe(GameEngine gameEngine, String[] parts) throws GameException {
+        ArgumentsParser.requireArgumentCount(parts, 2);
+        PlayerModeCommands.installPipe(gameEngine,
+                ArgumentsParser.parsePump(gameEngine, parts[1]));
         return false;
     }
 
