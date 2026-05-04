@@ -18,11 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PrototypeTests {
-    // 9 18 incorrect logic, 12 14 17 21 22 24 25 28 30 32 33 36 37 40 41 42 46 48
-    // 51 52 54 55 56 57
-    // not
-    // unit
-    // testable
     private static GameEngine initiliazeEngine() {
         GameEngine ge = new GameEngine();
         try {
