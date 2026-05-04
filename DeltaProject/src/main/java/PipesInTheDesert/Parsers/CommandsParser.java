@@ -2,9 +2,13 @@ package PipesInTheDesert.Parsers;
 
 import PipesInTheDesert.Commands.DebugModeCommands;
 import PipesInTheDesert.Commands.PlayerModeCommands;
+import PipesInTheDesert.Constants;
 import PipesInTheDesert.Exceptions.GameException;
 import PipesInTheDesert.GameEngine;
 import PipesInTheDesert.MapType;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 
 /**
  * Parses console commands and dispatches them to the command package.
@@ -15,18 +19,40 @@ public final class CommandsParser {
     }
 
     /**
-     * Parses and executes a single console command.
+     * Parses and executes a single console command in interactive mode.
+     * Output is prefixed with [OUTPUT] and sent to System.out.
      *
      * @param gameEngine active game engine instance
      * @param line raw command line
      * @return true when the console loop should terminate
      */
     public static boolean handleCommand(GameEngine gameEngine, String line) {
+        return handleCommand(gameEngine, line, System.out, Constants.OUTPUT_PREFIX);
+    }
+
+    /**
+     * Parses and executes a single console command with output routing.
+     * Captures all System.out output, prefixes it, and sends to the provided stream.
+     *
+     * @param gameEngine active game engine instance
+     * @param line raw command line
+     * @param outputStream destination for command output
+     * @param outputPrefix prefix to prepend to each line (e.g., "[OUTPUT] " or "")
+     * @return true when the console loop should terminate
+     */
+    public static boolean handleCommand(GameEngine gameEngine, String line, PrintStream outputStream, String outputPrefix) {
         String[] parts = line.trim().split("\\s+");
         String command = parts[0].toLowerCase();
 
+        PrintStream originalOut = System.out;
+        ByteArrayOutputStream captureBuffer = new ByteArrayOutputStream();
+        PrintStream captureStream = new PrintStream(captureBuffer);
+        boolean shouldExit = false;
+
         try {
-            return switch (command) {
+            System.setOut(captureStream);
+
+            shouldExit = switch (command) {
                 case "exit" -> true;
                 case "startgame" -> handleStartGame(gameEngine, parts);
                 case "loadmap" -> handleLoadMap(gameEngine, parts);
@@ -58,13 +84,37 @@ public final class CommandsParser {
                 }
             };
         } catch (GameException e) {
-            System.out.println(e.getClass().getSimpleName());
+            System.out.println(e.getClass().getSimpleName() + ": " + e.getMessage());
         } catch (IllegalArgumentException e) {
             System.out.println("InvalidArgumentException");
+        } finally {
+            System.out.flush();
+            System.setOut(originalOut);
+            captureStream.close();
+            emitOutput(outputStream, captureBuffer.toString(), outputPrefix);
         }
 
-        return false;
+        return shouldExit;
     }
+
+    /**
+     * Emits output to the provided stream with optional prefix.
+     * Each non-empty line gets the prefix prepended.
+     *
+     * @param outputStream destination stream
+     * @param content text content to emit
+     * @param prefix prefix for each line (e.g., "[OUTPUT] " or "")
+     */
+    private static void emitOutput(PrintStream outputStream, String content, String prefix) {
+        String[] lines = content.split("\n");
+        for (String line : lines) {
+            // Remove trailing \r for Windows compatibility because byte stream has \r\n
+            line = line.replaceAll("\r$", "");
+            if (!line.isEmpty())
+                outputStream.println(prefix + line);
+        }
+    }
+
 
     private static boolean handleStartGame(GameEngine gameEngine, String[] parts) throws GameException {
         ArgumentsParser.requireArgumentCount(parts, 3);
@@ -240,5 +290,3 @@ public final class CommandsParser {
         return false;
     }
 }
-
-

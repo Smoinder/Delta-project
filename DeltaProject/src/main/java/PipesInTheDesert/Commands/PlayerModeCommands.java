@@ -14,8 +14,10 @@ import PipesInTheDesert.Connectors.PipeEnd;
 import PipesInTheDesert.Elements.ActiveElement;
 import PipesInTheDesert.Elements.Cistern;
 import PipesInTheDesert.Elements.Pump;
+import PipesInTheDesert.Elements.Spring;
 import PipesInTheDesert.Exceptions.*;
 import java.util.List;
+import java.util.Map;
 
 public class PlayerModeCommands {
     private PlayerModeCommands() {
@@ -24,16 +26,67 @@ public class PlayerModeCommands {
 
     public static void disconnect(GameEngine ge, Plumber pl, Pipe p, IConnectable elem)
             throws PlayerNotOnElementException, ElementNotConnectedException, WrongGameModeException,
-            WrongTeamOfActivePlayerException {
-        notImplemented();
+            WrongTeamOfActivePlayerException, NotEnoughStaminaException, AlredayHoldingPumpException {
+        if (ge.getMode() != Mode.PLAYER) {
+            throw new WrongGameModeException("Game mode should be 'PLAYER'");
+        }
+        Player active = ge.getActivePlayer();
+        if (!(active instanceof Plumber)) {
+            throw new WrongTeamOfActivePlayerException("Disconnect is a plumber action");
+        }
+        if (active != pl) {
+            throw new WrongTeamOfActivePlayerException("Active player does not match target plumber");
+        }
+        if (pl.getPosition() != elem) {
+            throw new PlayerNotOnElementException("Plumber is not on the target element");
+        }
+        pl.disconnectPipeEnd(p, elem);
+        System.out.println("Disconnect OK");
     }
 
     public static void endTurn(GameEngine ge) throws WrongGameModeException {
-        notImplemented();
+        if (ge.getMode() != Mode.PLAYER) {
+            throw new WrongGameModeException("Game mode should be 'PLAYER'");
+        }
+
+        Player active = ge.getActivePlayer();
+        if (active != null) {
+            active.endTurn();
+        }
+        ge.nextTurn();
+
+        // TODO: Keep track of objects at every action and print here or just print
+        // scores and turn
+        System.out.println(PlayerHelpers.formatScoreLine(ge));
+        System.out.println(PlayerHelpers.formatTurnLine(ge));
     }
 
     public static void printState(GameEngine ge) throws WrongGameModeException {
-        notImplemented();
+        if (ge.getMode() != Mode.PLAYER) {
+            throw new WrongGameModeException("Game mode should be 'PLAYER'");
+        }
+        System.out.println("Mode: " + ge.getMode());
+        System.out.println(PlayerHelpers.formatTurnLine(ge));
+        System.out.println(PlayerHelpers.formatScoreLine(ge));
+        System.out.println("-------------- FULL STATE ------------------------");
+        for (Spring spring : PlayerHelpers.sortedByName(ge.getSprings())) {
+            System.out.println(PlayerHelpers.formatSpringLine(spring));
+        }
+        for (Cistern cistern : PlayerHelpers.sortedByName(ge.getCisterns())) {
+            System.out.println(PlayerHelpers.formatCisternLine(cistern));
+        }
+        for (Pump pump : PlayerHelpers.sortedByName(ge.getPumps())) {
+            System.out.println(PlayerHelpers.formatPumpLine(pump));
+        }
+        for (Pipe pipe : PlayerHelpers.sortedByName(ge.getPipes())) {
+            System.out.println(PlayerHelpers.formatPipeLine(pipe));
+        }
+        for (Plumber plumber : PlayerHelpers.sortedByName(ge.getPlumbers())) {
+            System.out.println(PlayerHelpers.formatPlumberLine(plumber));
+        }
+        for (Saboteur saboteur : PlayerHelpers.sortedByName(ge.getSaboteurs())) {
+            System.out.println(PlayerHelpers.formatSaboteurLine(saboteur));
+        }
     }
 
     public static void debugMode(GameEngine ge) throws WrongGameModeException {
@@ -48,11 +101,11 @@ public class PlayerModeCommands {
         ge.startGame(numPlumbers, numSaboteurs);
         printState(ge);
         System.out.println("StartGame OK");
+        printState(ge);
     }
 
     public static void loadMap(GameEngine ge, MapType mapType) throws WrongGameModeException, MapNotEmptyException {
         ge.loadMap(mapType);
-        printState(ge);
         System.out.println("LoadMap OK");
     }
 
@@ -68,10 +121,8 @@ public class PlayerModeCommands {
         }
         if (elem instanceof Pipe pipe) {
             active.moveAlongPipe(pipe);
-        } else if (elem instanceof Pump pump) {
-            active.moveToActiveElement(pump);
         } else {
-            throw new ElementNotReachableException("Target element is not a pipe or pump");
+            active.moveToActiveElement(elem);
         }
         System.out.println("Move OK");
     }
@@ -190,7 +241,7 @@ public class PlayerModeCommands {
      */
     public static void setPumpDirection(GameEngine ge, Pump pump, Pipe inputPipe, Pipe outputPipe)
             throws WrongGameModeException, PlayerNotOnElementException, NotEnoughStaminaException,
-            InvalidArgumentException, ElementNotConnectedException {
+            InvalidArgumentException, PipeNotConnectedException, ElementNotConnectedException {
         if (ge.getMode() != Mode.PLAYER) {
             throw new WrongGameModeException("Game mode should be 'PLAYER'");
         }
@@ -201,32 +252,15 @@ public class PlayerModeCommands {
         if (inputPipe == outputPipe) {
             throw new InvalidArgumentException("Input and output pipes must differ");
         }
-        if (endConnectedTo(inputPipe, pump) == null) {
+        if (PlayerHelpers.endConnectedTo(inputPipe, pump) == null) {
             throw new ElementNotConnectedException("Input pipe is not connected to the pump");
         }
-        if (endConnectedTo(outputPipe, pump) == null) {
+        if (PlayerHelpers.endConnectedTo(outputPipe, pump) == null) {
             throw new ElementNotConnectedException("Output pipe is not connected to the pump");
         }
         active.setIncomingPipe(pump, inputPipe);
         active.setOutgoingPipe(pump, outputPipe);
         System.out.println("SetPumpDirection OK");
-    }
-
-    /**
-     * Returns the endpoint of {@code pipe} that is currently connected to
-     * {@code pump}, or {@code null} if neither end is.
-     */
-    private static PipeEnd endConnectedTo(Pipe pipe, Pump pump) {
-        if (pipe == null) {
-            return null;
-        }
-        if (pipe.getEnd1() != null && pipe.getEnd1().getConnectedElement() == pump) {
-            return pipe.getEnd1();
-        }
-        if (pipe.getEnd2() != null && pipe.getEnd2().getConnectedElement() == pump) {
-            return pipe.getEnd2();
-        }
-        return null;
     }
 
     /**
@@ -407,7 +441,7 @@ public class PlayerModeCommands {
         if (plumber.getPosition() != elem) {
             throw new PlayerNotOnElementException("Plumber is not on the target element");
         }
-        PipeEnd freeEnd = freeEndOf(p);
+        PipeEnd freeEnd = PlayerHelpers.freeEndOf(p);
         if (freeEnd == null) {
             throw new PipeHasNoFreeEndsException("Pipe has no free ends to connect");
         }
@@ -422,20 +456,126 @@ public class PlayerModeCommands {
     }
 
     /**
-     * Returns the first free endpoint of {@code pipe}, or {@code null} if both
-     * endpoints are already attached to elements.
+     * Plumber action: picks up a manufactured pipe from the cistern the
+     * plumber is standing on. The plumber may carry at most one pipe end
+     * at a time.
+     *
+     * <p>
+     * Conditions checked, in order:
+     * <ol>
+     * <li>Game mode is {@link Mode#PLAYER}.</li>
+     * <li>The active player is a {@link Plumber}.</li>
+     * <li>The plumber is currently positioned on a {@link Cistern}.</li>
+     * <li>The plumber is not already holding a pipe end.</li>
+     * <li>The cistern has at least one manufactured pipe available.</li>
+     * <li>The plumber has at least
+     * {@link Constants#PLAYER_PICKUP_PUMP_STAMINA} stamina available.</li>
+     * </ol>
+     *
+     * <p>
+     * On success, one pipe is removed from the cistern's generated-pipe
+     * inventory, and one of its free endpoints is assigned to the plumber.
+     *
+     * @param ge active game engine
+     * @throws WrongGameModeException           if the game is not in PLAYER mode
+     * @throws WrongTeamOfActivePlayerException if the active player is not a
+     *                                          plumber
+     * @throws PlayerNotOnElementException      if the plumber is not on a cistern
+     * @throws InvalidArgumentException         if the plumber already holds a pipe
+     *                                          end
+     * @throws NoFreePumpsException             if the cistern has no available
+     *                                          pipes
+     * @throws NotEnoughStaminaException        if the plumber has insufficient
+     *                                          stamina
      */
-    private static PipeEnd freeEndOf(Pipe pipe) {
-        if (pipe.getEnd1() != null && pipe.getEnd1().getConnectedElement() == null) {
-            return pipe.getEnd1();
+    public static void pickUpPipe(GameEngine ge) throws WrongGameModeException, WrongTeamOfActivePlayerException,
+            NoFreePumpsException, NotEnoughStaminaException, PlayerNotOnElementException,
+            InvalidArgumentException {
+        if (ge.getMode() != Mode.PLAYER) {
+            throw new WrongGameModeException("Game mode should be 'PLAYER'");
         }
-        if (pipe.getEnd2() != null && pipe.getEnd2().getConnectedElement() == null) {
-            return pipe.getEnd2();
+        Player active = ge.getActivePlayer();
+        if (!(active instanceof Plumber plumber)) {
+            throw new WrongTeamOfActivePlayerException("PickUpPipe is a plumber action");
         }
-        return null;
+        if (!(plumber.getPosition() instanceof Cistern cistern)) {
+            throw new PlayerNotOnElementException("Plumber must be on a cistern to pick up a pipe");
+        }
+        if (plumber.getHeldPipeEnd() != null) {
+            throw new InvalidArgumentException("Plumber is already holding a pipe end");
+        }
+        List<Pipe> available = cistern.getGeneratedPipes();
+        if (available.isEmpty()) {
+            throw new NoFreePumpsException("Cistern has no free pipes to pick up");
+        }
+        plumber.consumeStamina(Constants.PLAYER_PICKUP_PUMP_STAMINA);
+        Pipe pipe = available.remove(0);
+        PipeEnd freeEnd = pipe.getFreeEnd();
+        if (freeEnd == null) {
+            freeEnd = pipe.getEnd1();
+        }
+        plumber.setHeldPipeEnd(freeEnd);
+        System.out.println("PickUpPipe OK");
     }
 
-    private static void notImplemented() {
-        System.out.println(Constants.NOT_IMPLEMENTED_YET);
+    /**
+     * Plumber action: installs the pipe end the plumber is carrying on a pump
+     * the plumber is standing on.
+     *
+     * <p>
+     * Conditions checked, in order:
+     * <ol>
+     * <li>Game mode is {@link Mode#PLAYER}.</li>
+     * <li>The active player is a {@link Plumber}.</li>
+     * <li>The plumber is currently positioned on the target pump.</li>
+     * <li>The plumber is currently holding a pipe end.</li>
+     * <li>The pump can accept the pipe end connection.</li>
+     * <li>The plumber has at least
+     * {@link Constants#PLAYER_PLACE_PUMP_STAMINA} stamina available.</li>
+     * </ol>
+     *
+     * <p>
+     * On success, the held pipe end is attached to the pump, the pump
+     * registers the connection, and the plumber's heldPipeEnd slot is cleared
+     * and stamina is consumed.
+     *
+     * @param ge   active game engine
+     * @param pump pump on which to install the pipe end
+     * @throws WrongGameModeException           if the game is not in PLAYER mode
+     * @throws WrongTeamOfActivePlayerException if the active player is not a
+     *                                          plumber
+     * @throws PlayerNotOnElementException      if the plumber is not on the
+     *                                          target pump
+     * @throws InvalidArgumentException         if the plumber is not holding a
+     *                                          pipe end or the pump cannot
+     *                                          accept the connection
+     * @throws NotEnoughStaminaException        if the plumber has insufficient
+     *                                          stamina
+     */
+    public static void installPipe(GameEngine ge, Pump pump) throws WrongGameModeException,
+            WrongTeamOfActivePlayerException, PlayerNotOnElementException, NotEnoughStaminaException,
+            InvalidArgumentException {
+        if (ge.getMode() != Mode.PLAYER) {
+            throw new WrongGameModeException("Game mode should be 'PLAYER'");
+        }
+        Player active = ge.getActivePlayer();
+        if (!(active instanceof Plumber plumber)) {
+            throw new WrongTeamOfActivePlayerException("InstallPipe is a plumber action");
+        }
+        if (plumber.getPosition() != pump) {
+            throw new PlayerNotOnElementException("Plumber is not on the target pump");
+        }
+        if (plumber.getHeldPipeEnd() == null) {
+            throw new InvalidArgumentException("Plumber is not holding a pipe end");
+        }
+        PipeEnd pipeEnd = plumber.getHeldPipeEnd();
+        if (!pump.canConnect(pipeEnd)) {
+            throw new InvalidArgumentException("Pump cannot accept this pipe end");
+        }
+        plumber.consumeStamina(Constants.PLAYER_PLACE_PUMP_STAMINA);
+        pipeEnd.setConnectedElement(pump);
+        pump.connectEnd(pipeEnd);
+        plumber.setHeldPipeEnd(null);
+        System.out.println("InstallPipe OK");
     }
 }

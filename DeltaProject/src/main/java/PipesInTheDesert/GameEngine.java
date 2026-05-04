@@ -156,6 +156,17 @@ public class GameEngine {
     public Team nextTurn() {
         simulateWaterFlow();
 
+        for(Cistern c : this._cisterns) {
+            c.generatePipes();
+            c.generatePumps();
+        }
+
+        for(Pump p : this._pumps) {
+            if(Math.random() <= Constants.PUMP_BREAK_CHANCE) {
+                p.goOutOfOrder();
+            }
+        }
+
         for (Plumber p : this._plumbers) {
             p.setStamina(Constants.PLAYER_MAX_STAMINA);
         }
@@ -211,7 +222,9 @@ public class GameEngine {
         }
         for (Pump p : this._pumps) {
             if (p.isHealthy()) {
-                p.getOutputPipe().getPipe().addWater(p.getWaterTankLevel());
+                if (p.getOutputPipe() != null) {
+                    p.getOutputPipe().getPipe().addWater(p.getWaterTankLevel());
+                }
                 p.setWaterTankLevel(0);
             }
         }

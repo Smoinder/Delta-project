@@ -1,0 +1,2 @@
+temporary file added so git adds tests/cases folder, remove this file when adding test cases, don't remove before that.
+add tests in this folder, don't create a folder for every test case, this is more cluttering but it is simple and it works

@@ -5,14 +5,10 @@ import PipesInTheDesert.Connectors.PipeEnd;
 import PipesInTheDesert.Constants;
 import PipesInTheDesert.Elements.ActiveElement;
 import PipesInTheDesert.Elements.Pump;
-import PipesInTheDesert.Exceptions.AlreadyOccupiedException;
-import PipesInTheDesert.Exceptions.ElementNotReachableException;
-import PipesInTheDesert.Exceptions.NotEnoughStaminaException;
-import PipesInTheDesert.Exceptions.PlayerNotOnPipeException;
+import PipesInTheDesert.Exceptions.*;
 import PipesInTheDesert.Interfaces.IOccupiable;
 import PipesInTheDesert.MapObject;
-import PipesInTheDesert.Exceptions.InvalidArgumentException;
-import PipesInTheDesert.Exceptions.NotEnoughStaminaException;
+import PipesInTheDesert.Team;
 
 /**
  * Abstract base type for all players that move in the pipe network.
@@ -30,6 +26,7 @@ public abstract class Player extends MapObject {
     private final int _playerId = ++Player._lastPlayerId;
     /** True when this player currently has the active turn. */
     private boolean _isActive;
+
 
     Player(IOccupiable position, int maxStamina, boolean isActive) {
         this._maxStamina = maxStamina;
@@ -206,9 +203,11 @@ public abstract class Player extends MapObject {
     };
 
     public abstract void setIncomingPipe(Pump pump, Pipe incoming)
-            throws InvalidArgumentException, NotEnoughStaminaException;
+            throws PipeNotConnectedException, NotEnoughStaminaException;
 
     public abstract void setOutgoingPipe(Pump pump, Pipe outgoing)
-            throws InvalidArgumentException, NotEnoughStaminaException;
+            throws PipeNotConnectedException, NotEnoughStaminaException;
+
+    public abstract Team getPlayerTeam();
 
 }

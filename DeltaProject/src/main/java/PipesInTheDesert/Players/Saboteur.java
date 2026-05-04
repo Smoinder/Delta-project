@@ -1,5 +1,6 @@
 package PipesInTheDesert.Players;
 
+import PipesInTheDesert.Commands.PlayerHelpers;
 import PipesInTheDesert.Connectors.Pipe;
 import PipesInTheDesert.Connectors.PipeEnd;
 import PipesInTheDesert.Constants;
@@ -7,8 +8,10 @@ import PipesInTheDesert.Elements.Pump;
 import PipesInTheDesert.Exceptions.InvalidArgumentException;
 import PipesInTheDesert.Exceptions.NotEnoughStaminaException;
 import PipesInTheDesert.Exceptions.PipeAlreadyLeakingException;
+import PipesInTheDesert.Exceptions.PipeNotConnectedException;
 import PipesInTheDesert.Interfaces.IConnectable;
 import PipesInTheDesert.Interfaces.IOccupiable;
+import PipesInTheDesert.Team;
 
 /**
  * Player role focused on disrupting water delivery.
@@ -40,7 +43,7 @@ public class Saboteur extends Player {
             throw new InvalidArgumentException("Pipe cannot be null");
         }
         if (pipe.isLeaking()) {
-            throw new InvalidArgumentException("Pipe already leaking");
+            throw new PipeAlreadyLeakingException("Pipe already leaking");
         }
         consumeStamina(Constants.PLAYER_PUNCTURE_PIPE_STAMINA);
         pipe.puncture();
@@ -48,11 +51,11 @@ public class Saboteur extends Player {
 
     @Override
     public void setIncomingPipe(Pump pump, Pipe incoming)
-            throws InvalidArgumentException, NotEnoughStaminaException {
+            throws PipeNotConnectedException, NotEnoughStaminaException {
 
-        PipeEnd end = findPipeEndConnectedTo(incoming, pump);
+        PipeEnd end = PlayerHelpers.endConnectedTo(incoming, pump);
         if (end == null) {
-            throw new InvalidArgumentException("Pipe not connected to pump");
+            throw new PipeNotConnectedException("Pipe not connected to pump");
         }
 
         consumeStamina(Constants.PLAYER_CHANGE_PUMP_INPUT_STAMINA);
@@ -62,11 +65,11 @@ public class Saboteur extends Player {
 
     @Override
     public void setOutgoingPipe(Pump pump, Pipe outgoing)
-            throws InvalidArgumentException, NotEnoughStaminaException {
+            throws PipeNotConnectedException, NotEnoughStaminaException {
 
-        PipeEnd end = findPipeEndConnectedTo(outgoing, pump);
+        PipeEnd end = PlayerHelpers.endConnectedTo(outgoing, pump);
         if (end == null) {
-            throw new InvalidArgumentException("Pipe not connected to pump");
+            throw new PipeNotConnectedException("Pipe not connected to pump");
         }
 
         consumeStamina(Constants.PLAYER_CHANGE_PUMP_INPUT_STAMINA);
@@ -74,16 +77,9 @@ public class Saboteur extends Player {
         pump.setOutput(end);
     }
 
-    private PipeEnd findPipeEndConnectedTo(Pipe pipe, IConnectable element) {
-        if (pipe == null || element == null) {
-            return null;
-        }
-        if (pipe.getEnd1() != null && pipe.getEnd1().getConnectedElement() == element) {
-            return pipe.getEnd1();
-        }
-        if (pipe.getEnd2() != null && pipe.getEnd2().getConnectedElement() == element) {
-            return pipe.getEnd2();
-        }
-        return null;
+    @Override
+    public Team getPlayerTeam() {
+        return Team.SABOTEURS;
     }
+
 }
