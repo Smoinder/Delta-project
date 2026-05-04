@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import PipesInTheDesert.Connectors.Pipe;
+import PipesInTheDesert.Connectors.PipeEnd;
 import PipesInTheDesert.Elements.Cistern;
 import PipesInTheDesert.Elements.Pump;
 import PipesInTheDesert.Elements.Spring;
@@ -41,6 +42,12 @@ public class GameEngine {
     public int saboteursScore;
     /** Current turn index of the game. */
     public int turnNumber;
+    /// Index of the last active plumber player in the plumbers list, used for turn
+    /// progression.
+    private int lastActivePlumberIndex = -1;
+    /// Index of the last active saboteur player in the saboteurs list, used for
+    /// turn progression.
+    private int lastActiveSaboteurIndex = -1;
 
     private Mode _mode = Mode.PLAYER;
 
@@ -79,7 +86,7 @@ public class GameEngine {
     }
 
     public List<Cistern> getCisterns() {
-        return  this._cisterns;
+        return this._cisterns;
     }
 
     public void addPump(Pump p) {
@@ -130,23 +137,95 @@ public class GameEngine {
         return this._mode;
     }
 
-    /** Ends the game and finalizes the result. */
-    public void endGame() {
-        System.out.println("GameEngine.endGame()");
+    /**
+     * Ends the game and finalizes the result.
+     * 
+     * @return the winning team
+     */
+    public Team endGame() {
+        this._started = false;
+        return plumbersScore > saboteursScore ? Team.PLUMBERS : Team.SABOTEURS;
     }
 
-    /** Advances the game to the next player's turn. */
-    public void nextTurn() {
-        System.out.println("GameEngine.nextTurn()");
+    /**
+     * Advances the game to the next player's turn.
+     * 
+     * @return the winning team if the game ended after this turn, or null
+     *         otherwise.
+     */
+    public Team nextTurn() {
+        simulateWaterFlow();
+
+        for (Plumber p : this._plumbers) {
+            p.setStamina(Constants.PLAYER_MAX_STAMINA);
+        }
+        for (Saboteur s : this._saboteurs) {
+            s.setStamina(Constants.PLAYER_MAX_STAMINA);
+        }
+
+        if (this._activePlayer instanceof Plumber pl) {
+            lastActivePlumberIndex = this._plumbers.indexOf(pl);
+            if (lastActiveSaboteurIndex == this._saboteurs.size() - 1) {
+                this._activePlayer = this._saboteurs.get(0);
+            } else {
+                this._activePlayer = this._saboteurs.get(lastActiveSaboteurIndex + 1);
+            }
+        } else if (this._activePlayer instanceof Saboteur s) {
+            lastActiveSaboteurIndex = this._saboteurs.indexOf(s);
+            if (lastActivePlumberIndex == this._plumbers.size() - 1) {
+                this._activePlayer = this._plumbers.get(0);
+            } else {
+                this._activePlayer = this._plumbers.get(lastActivePlumberIndex + 1);
+            }
+        }
+
+        this.turnNumber++;
+
+        if (this.turnNumber >= Constants.GAME_TURNS_NUMBER_TO_END) {
+            return endGame();
+        }
+        return null;
     }
 
     /** Simulates water movement through springs, pipes, pumps, and cisterns. */
     public void simulateWaterFlow() {
-        System.out.println("GameEngine.simulateWaterFlow()");
+        for (Pipe p : this._pipes) {
+            if (p.isLeaking()) {
+                saboteursScore += p.getWaterAmount();
+                p.setWaterAmount(0);
+            } else if (p.isWaterFlowing()) {
+                if (p.getEnd1().getConnectedElement() instanceof Cistern) {
+                    plumbersScore += p.getWaterAmount();
+                    p.setWaterAmount(0);
+                } else if (p.getEnd1().getConnectedElement() instanceof Pump pump) {
+                    pump.addWater(p.getWaterAmount());
+                    p.setWaterAmount(0);
+                } else if (p.getEnd2().getConnectedElement() instanceof Cistern) {
+                    plumbersScore += p.getWaterAmount();
+                    p.setWaterAmount(0);
+                } else if (p.getEnd2().getConnectedElement() instanceof Pump pump) {
+                    pump.addWater(p.getWaterAmount());
+                    p.setWaterAmount(0);
+                }
+            }
+        }
+        for (Pump p : this._pumps) {
+            if (p.isHealthy()) {
+                p.getOutputPipe().getPipe().addWater(p.getWaterTankLevel());
+                p.setWaterTankLevel(0);
+            }
+        }
+        for (Spring s : this._springs) {
+            for (PipeEnd p : s.getConnectedPipes()) {
+                p.getPipe().addWater(s.getThroughput() / s.getConnectedPipes().size());
+            }
+        }
     }
 
     /**
-     * Initializes the game session, just prints that it was called. Used in skeleton
+     * Initializes the game session, just prints that it was called. Used in
+     * skeleton
+     * 
      * @deprecated use {@link #startGame(int, int)} instead
      */
     @Deprecated
@@ -156,6 +235,7 @@ public class GameEngine {
 
     /**
      * Initializes the game field, just prints that it was called. Used in skeleton
+     * 
      * @deprecated use {@link #loadMap()} instead
      */
     @Deprecated
@@ -164,7 +244,8 @@ public class GameEngine {
     }
 
     /** Initializes the game session, configures players. */
-    public void startGame(int numPlumbers, int numSaboteurs) throws WrongGameModeException, GameAlreadyStartedException, InvalidArgumentException {
+    public void startGame(int numPlumbers, int numSaboteurs)
+            throws WrongGameModeException, GameAlreadyStartedException, InvalidArgumentException {
         if (this._started) {
             throw new GameAlreadyStartedException("Game already started");
         }
@@ -190,6 +271,10 @@ public class GameEngine {
             this.addSaboteur(s);
         }
 
+        this.turnNumber = 0;
+
+        this._activePlayer = this._plumbers.get(0);
+
         this._started = true;
     }
 
@@ -197,15 +282,16 @@ public class GameEngine {
      * Initializes small map, containing one spring and one cistern
      */
     private void _loadSmallMap() {
-//        Create a spring
+        // Create a spring
         this.addSpring(new Spring());
-//        Create a cistern
+        // Create a cistern
         this.addCistern(new Cistern());
     }
 
     /**
      * Initializes default map, containing two springs, two cisterns, and a
      * pump connected to one cistern and one spring.
+     * 
      * <pre>
      * spring1      spring2
      *   |
@@ -215,20 +301,20 @@ public class GameEngine {
      * </pre>
      */
     private void _loadDefaultMap() {
-//        Create springs
+        // Create springs
         Spring s1 = new Spring();
         this.addSpring(s1);
         this.addSpring(new Spring());
-//        Create cisterns
+        // Create cisterns
         Cistern c1 = new Cistern();
         this.addCistern(c1);
         this.addCistern(new Cistern());
 
-//        Create pump
+        // Create pump
         Pump p = new Pump();
         this.addPump(p);
 
-//        Connect all elements with pipes
+        // Connect all elements with pipes
         Pipe p1 = new Pipe();
         p1.getEnd1().setConnectedElement(s1);
         p1.getEnd2().setConnectedElement(p);
@@ -242,6 +328,7 @@ public class GameEngine {
     /**
      * Initializes large map, containing two springs, two cisterns, and
      * two pumps, in sequence connecting one cistern to one spring.
+     * 
      * <pre>
      * spring1      spring2
      *   |
@@ -253,22 +340,22 @@ public class GameEngine {
      * </pre>
      */
     private void _loadLargeMap() {
-//        Create springs
+        // Create springs
         Spring s1 = new Spring();
         this.addSpring(s1);
         this.addSpring(new Spring());
-//        Create cisterns
+        // Create cisterns
         Cistern c1 = new Cistern();
         this.addCistern(c1);
         this.addCistern(new Cistern());
 
-//        Create pumps
+        // Create pumps
         Pump pump1 = new Pump();
         this.addPump(pump1);
         Pump pump2 = new Pump();
         this.addPump(pump2);
 
-//        Connect all elements with pipes
+        // Connect all elements with pipes
         Pipe p1 = new Pipe();
         p1.getEnd1().setConnectedElement(s1);
         p1.getEnd2().setConnectedElement(pump1);
@@ -285,7 +372,8 @@ public class GameEngine {
 
     /** Initializes the game field. */
     public void loadMap(MapType mapType) throws MapNotEmptyException, WrongGameModeException {
-        if (this._mapLoaded) throw new MapNotEmptyException("Map already loaded");
+        if (this._mapLoaded)
+            throw new MapNotEmptyException("Map already loaded");
         if (this._mode != Mode.PLAYER) {
             throw new WrongGameModeException("Game mode should be 'PLAYER'");
         }
@@ -298,5 +386,7 @@ public class GameEngine {
     }
 
     /** Initializes the game field with the default map. */
-    public void loadMap() throws MapNotEmptyException, WrongGameModeException { this.loadMap(MapType.DEFAULT); }
+    public void loadMap() throws MapNotEmptyException, WrongGameModeException {
+        this.loadMap(MapType.DEFAULT);
+    }
 }

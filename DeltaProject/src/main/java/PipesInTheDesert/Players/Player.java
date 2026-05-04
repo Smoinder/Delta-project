@@ -120,39 +120,43 @@ public abstract class Player extends MapObject {
             throw new AlreadyOccupiedException("Target pipe is already occupied by another player");
         // pipes cannot be connected with each other -> no option to go directly to any
         // other pipe
-        if (this._position instanceof Pipe && !(this._position instanceof ActiveElement))
+        if (this._position instanceof Pipe || !(this._position instanceof ActiveElement))
             throw new ElementNotReachableException("Pipe not reachable");
 
-        ActiveElement currentElement = (ActiveElement) this._position;
-        boolean reachable = false;
-        for (PipeEnd end : currentElement.getConnectedPipes()) {
-            if (end != null && end.getPipe() == pipe && end.getConnectedElement() == currentElement) {
-                reachable = true;
-                break;
+        if (this._position instanceof ActiveElement currentElement) {
+            boolean reachable = false;
+            for (PipeEnd end : currentElement.getConnectedPipes()) {
+                if (end != null && end.getPipe() == pipe && end.getConnectedElement() == currentElement) {
+                    reachable = true;
+                    break;
+                }
             }
+            if (!reachable) {
+                throw new ElementNotReachableException("Pipe not reachable");
+            }
+            this.consumeStamina(Constants.PLAYER_WALK_ON_A_PIPE_STAMINA);
+            this._position.removeOccupant(this);
+            pipe.addOccupant(this);
+            this._position = pipe;
         }
-        if (!reachable) {
-            throw new ElementNotReachableException("Pipe not reachable");
-        }
-        this.consumeStamina(Constants.PLAYER_WALK_ON_A_PIPE_STAMINA);
-        this._position.removeOccupant(this);
-        pipe.addOccupant(this);
-        this._position = pipe;
     }
 
-    public void moveToActiveElement(IOccupiable destination) throws AlreadyOccupiedException, InvalidArgumentException {
+    public void moveToActiveElement(IOccupiable destination)
+            throws AlreadyOccupiedException, InvalidArgumentException, ElementNotReachableException,
+            NotEnoughStaminaException, PlayerNotOnPipeException {
         if (destination == this._position)
             return;
         if (!destination.canAccept(this))
             throw new AlreadyOccupiedException("Target element cannot accept this player");
         if (!(destination instanceof ActiveElement activeElement) || !(this._position instanceof Pipe pipe))
             throw new InvalidArgumentException("Wrong method used to move");
-        if (activeElement !== pipe.getEnd1().getConnectedElement() && activeElement !== pipe.getEnd2().getConnectedElement())
+        if (activeElement != pipe.getEnd1().getConnectedElement()
+                && activeElement != pipe.getEnd2().getConnectedElement())
             throw new ElementNotReachableException("Element not reachable");
         this.consumeStamina(Constants.PLAYER_WALK_ON_A_PUMP_STAMINA);
         this._position.removeOccupant(this);
-        activeElement.addOccupant(this);
-        this._position = activeElement;
+        destination.addOccupant(this);
+        this._position = destination;
     }
 
     /**

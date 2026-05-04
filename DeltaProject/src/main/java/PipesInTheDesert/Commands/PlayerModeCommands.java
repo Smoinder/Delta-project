@@ -33,7 +33,6 @@ public class PlayerModeCommands {
     }
 
     public static void printState(GameEngine ge) throws WrongGameModeException {
-
         notImplemented();
     }
 
@@ -69,8 +68,8 @@ public class PlayerModeCommands {
         }
         if (elem instanceof Pipe pipe) {
             active.moveAlongPipe(pipe);
-        } else if (elem instanceof ActiveElement activeElement) {
-            active.moveToActiveElement(activeElement);
+        } else if (elem instanceof Pump pump) {
+            active.moveToActiveElement(pump);
         } else {
             throw new ElementNotReachableException("Target element is not a pipe or pump");
         }
