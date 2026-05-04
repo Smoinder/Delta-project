@@ -156,14 +156,16 @@ public class GameEngine {
     public Team nextTurn() {
         simulateWaterFlow();
 
-        for(Cistern c : this._cisterns) {
+        for (Cistern c : this._cisterns) {
             c.generatePipes();
             c.generatePumps();
         }
 
-        for(Pump p : this._pumps) {
-            if(Math.random() <= Constants.PUMP_BREAK_CHANCE) {
-                p.goOutOfOrder();
+        if (_randomEnabled) {
+            for (Pump p : this._pumps) {
+                if (Math.random() <= Constants.PUMP_BREAK_CHANCE) {
+                    p.goOutOfOrder();
+                }
             }
         }
 
