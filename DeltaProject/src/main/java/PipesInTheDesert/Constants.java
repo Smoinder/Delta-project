@@ -12,6 +12,8 @@ public class Constants {
     public final static int PLAYER_FIX_PIPE_STAMINA = 8;
     public final static int PLAYER_FIX_PUMP_STAMINA = 12;
     public final static int PLAYER_CHANGE_PUMP_INPUT_STAMINA = 8;
+    /** Stamina cost for disconnecting a pipe end from an element. */
+    public final static int PLAYER_DISCONNECT_PIPE_STAMINA = 1;
     /** Stamina cost for a plumber to attach a free pipe end to an active element. */
     public final static int PLAYER_CONNECT_PIPE_STAMINA = 6;
     public final static double PUMP_BREAK_CHANCE = 0.1;

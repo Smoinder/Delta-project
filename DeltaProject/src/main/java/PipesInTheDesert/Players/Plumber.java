@@ -1,13 +1,16 @@
 package PipesInTheDesert.Players;
 
+import PipesInTheDesert.Commands.PlayerHelpers;
 import PipesInTheDesert.Connectors.Pipe;
 import PipesInTheDesert.Connectors.PipeEnd;
 import PipesInTheDesert.Constants;
 import PipesInTheDesert.Elements.Cistern;
 import PipesInTheDesert.Elements.Pump;
+import PipesInTheDesert.Elements.ActiveElement;
 import PipesInTheDesert.Exceptions.*;
 import PipesInTheDesert.Interfaces.IConnectable;
 import PipesInTheDesert.Interfaces.IOccupiable;
+import PipesInTheDesert.Team;
 
 /**
  * Player role focused on maintaining and extending the pipe system.
@@ -79,19 +82,29 @@ public class Plumber extends Player {
 
     public void disconnectPipeEnd(Pipe pipe, IConnectable element)
             throws ElementNotConnectedException,
-            InvalidArgumentException, NotEnoughStaminaException, PipeNotConnectedException {
+            AlredayHoldingPumpException, NotEnoughStaminaException {
 
         if (isHoldingPump()) {
-            throw new InvalidArgumentException("Already holding pump");
+            throw new AlredayHoldingPumpException("Already holding pump");
         }
 
-        PipeEnd end = findPipeEndConnectedTo(pipe, element);
+        PipeEnd end = PlayerHelpers.endConnectedTo(pipe, element);
         if (end == null) {
             throw new ElementNotConnectedException("Pipe end not connected");
         }
 
-        consumeStamina(Constants.PLAYER_CHANGE_PUMP_INPUT_STAMINA);
-        end.disconnect();
+        consumeStamina(Constants.PLAYER_DISCONNECT_PIPE_STAMINA);
+        try {
+            end.disconnect();
+        } catch (PipeNotConnectedException e) {
+            // Roll back stamina to avoid side effects on failure.
+            setStamina(getStamina() + Constants.PLAYER_DISCONNECT_PIPE_STAMINA);
+            throw new ElementNotConnectedException("Pipe end not connected");
+        }
+
+        if (element instanceof ActiveElement activeElement) {
+            activeElement.removeConnectedPipe(end);
+        }
         _heldPipeEnd = end;
     }
 
@@ -174,11 +187,11 @@ public class Plumber extends Player {
 
     @Override
     public void setIncomingPipe(Pump pump, Pipe incoming)
-            throws InvalidArgumentException, NotEnoughStaminaException {
+            throws PipeNotConnectedException, NotEnoughStaminaException {
 
-        PipeEnd end = findPipeEndConnectedTo(incoming, pump);
+        PipeEnd end = PlayerHelpers.endConnectedTo(incoming, pump);
         if (end == null) {
-            throw new InvalidArgumentException("Pipe is not connected to pump");
+            throw new PipeNotConnectedException("Pipe is not connected to pump");
         }
         consumeStamina(Constants.PLAYER_CHANGE_PUMP_INPUT_STAMINA);
         pump.setInput(end);
@@ -186,26 +199,20 @@ public class Plumber extends Player {
 
     @Override
     public void setOutgoingPipe(Pump pump, Pipe outgoing)
-            throws InvalidArgumentException, NotEnoughStaminaException {
+            throws PipeNotConnectedException, NotEnoughStaminaException {
 
-        PipeEnd end = findPipeEndConnectedTo(outgoing, pump);
+        PipeEnd end = PlayerHelpers.endConnectedTo(outgoing, pump);
         if (end == null) {
-            throw new InvalidArgumentException("Pipe is not connected to pump");
+            throw new PipeNotConnectedException("Pipe is not connected to pump");
         }
         consumeStamina(Constants.PLAYER_CHANGE_PUMP_INPUT_STAMINA);
         pump.setOutput(end);
     }
 
-    private PipeEnd findPipeEndConnectedTo(Pipe pipe, IConnectable element) {
-        if (pipe == null || element == null) {
-            return null;
-        }
-        if (pipe.getEnd1() != null && pipe.getEnd1().getConnectedElement() == element) {
-            return pipe.getEnd1();
-        }
-        if (pipe.getEnd2() != null && pipe.getEnd2().getConnectedElement() == element) {
-            return pipe.getEnd2();
-        }
-        return null;
+    @Override
+    public Team getPlayerTeam() {
+        return Team.PLUMBERS;
     }
+
+
 }

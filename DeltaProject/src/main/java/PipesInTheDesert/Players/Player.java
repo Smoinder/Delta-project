@@ -3,14 +3,10 @@ package PipesInTheDesert.Players;
 import PipesInTheDesert.Connectors.Pipe;
 import PipesInTheDesert.Constants;
 import PipesInTheDesert.Elements.Pump;
-import PipesInTheDesert.Exceptions.AlreadyOccupiedException;
-import PipesInTheDesert.Exceptions.ElementNotReachableException;
-import PipesInTheDesert.Exceptions.NotEnoughStaminaException;
-import PipesInTheDesert.Exceptions.PlayerNotOnPipeException;
+import PipesInTheDesert.Exceptions.*;
 import PipesInTheDesert.Interfaces.IOccupiable;
 import PipesInTheDesert.MapObject;
-import PipesInTheDesert.Exceptions.InvalidArgumentException;
-import PipesInTheDesert.Exceptions.NotEnoughStaminaException;
+import PipesInTheDesert.Team;
 
 /**
  * Abstract base type for all players that move in the pipe network.
@@ -29,6 +25,7 @@ public abstract class Player extends MapObject {
     /** True when this player currently has the active turn. */
     private boolean _isActive;
 
+
     Player(IOccupiable position, int maxStamina, boolean isActive) {
         this._maxStamina = maxStamina;
         this._stamina = maxStamina;
@@ -43,13 +40,6 @@ public abstract class Player extends MapObject {
     Player(IOccupiable position) {
         this(position, Constants.PLAYER_MAX_STAMINA);
     }
-
-    Player() {
-        // TODO: Remove default constructor when Plumbers and Saboteurs are concretely
-        // defined
-        _maxStamina = Constants.PLAYER_MAX_STAMINA;
-    }
-
     /**
      * Gets the unique ID of this player.
      *
@@ -181,11 +171,11 @@ public abstract class Player extends MapObject {
     };
 
     public abstract void setIncomingPipe(Pump pump, Pipe incoming)
-            throws InvalidArgumentException, NotEnoughStaminaException;
+            throws PipeNotConnectedException, NotEnoughStaminaException;
 
     public abstract void setOutgoingPipe(Pump pump, Pipe outgoing)
-            throws InvalidArgumentException, NotEnoughStaminaException;
+            throws PipeNotConnectedException, NotEnoughStaminaException;
 
-
+    public abstract Team getPlayerTeam();
 
 }
