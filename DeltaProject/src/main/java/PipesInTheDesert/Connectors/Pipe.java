@@ -129,7 +129,9 @@ public class Pipe implements IOccupiable {
 
     /**
      * Adds the specified amount of water to the pipe, respecting capacity limits.
-     * @param amount the amount of water to add (must be positive and not exceed capacity)
+     * 
+     * @param amount the amount of water to add (must be positive and not exceed
+     *               capacity)
      */
     public void addWater(int amount) {
         if (amount > 0 && this.waterAmount + amount <= Constants.PIPE_CAPACITY) {
@@ -284,4 +286,27 @@ public class Pipe implements IOccupiable {
         }
     }
 
+    /**
+     * Retrieves a free endpoint from this pipe.
+     *
+     * @return the first free endpoint, or null if both ends are occupied
+     */
+    public PipeEnd getFreeEnd() {
+        if (end1.isFree()) {
+            return end1;
+        }
+        if (end2.isFree()) {
+            return end2;
+        }
+        return null;
+    }
+
+    /**
+     * Checks whether this pipe has at least one free endpoint.
+     *
+     * @return true when at least one end is free
+     */
+    public boolean hasFreeEnd() {
+        return end1.isFree() || end2.isFree();
+    }
 }
