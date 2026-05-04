@@ -300,9 +300,16 @@ public final class CommandsParser {
 
     private static boolean handleTeleportPlayer(GameEngine gameEngine, String[] parts) throws GameException {
         ArgumentsParser.requireArgumentCount(parts, 3);
-        DebugModeCommands.teleportPlayer(gameEngine,
-                ArgumentsParser.parsePlayer(gameEngine, parts[1]),
-                ArgumentsParser.parseMapObject(gameEngine, parts[2]));
-        return false;
+        if (parts[2].toLowerCase().startsWith("pipe")) {
+            DebugModeCommands.teleportPlayer(gameEngine,
+                    ArgumentsParser.parsePlayer(gameEngine, parts[1]),
+                    ArgumentsParser.parsePipe(gameEngine, parts[2]));
+            return false;
+        } else {
+            DebugModeCommands.teleportPlayer(gameEngine,
+                    ArgumentsParser.parsePlayer(gameEngine, parts[1]),
+                    ArgumentsParser.parseMapObject(gameEngine, parts[2]));
+            return false;
+        }
     }
 }
