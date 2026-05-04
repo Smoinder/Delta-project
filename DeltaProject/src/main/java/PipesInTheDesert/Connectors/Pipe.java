@@ -8,10 +8,13 @@ import PipesInTheDesert.Exceptions.PipeAlreadyIntactException;
 import PipesInTheDesert.Exceptions.PipeHasNoFreeEndsException;
 import PipesInTheDesert.Exceptions.PlayerNotOnPipeException;
 import PipesInTheDesert.Exceptions.InvalidArgumentException;
+import PipesInTheDesert.Constants;
+
 /**
- * Connector that transports water between active elements through two endpoints.
+ * Connector that transports water between active elements through two
+ * endpoints.
  */
-public class Pipe implements IOccupiable{
+public class Pipe implements IOccupiable {
     /** Counter for unique pipe IDs (type-specific). */
     private static int _count = 0;
     /** Unique identifier of this pipe (1-indexed). */
@@ -28,6 +31,8 @@ public class Pipe implements IOccupiable{
     private Player occupant;
     /** Pipe length value used by game logic. */
     private int length;
+    /** Amount of water in the pipe. */
+    private int waterAmount = 0;
 
     /**
      * Constructor. Initializes pipe ends and sets them to belong to this pipe.
@@ -42,71 +47,118 @@ public class Pipe implements IOccupiable{
         this.occupant = null;
         this.length = 1;
     }
+
     /**
      * Gets the first endpoint of the pipe.
+     * 
      * @return the first endpoint
      */
     public PipeEnd getEnd1() {
         return end1;
     }
+
     /**
      * Sets the first endpoint of the pipe.
+     * 
      * @param end1 the first endpoint to set
      */
     public void setEnd1(PipeEnd end1) {
         this.end1 = end1;
     }
+
     /**
      * Gets the second endpoint of the pipe.
+     * 
      * @return the second endpoint
      */
     public PipeEnd getEnd2() {
         return end2;
     }
+
     /**
      * Sets the second endpoint of the pipe.
+     * 
      * @param end2 the second endpoint to set
      */
     public void setEnd2(PipeEnd end2) {
         this.end2 = end2;
     }
+
     /**
      * Checks whether the pipe is leaking.
+     * 
      * @return true if leaking, false otherwise
      */
     public boolean isLeaking() {
         return leaking;
     }
+
     /**
      * Sets the leaking state of the pipe.
+     * 
      * @param leaking true to mark as leaking, false otherwise
      */
     public void setLeaking(boolean leaking) {
         this.leaking = leaking;
     }
+
     /**
      * Checks whether water is flowing through the pipe.
+     * 
      * @return true if water is flowing, false otherwise
      */
     public boolean isWaterFlowing() {
         return waterFlowing;
     }
+
     /**
-     * Sets the water flow state of the pipe.
-     * @param waterFlowing true to indicate water is flowing, false otherwise
+     * Sets the amount of water in the pipe and updates the flowing state
+     * accordingly.
+     * 
+     * @return the amount of water
      */
-    public void setWaterFlowing(boolean waterFlowing) {
-        this.waterFlowing = waterFlowing;
+    public void setWaterAmount(int amount) {
+        if (amount > 0 && amount <= Constants.PIPE_CAPACITY) {
+            this.waterAmount = amount;
+            this.waterFlowing = true;
+        } else if (amount <= 0) {
+            this.waterAmount = 0;
+            this.waterFlowing = false;
+        }
     }
+
+    /**
+     * Adds the specified amount of water to the pipe, respecting capacity limits.
+     * @param amount the amount of water to add (must be positive and not exceed capacity)
+     */
+    public void addWater(int amount) {
+        if (amount > 0 && this.waterAmount + amount <= Constants.PIPE_CAPACITY) {
+            this.waterAmount += amount;
+            this.waterFlowing = true;
+        }
+    }
+
+    /**
+     * Gets the amount of water currently in the pipe.
+     * 
+     * @return the amount of water in the pipe
+     */
+    public int getWaterAmount() {
+        return waterAmount;
+    }
+
     /**
      * Gets the player currently occupying the pipe.
+     * 
      * @return the occupant player, or null if unoccupied
      */
     public Player getOccupant() {
         return occupant;
     }
+
     /**
      * Sets the player occupying the pipe.
+     * 
      * @param occupant the player to set as occupant
      */
     public void setOccupant(Player occupant) {
@@ -115,13 +167,16 @@ public class Pipe implements IOccupiable{
 
     /**
      * Gets the length of the pipe.
+     * 
      * @return the pipe length
      */
     public int getLength() {
         return length;
     }
+
     /**
      * Sets the length of the pipe.
+     * 
      * @param length the length to set
      */
     public void setLength(int length) {
@@ -129,16 +184,17 @@ public class Pipe implements IOccupiable{
     }
 
     /**
-    * Gets the unique ID of this pipe.
-    *
-    * @return pipe ID (1-indexed)
-    */
+     * Gets the unique ID of this pipe.
+     *
+     * @return pipe ID (1-indexed)
+     */
     public int getId() {
         return this._id;
     }
 
     /**
      * Marks this pipe as leaking.
+     * 
      * @throws PipeAlreadyLeakingException if the pipe is already leaking
      */
     public void puncture() throws PipeAlreadyLeakingException {
@@ -147,9 +203,12 @@ public class Pipe implements IOccupiable{
         }
         this.leaking = true;
     }
+
     /**
      * Repairs this pipe and restores non-leaking state.
-     * @throws PipeAlreadyIntactException if the pipe is already intact (not leaking)
+     * 
+     * @throws PipeAlreadyIntactException if the pipe is already intact (not
+     *                                    leaking)
      */
     public void repair() throws PipeAlreadyIntactException {
         if (!leaking) {
@@ -162,7 +221,8 @@ public class Pipe implements IOccupiable{
      * Returns the opposite endpoint relative to the provided endpoint.
      *
      * @param end endpoint already known on this pipe
-     * @return the other endpoint of this pipe, or null if the end does not belong to this pipe
+     * @return the other endpoint of this pipe, or null if the end does not belong
+     *         to this pipe
      */
     public PipeEnd getOtherEnd(PipeEnd end) {
         if (end == end1) {
@@ -202,17 +262,17 @@ public class Pipe implements IOccupiable{
     public void removeOccupant(Player player) throws PlayerNotOnPipeException {
         if (this.occupant == player) {
             this.occupant = null;
-        }
-        else {
+        } else {
             throw new PlayerNotOnPipeException("Player is not on this pipe");
         }
     }
 
     /**
      * Connects a free end of this pipe to the specified element.
+     * 
      * @param element the element to connect to (must implement IConnectable)
      * @throws PipeHasNoFreeEndsException if both ends are already connected
-     * @throws InvalidArgumentException if the connection is not possible
+     * @throws InvalidArgumentException   if the connection is not possible
      */
     public void connectToElement(IConnectable element) throws PipeHasNoFreeEndsException, InvalidArgumentException {
         if (end1.isFree()) {

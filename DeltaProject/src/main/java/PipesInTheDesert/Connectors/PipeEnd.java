@@ -5,6 +5,7 @@ import PipesInTheDesert.Interfaces.IConnectable;
 import PipesInTheDesert.Exceptions.InvalidArgumentException;
 import PipesInTheDesert.Exceptions.PipeNotConnectedException;
 import PipesInTheDesert.Elements.Pump;
+
 /**
  * Endpoint of a pipe that can connect to active elements in the network.
  */
@@ -22,13 +23,30 @@ public class PipeEnd extends MapObject {
         this.pipe = null;
         this.connectedElement = null;
     }
+
     /**
      * Getters and Setters
      */
-    public Pipe getPipe() { return pipe; }
-    public void setPipe(Pipe pipe) { this.pipe = pipe; }
-    public IConnectable getConnectedElement() { return connectedElement; }
-    public void setConnectedElement(IConnectable element) { this.connectedElement = element; }
+    public Pipe getPipe() {
+        return pipe;
+    }
+
+    public void setPipe(Pipe pipe) {
+        this.pipe = pipe;
+    }
+
+    public IConnectable getConnectedElement() {
+        return connectedElement;
+    }
+
+    public void setConnectedElement(IConnectable element) {
+        this.connectedElement = element;
+        if (element instanceof Pump pump) {
+            if (!pump.getConnectedPipes().contains(this)) {
+                pump.addConnectedPipe(this);
+            }
+        }
+    }
 
     /**
      * Reports whether this endpoint is currently connected.
@@ -61,7 +79,9 @@ public class PipeEnd extends MapObject {
         this.connectedElement = element;
     }
 
-    /** Disconnects this endpoint from its current element.
+    /**
+     * Disconnects this endpoint from its current element.
+     * 
      * @throws PipeNotConnectedException if already disconnected
      */
     public void disconnect() throws PipeNotConnectedException {

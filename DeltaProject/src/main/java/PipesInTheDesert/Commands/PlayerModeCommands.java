@@ -33,7 +33,6 @@ public class PlayerModeCommands {
     }
 
     public static void printState(GameEngine ge) throws WrongGameModeException {
-
         notImplemented();
     }
 
@@ -47,29 +46,68 @@ public class PlayerModeCommands {
     public static void startGame(GameEngine ge, int numPlumbers, int numSaboteurs)
             throws WrongGameModeException, GameAlreadyStartedException, InvalidArgumentException {
         ge.startGame(numPlumbers, numSaboteurs);
+        printState(ge);
         System.out.println("StartGame OK");
     }
 
     public static void loadMap(GameEngine ge, MapType mapType) throws WrongGameModeException, MapNotEmptyException {
         ge.loadMap(mapType);
+        printState(ge);
         System.out.println("LoadMap OK");
     }
 
     public static void move(GameEngine ge, IOccupiable elem)
-            throws WrongGameModeException, ElementNotReachableException, NotEnoughStaminaException {
-        notImplemented();
+            throws WrongGameModeException, ElementNotReachableException, AlreadyOccupiedException,
+            NotEnoughStaminaException, PlayerNotOnPipeException, InvalidArgumentException {
+        if (ge.getMode() != Mode.PLAYER) {
+            throw new WrongGameModeException("Game mode should be 'PLAYER'");
+        }
+        Player active = ge.getActivePlayer();
+        if (active == null) {
+            throw new InvalidArgumentException("No active player");
+        }
+        if (elem instanceof Pipe pipe) {
+            active.moveAlongPipe(pipe);
+        } else if (elem instanceof Pump pump) {
+            active.moveToActiveElement(pump);
+        } else {
+            throw new ElementNotReachableException("Target element is not a pipe or pump");
+        }
+        System.out.println("Move OK");
     }
 
     public static void fix(GameEngine ge, Pipe p)
             throws WrongGameModeException, PlayerNotOnElementException, NotEnoughStaminaException,
-            WrongTeamOfActivePlayerException {
-        notImplemented();
+            WrongTeamOfActivePlayerException, InvalidArgumentException, PipeAlreadyIntactException {
+        if (ge.getMode() != Mode.PLAYER) {
+            throw new WrongGameModeException("Game mode should be 'PLAYER'");
+        }
+        Player active = ge.getActivePlayer();
+        if (!(active instanceof Plumber plumber)) {
+            throw new WrongTeamOfActivePlayerException("Fix is a plumber action");
+        }
+        if (plumber.getPosition() != p) {
+            throw new PlayerNotOnElementException("Plumber is not on the target pipe");
+        }
+        plumber.fixPipe(p);
+        System.out.println("Fix OK");
     }
 
     public static void fixPump(GameEngine ge, Pump p)
             throws WrongGameModeException, PlayerNotOnElementException, NotEnoughStaminaException,
-            WrongTeamOfActivePlayerException {
-        notImplemented();
+            WrongTeamOfActivePlayerException, InvalidArgumentException {
+        if (ge.getMode() != Mode.PLAYER) {
+            throw new WrongGameModeException("Game mode should be 'PLAYER'");
+        }
+        Player active = ge.getActivePlayer();
+        if (!(active instanceof Plumber plumber)) {
+            throw new WrongTeamOfActivePlayerException("FixPump is a plumber action");
+        }
+        if (plumber.getPosition() != p) {
+            throw new PlayerNotOnElementException("Plumber is not on the target pump");
+        }
+        plumber.fixPump(p);
+        System.out.println("FixPump OK");
     }
 
     /**
