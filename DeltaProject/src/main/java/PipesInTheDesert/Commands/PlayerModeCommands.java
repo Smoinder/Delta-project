@@ -90,56 +90,98 @@ public class PlayerModeCommands {
     }
 
     public static void debugMode(GameEngine ge) throws WrongGameModeException {
-        if(ge.getMode() == Mode.DEBUG)
+        if (ge.getMode() == Mode.DEBUG)
             throw new WrongGameModeException("MODE:DEBUG is already the current mode");
         ge.setMode(Mode.DEBUG);
         System.out.println("DebugMode OK");
     }
 
-    public static void startGame(GameEngine ge, int numPlumbers, int numSaboteurs) throws WrongGameModeException, GameAlreadyStartedException, InvalidArgumentException {
+    public static void startGame(GameEngine ge, int numPlumbers, int numSaboteurs)
+            throws WrongGameModeException, GameAlreadyStartedException, InvalidArgumentException {
         ge.startGame(numPlumbers, numSaboteurs);
+        printState(ge);
         System.out.println("StartGame OK");
         printState(ge);
     }
 
     public static void loadMap(GameEngine ge, MapType mapType) throws WrongGameModeException, MapNotEmptyException {
         ge.loadMap(mapType);
+        printState(ge);
         System.out.println("LoadMap OK");
         printState(ge);
     }
 
     public static void move(GameEngine ge, IOccupiable elem)
-            throws WrongGameModeException, ElementNotReachableException, NotEnoughStaminaException {
-        PlayerHelpers.notImplemented();
+            throws WrongGameModeException, ElementNotReachableException, AlreadyOccupiedException,
+            NotEnoughStaminaException, PlayerNotOnPipeException, InvalidArgumentException {
+        if (ge.getMode() != Mode.PLAYER) {
+            throw new WrongGameModeException("Game mode should be 'PLAYER'");
+        }
+        Player active = ge.getActivePlayer();
+        if (active == null) {
+            throw new InvalidArgumentException("No active player");
+        }
+        if (elem instanceof Pipe pipe) {
+            active.moveAlongPipe(pipe);
+        } else if (elem instanceof Pump pump) {
+            active.moveToActiveElement(pump);
+        } else {
+            throw new ElementNotReachableException("Target element is not a pipe or pump");
+        }
+        System.out.println("Move OK");
     }
 
     public static void fix(GameEngine ge, Pipe p)
             throws WrongGameModeException, PlayerNotOnElementException, NotEnoughStaminaException,
-            WrongTeamOfActivePlayerException {
-        PlayerHelpers.notImplemented();
+            WrongTeamOfActivePlayerException, InvalidArgumentException, PipeAlreadyIntactException {
+        if (ge.getMode() != Mode.PLAYER) {
+            throw new WrongGameModeException("Game mode should be 'PLAYER'");
+        }
+        Player active = ge.getActivePlayer();
+        if (!(active instanceof Plumber plumber)) {
+            throw new WrongTeamOfActivePlayerException("Fix is a plumber action");
+        }
+        if (plumber.getPosition() != p) {
+            throw new PlayerNotOnElementException("Plumber is not on the target pipe");
+        }
+        plumber.fixPipe(p);
+        System.out.println("Fix OK");
     }
 
     public static void fixPump(GameEngine ge, Pump p)
             throws WrongGameModeException, PlayerNotOnElementException, NotEnoughStaminaException,
-            WrongTeamOfActivePlayerException {
-        PlayerHelpers.notImplemented();
+            WrongTeamOfActivePlayerException, InvalidArgumentException {
+        if (ge.getMode() != Mode.PLAYER) {
+            throw new WrongGameModeException("Game mode should be 'PLAYER'");
+        }
+        Player active = ge.getActivePlayer();
+        if (!(active instanceof Plumber plumber)) {
+            throw new WrongTeamOfActivePlayerException("FixPump is a plumber action");
+        }
+        if (plumber.getPosition() != p) {
+            throw new PlayerNotOnElementException("Plumber is not on the target pump");
+        }
+        plumber.fixPump(p);
+        System.out.println("FixPump OK");
     }
 
     /**
      * Saboteur action: punctures a pipe so it leaks water into the desert
      * (use case 12, §5.2.2.12 of the skeleton plan).
      *
-     * <p>Conditions checked, in order:
+     * <p>
+     * Conditions checked, in order:
      * <ol>
-     *   <li>Game mode is {@link Mode#PLAYER}.</li>
-     *   <li>The active player is a {@link Saboteur} (puncturing is a saboteur
-     *       action).</li>
-     *   <li>The active player is currently positioned on the target pipe.</li>
-     *   <li>The active player has at least
-     *       {@link Constants#PLAYER_PUNCTURE_PIPE_STAMINA} stamina available.</li>
+     * <li>Game mode is {@link Mode#PLAYER}.</li>
+     * <li>The active player is a {@link Saboteur} (puncturing is a saboteur
+     * action).</li>
+     * <li>The active player is currently positioned on the target pipe.</li>
+     * <li>The active player has at least
+     * {@link Constants#PLAYER_PUNCTURE_PIPE_STAMINA} stamina available.</li>
      * </ol>
      *
-     * <p>On success, the pipe is marked leaking ({@link Pipe#puncture()},
+     * <p>
+     * On success, the pipe is marked leaking ({@link Pipe#puncture()},
      * idempotent) and the saboteur's stamina is consumed.
      *
      * @param ge active game engine
@@ -177,28 +219,29 @@ public class PlayerModeCommands {
      * action; only one pipe may be the input and only one the output, and any
      * other connected pipes implicitly become "closed pipes".
      *
-     * <p>Conditions checked, in order:
+     * <p>
+     * Conditions checked, in order:
      * <ol>
-     *   <li>Game mode is {@link Mode#PLAYER}.</li>
-     *   <li>The active player is currently positioned on the target pump.</li>
-     *   <li>The two selected pipes are different.</li>
-     *   <li>Each selected pipe has an endpoint currently connected to the pump.</li>
-     *   <li>The active player has at least
-     *       {@link Constants#PLAYER_CHANGE_PUMP_INPUT_STAMINA} stamina available.</li>
+     * <li>Game mode is {@link Mode#PLAYER}.</li>
+     * <li>The active player is currently positioned on the target pump.</li>
+     * <li>The two selected pipes are different.</li>
+     * <li>Each selected pipe has an endpoint currently connected to the pump.</li>
+     * <li>The active player has at least
+     * {@link Constants#PLAYER_CHANGE_PUMP_INPUT_STAMINA} stamina available.</li>
      * </ol>
      *
      * @param ge         active game engine
      * @param pump       pump whose direction is being changed
      * @param inputPipe  pipe to mark as the new input
      * @param outputPipe pipe to mark as the new output
-     * @throws WrongGameModeException        if the game is not in PLAYER mode
-     * @throws PlayerNotOnElementException   if the active player is not on the
-     *                                       target pump
-     * @throws InvalidArgumentException      if the input and output pipes are the
-     *                                       same instance
-     * @throws ElementNotConnectedException  if either selected pipe is not
-     *                                       connected to the pump
-     * @throws NotEnoughStaminaException     if the player has insufficient stamina
+     * @throws WrongGameModeException       if the game is not in PLAYER mode
+     * @throws PlayerNotOnElementException  if the active player is not on the
+     *                                      target pump
+     * @throws InvalidArgumentException     if the input and output pipes are the
+     *                                      same instance
+     * @throws ElementNotConnectedException if either selected pipe is not
+     *                                      connected to the pump
+     * @throws NotEnoughStaminaException    if the player has insufficient stamina
      */
     public static void setPumpDirection(GameEngine ge, Pump pump, Pipe inputPipe, Pipe outputPipe)
             throws WrongGameModeException, PlayerNotOnElementException, NotEnoughStaminaException,
@@ -229,18 +272,20 @@ public class PlayerModeCommands {
      * plumber is standing on (use case 6, §5.2.2.6 of the skeleton plan).
      * The plumber may carry at most one pump at a time.
      *
-     * <p>Conditions checked, in order:
+     * <p>
+     * Conditions checked, in order:
      * <ol>
-     *   <li>Game mode is {@link Mode#PLAYER}.</li>
-     *   <li>The active player is a {@link Plumber}.</li>
-     *   <li>The plumber is currently positioned on a {@link Cistern}.</li>
-     *   <li>The plumber is not already holding a pump.</li>
-     *   <li>The cistern has at least one manufactured pump available.</li>
-     *   <li>The plumber has at least
-     *       {@link Constants#PLAYER_PICKUP_PUMP_STAMINA} stamina available.</li>
+     * <li>Game mode is {@link Mode#PLAYER}.</li>
+     * <li>The active player is a {@link Plumber}.</li>
+     * <li>The plumber is currently positioned on a {@link Cistern}.</li>
+     * <li>The plumber is not already holding a pump.</li>
+     * <li>The cistern has at least one manufactured pump available.</li>
+     * <li>The plumber has at least
+     * {@link Constants#PLAYER_PICKUP_PUMP_STAMINA} stamina available.</li>
      * </ol>
      *
-     * <p>On success, one pump is removed from the cistern's generated-pump
+     * <p>
+     * On success, one pump is removed from the cistern's generated-pump
      * inventory and assigned to the plumber.
      *
      * @param ge active game engine
@@ -249,7 +294,8 @@ public class PlayerModeCommands {
      *                                          plumber
      * @throws PlayerNotOnElementException      if the plumber is not on a cistern
      * @throws AlredayHoldingPumpException      if the plumber already holds a pump
-     * @throws NoFreePumpsException             if the cistern has no available pumps
+     * @throws NoFreePumpsException             if the cistern has no available
+     *                                          pumps
      * @throws NotEnoughStaminaException        if the plumber has insufficient
      *                                          stamina
      */
@@ -281,18 +327,20 @@ public class PlayerModeCommands {
      * Plumber action: installs the pump the plumber is carrying on the pipe
      * the plumber is standing on (use case 7, §5.2.2.7 of the skeleton plan).
      *
-     * <p>Conditions checked, in order:
+     * <p>
+     * Conditions checked, in order:
      * <ol>
-     *   <li>Game mode is {@link Mode#PLAYER}.</li>
-     *   <li>The active player is a {@link Plumber}.</li>
-     *   <li>The plumber is currently positioned on the target pipe.</li>
-     *   <li>The plumber is currently holding a pump.</li>
-     *   <li>The pipe has at least one initialized endpoint.</li>
-     *   <li>The plumber has at least
-     *       {@link Constants#PLAYER_PLACE_PUMP_STAMINA} stamina available.</li>
+     * <li>Game mode is {@link Mode#PLAYER}.</li>
+     * <li>The active player is a {@link Plumber}.</li>
+     * <li>The plumber is currently positioned on the target pipe.</li>
+     * <li>The plumber is currently holding a pump.</li>
+     * <li>The pipe has at least one initialized endpoint.</li>
+     * <li>The plumber has at least
+     * {@link Constants#PLAYER_PLACE_PUMP_STAMINA} stamina available.</li>
      * </ol>
      *
-     * <p>On success, the held pump is inserted on one end of the pipe per the
+     * <p>
+     * On success, the held pump is inserted on one end of the pipe per the
      * skeleton flow (PipeEnd.disconnect; PipeEnd.connect(pump)): the chosen
      * pipe end is detached from its previous element (if any) and attached to
      * the pump. The plumber's heldPump slot is cleared and stamina is consumed.
@@ -346,20 +394,22 @@ public class PlayerModeCommands {
      * Plumber action: connects a free pipe end of the given pipe to the
      * specified active element (use case 10, §5.2.2.10 of the skeleton plan).
      *
-     * <p>Conditions checked, in order:
+     * <p>
+     * Conditions checked, in order:
      * <ol>
-     *   <li>Game mode is {@link Mode#PLAYER}.</li>
-     *   <li>The active player is a {@link Plumber}.</li>
-     *   <li>The plumber is currently positioned on the target element.</li>
-     *   <li>Both arguments are non-null.</li>
-     *   <li>The pipe has a free endpoint (not already connected to an element).</li>
-     *   <li>The element accepts the chosen pipe end
-     *       ({@link IConnectable#canConnect(PipeEnd)}).</li>
-     *   <li>The plumber has at least
-     *       {@link Constants#PLAYER_CONNECT_PIPE_STAMINA} stamina available.</li>
+     * <li>Game mode is {@link Mode#PLAYER}.</li>
+     * <li>The active player is a {@link Plumber}.</li>
+     * <li>The plumber is currently positioned on the target element.</li>
+     * <li>Both arguments are non-null.</li>
+     * <li>The pipe has a free endpoint (not already connected to an element).</li>
+     * <li>The element accepts the chosen pipe end
+     * ({@link IConnectable#canConnect(PipeEnd)}).</li>
+     * <li>The plumber has at least
+     * {@link Constants#PLAYER_CONNECT_PIPE_STAMINA} stamina available.</li>
      * </ol>
      *
-     * <p>On success, the free pipe end's {@code connectedElement} is set to
+     * <p>
+     * On success, the free pipe end's {@code connectedElement} is set to
      * the target element, the element registers the pipe end via
      * {@link IConnectable#connectEnd(PipeEnd)}, the plumber's
      * {@link Plumber#heldPipeEnd held pipe end} reference is cleared, and

@@ -12,12 +12,14 @@ import PipesInTheDesert.Interfaces.IOccupiable;
  * Active element that moves water from an input pipe to an output pipe and can
  * be occupied by players.
  *
- * <p>A pump enforces a "single input, single output" invariant: at most one
+ * <p>
+ * A pump enforces a "single input, single output" invariant: at most one
  * connected pipe end is the input and at most one is the output. Any other
  * connected pipes are <em>closed pipes</em> and do not transport water
  * (Glossary §2.5).
  *
- * <p>The list of connected pipe ends is inherited from {@link ActiveElement}
+ * <p>
+ * The list of connected pipe ends is inherited from {@link ActiveElement}
  * and accessed through its protected list-management methods.
  */
 public class Pump extends ActiveElement implements IOccupiable {
@@ -37,7 +39,7 @@ public class Pump extends ActiveElement implements IOccupiable {
     /** Players currently occupying this pump. */
     private final List<Player> _occupants;
     /** Current stored water amount in the pump tank. */
-    private double _waterTankLevel;
+    private int _waterTankLevel;
 
     /**
      * Creates a new healthy pump with default capacity, no occupants, an empty
@@ -49,7 +51,7 @@ public class Pump extends ActiveElement implements IOccupiable {
         this._outputPipe = null;
         this._isHealthy = true;
         this._occupants = new ArrayList<>();
-        this._waterTankLevel = 0.0;
+        this._waterTankLevel = 0;
     }
 
     /**
@@ -84,7 +86,7 @@ public class Pump extends ActiveElement implements IOccupiable {
 
     /**
      * @param inputPipe endpoint to use as input; the endpoint must already be
-     *     connected to this pump or it is ignored
+     *                  connected to this pump or it is ignored
      */
     public void setInputPipe(PipeEnd inputPipe) {
         this.setInput(inputPipe);
@@ -99,7 +101,7 @@ public class Pump extends ActiveElement implements IOccupiable {
 
     /**
      * @param outputPipe endpoint to use as output; the endpoint must already
-     *     be connected to this pump or it is ignored
+     *                   be connected to this pump or it is ignored
      */
     public void setOutputPipe(PipeEnd outputPipe) {
         this.setOutput(outputPipe);
@@ -129,15 +131,19 @@ public class Pump extends ActiveElement implements IOccupiable {
     /**
      * @return current water level in the internal tank
      */
-    public double getWaterTankLevel() {
+    public int getWaterTankLevel() {
         return this._waterTankLevel;
     }
 
     /**
      * @param level new water-tank level (must be non-negative)
      */
-    public void setWaterTankLevel(double level) {
-        this._waterTankLevel = level;
+    public void setWaterTankLevel(int level) {
+        if (level >= 0 && level <= Constants.PUMP_MAX_WATER_TANK_LEVEL) {
+            this._waterTankLevel = level;
+        } else if (level < 0) {
+            this._waterTankLevel = 0;
+        }
     }
 
     /** Restores the pump to working state. */
@@ -193,7 +199,19 @@ public class Pump extends ActiveElement implements IOccupiable {
      * @return {@code true} when the tank is empty
      */
     public boolean isTankEmpty() {
-        return this._waterTankLevel <= 0.0;
+        return this._waterTankLevel <= 0;
+    }
+
+    /**
+     * Adds the specified amount of water to the pump's internal tank, respecting
+     * capacity limits.
+     * 
+     * @param amount amount of water to add (must be positive and not exceed maximum tank level)
+     */
+    public void addWater(int amount) {
+        if (amount > 0 && this._waterTankLevel + amount <= Constants.PUMP_MAX_WATER_TANK_LEVEL) {
+            this._waterTankLevel += amount;
+        }
     }
 
     /**
@@ -235,7 +253,7 @@ public class Pump extends ActiveElement implements IOccupiable {
      * selection is cleared.
      *
      * @return the disconnected endpoint, or {@code null} if no pipe ends were
-     *     connected
+     *         connected
      */
     @Override
     public PipeEnd disconnectEnd() {
@@ -258,7 +276,7 @@ public class Pump extends ActiveElement implements IOccupiable {
      * Returns any pipe currently connected to this pump.
      *
      * @return the pipe owning the first connected endpoint, or {@code null}
-     *     if no pipes are connected
+     *         if no pipes are connected
      */
     @Override
     public Pipe getEnd() {
@@ -274,7 +292,7 @@ public class Pump extends ActiveElement implements IOccupiable {
      *
      * @param player player attempting occupancy
      * @return {@code true} when the player is non-null and the pump is in a
-     *     state that accepts occupancy
+     *         state that accepts occupancy
      */
     @Override
     public boolean canAccept(Player player) {

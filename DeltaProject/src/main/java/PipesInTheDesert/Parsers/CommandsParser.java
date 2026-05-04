@@ -275,8 +275,10 @@ public final class CommandsParser {
     }
 
     private static boolean handleAddWater(GameEngine gameEngine, String[] parts) throws GameException {
-        ArgumentsParser.requireArgumentCount(parts, 2);
-        DebugModeCommands.addWater(gameEngine, ArgumentsParser.parseInteger(parts[1]));
+        ArgumentsParser.requireArgumentCount(parts, 3);
+        DebugModeCommands.addWater(gameEngine,
+                ArgumentsParser.parsePump(gameEngine, parts[1]),
+                ArgumentsParser.parseInteger(parts[2]));
         return false;
     }
 
