@@ -1,5 +1,6 @@
 package PipesInTheDesert.Connectors;
 
+import PipesInTheDesert.Elements.MapObject;
 import PipesInTheDesert.Interfaces.IOccupiable;
 import PipesInTheDesert.Players.Player;
 import PipesInTheDesert.Interfaces.IConnectable;
@@ -10,11 +11,13 @@ import PipesInTheDesert.Exceptions.PlayerNotOnPipeException;
 import PipesInTheDesert.Exceptions.InvalidArgumentException;
 import PipesInTheDesert.Constants;
 
+import java.awt.*;
+
 /**
  * Connector that transports water between active elements through two
  * endpoints.
  */
-public class Pipe implements IOccupiable {
+public class Pipe extends MapObject implements IOccupiable {
     /** Counter for unique pipe IDs (type-specific). */
     private static int _count = 0;
     /** Unique identifier of this pipe (1-indexed). */
@@ -308,5 +311,10 @@ public class Pipe implements IOccupiable {
      */
     public boolean hasFreeEnd() {
         return end1.isFree() || end2.isFree();
+    }
+
+    @Override
+    public Rectangle getBounds(){
+        return super.getBounds();
     }
 }

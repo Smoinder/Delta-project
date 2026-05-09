@@ -1,8 +1,7 @@
 package PipesInTheDesert.Commands;
 
-import PipesInTheDesert.Constants;
 import PipesInTheDesert.GameEngine;
-import PipesInTheDesert.MapObject;
+import PipesInTheDesert.Elements.MapObject;
 import PipesInTheDesert.Elements.Pump;
 import PipesInTheDesert.Mode;
 import PipesInTheDesert.Exceptions.WrongGameModeException;

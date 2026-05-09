@@ -1,4 +1,4 @@
-package PipesInTheDesert.Parsers;
+package PipesInTheDesert.Depracated.Parsers;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -8,7 +8,7 @@ import PipesInTheDesert.Elements.Cistern;
 import PipesInTheDesert.Elements.Pump;
 import PipesInTheDesert.Elements.Spring;
 import PipesInTheDesert.GameEngine;
-import PipesInTheDesert.MapObject;
+import PipesInTheDesert.Elements.MapObject;
 import PipesInTheDesert.MapType;
 import PipesInTheDesert.Team;
 import PipesInTheDesert.Interfaces.IConnectable;

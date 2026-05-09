@@ -1,4 +1,4 @@
-package PipesInTheDesert.Parsers;
+package PipesInTheDesert.Depracated.Parsers;
 
 import PipesInTheDesert.Commands.DebugModeCommands;
 import PipesInTheDesert.Commands.PlayerModeCommands;

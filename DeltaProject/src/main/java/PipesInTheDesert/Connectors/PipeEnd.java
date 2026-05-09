@@ -1,10 +1,12 @@
 package PipesInTheDesert.Connectors;
 
-import PipesInTheDesert.MapObject;
+import PipesInTheDesert.Elements.MapObject;
 import PipesInTheDesert.Interfaces.IConnectable;
 import PipesInTheDesert.Exceptions.InvalidArgumentException;
 import PipesInTheDesert.Exceptions.PipeNotConnectedException;
 import PipesInTheDesert.Elements.Pump;
+
+import java.awt.*;
 
 /**
  * Endpoint of a pipe that can connect to active elements in the network.
@@ -106,5 +108,10 @@ public class PipeEnd extends MapObject {
             return pump.getConnectedPipes().size() < pump.getMaxConnectedPipes();
         }
         return true;
+    }
+
+    @Override
+    public Rectangle getBounds(){
+        return super.getBounds();
     }
 }
