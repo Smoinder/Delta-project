@@ -1,4 +1,4 @@
-package PipesInTheDesert;
+package PipesInTheDesert.Depracated;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Scanner;
 
-import PipesInTheDesert.Parsers.CommandsParser;
+import PipesInTheDesert.Constants;
+import PipesInTheDesert.Depracated.Parsers.CommandsParser;
+import PipesInTheDesert.GameEngine;
 
 /**
  * Console entry point for the prototype command loop.

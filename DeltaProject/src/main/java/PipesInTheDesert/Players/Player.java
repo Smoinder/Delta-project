@@ -7,7 +7,7 @@ import PipesInTheDesert.Elements.ActiveElement;
 import PipesInTheDesert.Elements.Pump;
 import PipesInTheDesert.Exceptions.*;
 import PipesInTheDesert.Interfaces.IOccupiable;
-import PipesInTheDesert.MapObject;
+import PipesInTheDesert.Elements.MapObject;
 import PipesInTheDesert.Team;
 
 /**

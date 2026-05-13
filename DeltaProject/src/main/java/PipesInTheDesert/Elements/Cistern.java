@@ -1,5 +1,6 @@
 package PipesInTheDesert.Elements;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -265,5 +266,10 @@ public class Cistern extends ActiveElement implements IOccupiable {
     @Override
     public void removeOccupant(Player player) {
         this._occupants.remove(player);
+    }
+
+    @Override
+    public Rectangle getBounds(){
+        return super.getBounds();
     }
 }

@@ -1,4 +1,11 @@
-package PipesInTheDesert;
+package PipesInTheDesert.Elements;
+
+import PipesInTheDesert.GUI.Observer.ChangeType;
+import PipesInTheDesert.GUI.Observer.ModelObserver;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Abstract base for elements that have a fixed position on the game field canvas.
@@ -8,6 +15,8 @@ public abstract class MapObject {
     private double x;
     /** Y coordinate on the game field canvas. */
     private double y;
+
+    private final List<ModelObserver> observers = new ArrayList<>();
 
     /**
      * Returns the horizontal position of this object.
@@ -44,4 +53,25 @@ public abstract class MapObject {
     public void setY(double y) {
         this.y = y;
     }
+
+    public void addObserver(ModelObserver obs){
+
+    }
+
+    public void removeObserver(ModelObserver obs){
+
+    }
+
+    protected void notifyObservers(ChangeType change){
+
+    }
+
+    public Rectangle getBounds(){
+        return new Rectangle(40,40);
+    }
+
+    public boolean contains(int px, int py){
+        return false;
+    }
+
 }

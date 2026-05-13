@@ -1,5 +1,6 @@
 package PipesInTheDesert.Elements;
 
+import java.awt.*;
 import java.util.List;
 
 import PipesInTheDesert.Connectors.*;
@@ -106,5 +107,10 @@ public class Spring extends ActiveElement {
             return null;
         }
         return ends.get(0).getPipe();
+    }
+
+    @Override
+    public Rectangle getBounds(){
+        return super.getBounds();
     }
 }

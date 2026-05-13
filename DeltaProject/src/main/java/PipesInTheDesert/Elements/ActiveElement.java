@@ -5,7 +5,6 @@ import PipesInTheDesert.Interfaces.IConnectable;
 
 import java.util.ArrayList;
 import java.util.List;
-import PipesInTheDesert.MapObject;
 
 /**
  * Abstract base for field elements that act as connection nodes for pipe ends.

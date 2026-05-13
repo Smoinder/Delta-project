@@ -13,7 +13,7 @@ import PipesInTheDesert.Exceptions.InvalidArgumentException;
 import PipesInTheDesert.Exceptions.PlayerNotOnElementException;
 import PipesInTheDesert.Commands.DebugModeCommands;
 import PipesInTheDesert.Commands.PlayerModeCommands;
-import PipesInTheDesert.Parsers.CommandsParser;
+import PipesInTheDesert.Depracated.Parsers.CommandsParser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
