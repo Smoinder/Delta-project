@@ -6,9 +6,11 @@ import PipesInTheDesert.Elements.Pump;
 import PipesInTheDesert.Players.Player;
 import PipesInTheDesert.Players.Plumber;
 import PipesInTheDesert.Players.Saboteur;
+import PipesInTheDesert.Constants;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * InfoPanel displays detailed information about the currently selected element.
@@ -81,7 +83,7 @@ public class InfoPanel extends JPanel {
             typeLabel.setText("Type: Plumber");
             addInfoRow("Position:", formatPosition(plumber));
             addInfoRow("Team:", "Plumbers 🔵");
-            addInfoRow("Stamina:", plumber.getStamina() + " / " + plumber._maxStamina);
+            addInfoRow("Stamina:", plumber.getStamina() + " / " + Constants.PLAYER_MAX_STAMINA);
             addInfoRow("Holding Pump:", plumber.isHoldingPump() ? "Yes" : "No");
         }
         else if (element instanceof Saboteur) {
@@ -90,7 +92,7 @@ public class InfoPanel extends JPanel {
             typeLabel.setText("Type: Saboteur");
             addInfoRow("Position:", formatPosition(saboteur));
             addInfoRow("Team:", "Saboteurs 🔴");
-            addInfoRow("Stamina:", saboteur.getStamina() + " / " + saboteur._maxStamina);
+            addInfoRow("Stamina:", saboteur.getStamina() + " / " + Constants.PLAYER_MAX_STAMINA);
         }
         else {
             nameLabel.setText("ID: unknown");
